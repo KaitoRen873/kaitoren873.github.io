@@ -6,6 +6,8 @@
     ║   SY 2025-2027                         ║
     ║   Complete Interactive Yearbook        ║
     ║   Single HTML File · Retro Pixel Style ║
+    ║   ENTER or CLICK anywhere to begin     ║
+    ║   + No reload on external links        ║
     ╚══════════════════════════════════════════╝
 -->
 <html lang="en">
@@ -15,7 +17,6 @@
     <title>TechPro B (ICT) Digital Yearbook</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Changed font to VT323 for better readability -->
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         /* ========== ROOT VARIABLES & THEME ========== */
@@ -33,29 +34,17 @@
             --day-header: #8395a7;
             --pixel-shadow: 4px 4px 0 rgba(0,0,0,.3);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html {
-            scroll-behavior: smooth;
-            font-size: 25px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 25px; }
         body {
             background: var(--bg);
             color: var(--text);
-            /* Font changed to VT323 */
             font-family: 'VT323', monospace;
             overflow-x: hidden;
             transition: background .3s ease, color .3s ease;
             min-height: 100vh;
         }
-        body.day-mode {
-            background: var(--day-bg);
-            color: var(--day-text);
-        }
+        body.day-mode { background: var(--day-bg); color: var(--day-text); }
         body::after {
             content: "";
             position: fixed;
@@ -65,7 +54,6 @@
             z-index: 999;
             opacity: 0.6;
         }
-
         /* INTRO SCREEN */
         #introScreen {
             position: fixed;
@@ -76,12 +64,9 @@
             background: radial-gradient(circle, #1d2b53, #09142e);
             z-index: 10000;
             transition: opacity 0.8s ease;
+            cursor: pointer;
         }
-        .intro-content {
-            text-align: center;
-            padding: 20px;
-            z-index: 2;
-        }
+        .intro-content { text-align: center; padding: 20px; z-index: 2; pointer-events: none; }
         #introTitle { font-size: 2.5rem; opacity: 0; animation: fadeIn 1s forwards; }
         #introSchool { margin-top: 25px; font-size: 1.2rem; opacity: 0; animation: fadeIn 1s forwards 1s; }
         #introYear { margin-top: 20px; font-size: 1rem; opacity: 0; animation: fadeIn 1s forwards 2s; }
@@ -89,22 +74,13 @@
         #enterPrompt { display: none; margin-top: 40px; font-size: 1.2rem; animation: blink 1s infinite; }
         .fade-out { animation: fadeOut 0.8s forwards; }
         .fade-in { animation: fadeInPage 0.8s forwards; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
         @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
-
-        .logo {
-            width: 120px;
-            image-rendering: pixelated;
-            margin-bottom: 20px;
-            animation: floatLogo 4s ease-in-out infinite;
-        }
-        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-
+        @keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+        .logo { width: 120px; image-rendering: pixelated; margin-bottom: 20px; animation: floatLogo 4s ease-in-out infinite; }
+        @keyframes floatLogo { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
         #website { display: none; opacity: 1; }
-
         header {
             text-align: center;
             padding: 60px 20px;
@@ -130,8 +106,7 @@
             z-index: 1;
         }
         header > * { position: relative; z-index: 2; }
-
-        /* ========== CLEANER NAVIGATION BAR ========== */
+        /* Navigation */
         .desktop-nav {
             display: flex;
             flex-wrap: wrap;
@@ -143,19 +118,8 @@
             border-bottom: 3px solid var(--border);
             font-size: 0.9rem;
         }
-        .nav-group {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 14px;
-            position: relative;
-        }
-        .nav-group .group-label {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            letter-spacing: 1px;
-            margin-right: 8px;
-        }
+        .nav-group { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; position: relative; }
+        .nav-group .group-label { font-size: 0.8rem; opacity: 0.7; letter-spacing: 1px; margin-right: 8px; }
         .nav-group:not(:last-child)::after {
             content: "";
             position: absolute;
@@ -182,8 +146,6 @@
             background: rgba(255,255,255,0.2);
             transform: translateY(-2px);
         }
-
-        /* Mobile menu */
         .hamburger {
             display: none;
             position: fixed;
@@ -220,11 +182,7 @@
             padding-bottom: 15px;
             margin-bottom: 10px;
         }
-        .mobile-menu .nav-group-mobile span {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-bottom: 8px;
-        }
+        .mobile-menu .nav-group-mobile span { font-size: 0.8rem; opacity: 0.7; margin-bottom: 8px; }
         .mobile-menu a, .mobile-menu .nav-util-mobile {
             color: white;
             text-decoration: none;
@@ -237,24 +195,11 @@
             padding: 8px 0;
         }
         .mobile-menu.open { display: flex; }
-
         /* Sections */
-        section {
-            padding: 60px 10%;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
-        }
+        section { padding: 60px 10%; border-bottom: 2px solid rgba(255,255,255,0.1); }
         section:last-of-type { border-bottom: none; }
-        section h2 {
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 1.6rem;
-            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
-        }
-        .retro-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
+        section h2 { margin-bottom: 30px; text-align: center; font-size: 1.6rem; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); }
+        .retro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
         .retro-card {
             background: var(--card);
             padding: 20px;
@@ -265,59 +210,20 @@
             font-size: 1rem;
         }
         .retro-card:hover { transform: translateY(-4px); box-shadow: 6px 6px 0 rgba(0,0,0,.3); }
-        .pfp {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-            border: 3px solid var(--border);
-        }
-
-        /* Teacher list */
-        .teacher-list {
-            list-style: none;
-            padding: 0;
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        #teacher .retro-card {
-          padding: 14px;
-          font-size: 0.85rem;
-        }
-
+        .pfp { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid var(--border); }
+        .teacher-list { list-style: none; padding: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
         .teacher-list li {
             padding: 10px 12px;
             background: rgba(255,255,255,0.08);
             border: 2px solid var(--border);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.6;
-            letter-spacing: 0.5px;
             text-align: left;
             transition: 0.3s;
-            word-break: break-word;
         }
-        .teacher-list li:hover {
-            transform: translateX(5px);
-            background: rgba(255,255,255,0.15);
-            border-color: #ffd700;
-        }
-
-        /* Flip cards */
-        .flip-card {
-            height: 340px;
-            perspective: 1000px;
-        }
-        .flip-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.4s ease;
-            transform-style: preserve-3d;
-        }
+        .teacher-list li:hover { transform: translateX(5px); background: rgba(255,255,255,0.15); border-color: #ffd700; }
+        .flip-card { height: 340px; perspective: 1000px; }
+        .flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.4s ease; transform-style: preserve-3d; }
         .flip-card:hover .flip-inner { transform: rotateY(180deg); }
         .flip-front, .flip-back {
             position: absolute;
@@ -336,129 +242,28 @@
             font-size: 1rem;
         }
         .flip-back { transform: rotateY(180deg); font-size: 0.9rem; line-height: 1.6; }
-
         /* Panels */
-        #secretPanel {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100vh;
-            background: #132040;
-            border-right: 4px solid white;
-            padding: 20px;
-            transition: 0.3s;
-            z-index: 7000;
-            overflow-y: auto;
-        }
+        #secretPanel { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background: #132040; border-right: 4px solid white; padding: 20px; transition: 0.3s; z-index: 7000; overflow-y: auto; }
         #secretPanel.open { left: 0; }
-        #jukeboxPanel {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 300px;
-            height: 100vh;
-            background: #132040;
-            border-left: 4px solid white;
-            padding: 20px;
-            transition: 0.3s;
-            z-index: 7000;
-            overflow-y: auto;
-        }
+        #jukeboxPanel { position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background: #132040; border-left: 4px solid white; padding: 20px; transition: 0.3s; z-index: 7000; overflow-y: auto; }
         #jukeboxPanel.open { right: 0; }
-        #themeMenu {
-            display: none;
-            position: fixed;
-            right: 25px;
-            bottom: 100px;
-            padding: 12px;
-            background: #132040;
-            border: 4px solid white;
-            border-radius: 12px;
-            z-index: 5000;
-        }
-        #themeMenu button {
-            display: block;
-            width: 200px;
-            padding: 10px;
-            margin: 6px 0;
-            background: #243b72;
-            color: white;
-            border: 3px solid white;
-            cursor: pointer;
-            font-family: 'VT323', monospace;
-            font-size: 1rem;
-            text-align: left;
-        }
-        #weatherOverlay {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 100;
-            display: none;
-        }
+        #themeMenu { display: none; position: fixed; right: 25px; bottom: 100px; padding: 12px; background: #132040; border: 4px solid white; border-radius: 12px; z-index: 5000; }
+        #themeMenu button { display: block; width: 200px; padding: 10px; margin: 6px 0; background: #243b72; color: white; border: 3px solid white; cursor: pointer; font-family: 'VT323', monospace; font-size: 1rem; text-align: left; }
+        #weatherOverlay { position: fixed; inset: 0; pointer-events: none; z-index: 100; display: none; }
         .sunny { background: radial-gradient(circle at 50% 10%, rgba(255,255,0,0.3) 0%, transparent 50%); }
         .rainy { background: linear-gradient(transparent, rgba(0,0,255,0.1)); }
         .starry-night { background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 1px, transparent 1px); }
-
         /* Win98 taskbar */
-        #win98Taskbar {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 40px;
-            background: #c0c0c0;
-            border-top: 2px solid white;
-            padding: 5px 15px;
-            align-items: center;
-            color: black;
-            z-index: 4000;
-        }
+        #win98Taskbar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background: #c0c0c0; border-top: 2px solid white; padding: 5px 15px; align-items: center; color: black; z-index: 4000; }
         .taskbar-left { display: flex; align-items: center; gap: 12px; }
         .taskbar-center { flex: 1; text-align: center; font-family: Tahoma, sans-serif; font-size: 14px; font-weight: bold; }
         #taskbarClock { background: white; padding: 4px 8px; border: 1px solid gray; font-family: monospace; font-size: 12px; }
-        #startBtn {
-            height: 28px;
-            padding: 0 15px;
-            font-weight: bold;
-            background: #c0c0c0;
-            border-top: 2px solid white;
-            border-left: 2px solid white;
-            border-right: 2px solid gray;
-            border-bottom: 2px solid gray;
-            cursor: pointer;
-            font-family: 'VT323', monospace;
-        }
-        #startMenu {
-            display: none;
-            position: fixed;
-            bottom: 40px;
-            left: 0;
-            width: 220px;
-            background: #c0c0c0;
-            border: 2px solid white;
-            padding: 10px;
-            z-index: 5000;
-        }
+        #startBtn { height: 28px; padding: 0 15px; font-weight: bold; background: #c0c0c0; border-top: 2px solid white; border-left: 2px solid white; border-right: 2px solid gray; border-bottom: 2px solid gray; cursor: pointer; font-family: 'VT323', monospace; }
+        #startMenu { display: none; position: fixed; bottom: 40px; left: 0; width: 220px; background: #c0c0c0; border: 2px solid white; padding: 10px; z-index: 5000; }
         #startMenu a { display: block; padding: 10px; color: black; text-decoration: none; font-family: 'VT323', monospace; font-size: 1rem; }
         #startMenu a:hover { background: #000080; color: white; }
-
-        #fallbackClock {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: var(--card);
-            border: 2px solid var(--border);
-            padding: 6px 12px;
-            font-family: monospace;
-            font-size: 10px;
-            z-index: 5000;
-            display: none;
-        }
+        #fallbackClock { position: fixed; bottom: 10px; left: 10px; background: var(--card); border: 2px solid var(--border); padding: 6px 12px; font-family: monospace; font-size: 10px; z-index: 5000; display: none; }
         body:not(.win98-mode) #fallbackClock { display: block; }
-
         /* Background effects */
         .stars, #particles, .rain { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: -1; }
         .star { position: absolute; width: 3px; height: 3px; background: white; opacity: 0.5; animation: twinkle 3s infinite; }
@@ -467,80 +272,23 @@
         @keyframes floatPixel { from { transform: translateY(100vh); } to { transform: translateY(-100px); } }
         .rain { position: fixed; width: 2px; height: 12px; background: white; opacity: 0.2; animation: rainFall 3s linear infinite; }
         @keyframes rainFall { from { transform: translateY(-20px); } to { transform: translateY(100vh); } }
-
-        .lightbox {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 9000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
+        .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9000; justify-content: center; align-items: center; flex-direction: column; }
         .lightbox img { max-width: 90%; max-height: 80vh; border: 4px solid white; }
         .lightbox-controls { margin-top: 20px; }
         .lightbox-controls button { padding: 10px 20px; margin: 0 10px; background: var(--header); color: white; border: 2px solid white; cursor: pointer; font-family: 'VT323', monospace; }
-
-        #terminalOverlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: #000;
-            color: #0f0;
-            z-index: 9500;
-            font-family: monospace;
-            padding: 20px;
-            overflow-y: auto;
-        }
+        #terminalOverlay { display: none; position: fixed; inset: 0; background: #000; color: #0f0; z-index: 9500; font-family: monospace; padding: 20px; overflow-y: auto; }
         #terminalInput { background: transparent; border: none; color: #0f0; width: 100%; outline: none; font-family: monospace; font-size: 14px; }
-
-        #retroDesktop {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: #008080;
-            z-index: 9800;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-            padding: 20px;
-        }
+        #retroDesktop { display: none; position: fixed; inset: 0; background: #008080; z-index: 9800; flex-direction: column; justify-content: flex-start; align-items: flex-start; padding: 20px; }
         .desktop-icon { width: 70px; text-align: center; color: white; cursor: pointer; margin: 10px; font-size: 12px; font-family: 'VT323', monospace; }
-        .window {
-            position: absolute;
-            background: #c0c0c0;
-            border: 2px solid black;
-            padding: 10px;
-            min-width: 200px;
-            z-index: 9900;
-            box-shadow: 4px 4px 0 rgba(0,0,0,.5);
-            font-family: 'VT323', monospace;
-        }
+        .window { position: absolute; background: #c0c0c0; border: 2px solid black; padding: 10px; min-width: 200px; z-index: 9900; box-shadow: 4px 4px 0 rgba(0,0,0,.5); font-family: 'VT323', monospace; }
         .window-title { background: #000080; color: white; padding: 2px 5px; margin: -10px -10px 5px -10px; cursor: move; font-family: Tahoma, sans-serif; }
-
-        #backToTop {
-            position: fixed;
-            bottom: 100px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            background: var(--header);
-            border: 3px solid white;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            display: none;
-            z-index: 6000;
-        }
+        #backToTop { position: fixed; bottom: 100px; right: 25px; width: 50px; height: 50px; background: var(--header); border: 3px solid white; color: white; font-size: 24px; cursor: pointer; display: none; z-index: 6000; }
         .badge { display: inline-block; padding: 5px 10px; background: gold; color: black; border-radius: 5px; animation: bounceBadge 1s infinite; margin: 5px; font-size: 12px; }
         @keyframes bounceBadge { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         .rainbowMode { animation: rainbow 5s linear infinite; }
         @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
-
         #secretPixel { position: fixed; right: 5px; bottom: 5px; width: 8px; height: 8px; background: white; opacity: 0.15; cursor: pointer; z-index: 9999; }
         #creatorSecret { position: absolute; bottom: 10px; right: 10px; font-size: 12px; opacity: 0.2; cursor: pointer; }
-
         @media (max-width: 768px) {
             .desktop-nav { display: none; }
             .hamburger, .mobile-menu { display: flex; }
@@ -549,7 +297,6 @@
             .retro-grid { grid-template-columns: 1fr; }
             .pfp { width: 90px; height: 90px; }
             .star, .pixel, .rain { display: none; }
-            .teacher-list li { font-size: 1rem; padding: 12px; }
         }
         @media (prefers-reduced-motion: reduce) {
             .star, .pixel, .rain, .flip-inner, .logo, .retro-card { animation: none !important; transition: none !important; }
@@ -558,42 +305,15 @@
     </style>
 </head>
 <body>
-
-    <!-- Panels (hidden until triggered by navbar) -->
-    <div id="secretPanel">
-        <h3>🔐 Secrets Found</h3>
-        <div id="secretCountDisplay">0/10</div>
-        <ul style="list-style: none; padding: 0;">
-            <li id="s1">???</li><li id="s2">???</li><li id="s3">???</li><li id="s4">???</li><li id="s5">???</li>
-            <li id="s6">???</li><li id="s7">???</li><li id="s8">???</li><li id="s9">???</li><li id="s10">???</li>
-        </ul>
-        <div id="secretBadge" style="display: none; margin-top: 20px;"><span class="badge">🏆 SECRET MASTER</span></div>
-    </div>
-    <div id="jukeboxPanel">
-        <h3>📻 Jukebox</h3>
-        <div id="currentSongDisplay">No song playing</div>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" style="width:100%; margin:10px 0;">
-        <button onclick="jukeboxPlayPause()">⏯ Play/Pause</button>
-        <button onclick="jukeboxNext()">⏭ Next</button>
-        <button onclick="jukeboxShuffle()">🔀 Shuffle</button>
-        <button onclick="stopMusic()">⏹ Stop</button>
-        <div style="margin-top:15px;">Playlist:</div>
-        <ul id="playlistContainer" style="list-style: none; padding: 0;"></ul>
-    </div>
-    <div id="themeMenu">
-        <button onclick="setTheme('blue')">💙 Classic Blue</button>
-        <button onclick="setTheme('green')">💚 Terminal Green</button>
-        <button onclick="setTheme('amber')">🧡 Amber CRT</button>
-        <button onclick="setTheme('purple')">💜 Pixel Purple</button>
-        <button onclick="setTheme('dark')">🖤 Dark Mode</button>
-        <button onclick="setTheme('win98')">🟦 Windows 98</button>
-        <button onclick="toggleDayNight()">🌗 Day/Night</button>
-    </div>
+    <!-- Panels -->
+    <div id="secretPanel"><h3>🔐 Secrets Found</h3><div id="secretCountDisplay">0/10</div><ul style="list-style:none; padding:0;"><li id="s1">???</li><li id="s2">???</li><li id="s3">???</li><li id="s4">???</li><li id="s5">???</li><li id="s6">???</li><li id="s7">???</li><li id="s8">???</li><li id="s9">???</li><li id="s10">???</li></ul><div id="secretBadge" style="display:none; margin-top:20px;"><span class="badge">🏆 SECRET MASTER</span></div></div>
+    <div id="jukeboxPanel"><h3>📻 Jukebox</h3><div id="currentSongDisplay">No song playing</div><input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" style="width:100%; margin:10px 0;"><button onclick="jukeboxPlayPause()">⏯ Play/Pause</button><button onclick="jukeboxNext()">⏭ Next</button><button onclick="jukeboxShuffle()">🔀 Shuffle</button><button onclick="stopMusic()">⏹ Stop</button><div style="margin-top:15px;">Playlist:</div><ul id="playlistContainer" style="list-style:none; padding:0;"></ul></div>
+    <div id="themeMenu"><button onclick="setTheme('blue')">💙 Classic Blue</button><button onclick="setTheme('green')">💚 Terminal Green</button><button onclick="setTheme('amber')">🧡 Amber CRT</button><button onclick="setTheme('purple')">💜 Pixel Purple</button><button onclick="setTheme('dark')">🖤 Dark Mode</button><button onclick="setTheme('win98')">🟦 Windows 98</button><button onclick="toggleDayNight()">🌗 Day/Night</button></div>
     <div id="weatherOverlay"></div>
-
     <div id="fallbackClock">📅 --/--/---- 🕒 --:--</div>
     <div class="stars"></div><div id="particles"></div>
 
+    <!-- INTRO SCREEN (clickable + Enter) -->
     <div id="introScreen">
         <div class="intro-content">
             <img src="images/logo.png" class="logo" alt="TechPro B Logo" onerror="this.style.display='none'">
@@ -601,7 +321,7 @@
             <h2 id="introSchool">Mabayuhan Senior High School (MSHS)</h2>
             <h3 id="introYear">2025-2027</h3>
             <div id="introMessage">22 Active Students<br>One Class<br>One Legacy..<br>(The First Pilots Of The New Curriculum)</div>
-            <div id="enterPrompt">▶ PRESS ENTER TO BEGIN</div>
+            <div id="enterPrompt">▶ PRESS ENTER OR CLICK ANYWHERE TO BEGIN</div>
         </div>
     </div>
 
@@ -618,106 +338,20 @@
             <p>School Year 2025-2027</p>
             <p class="motto">"We may walk different paths tomorrow, but the memories we built together will always connect us."</p>
         </header>
-
         <button class="hamburger" id="hamburgerBtn">☰</button>
-        <!-- Mobile menu -->
         <nav class="mobile-menu" id="mobileMenu">
-            <div class="nav-group-mobile">
-                <span>📌 MAIN</span>
-                <a href="#officers">🏛 Officers</a>
-                <a href="#teachers">👩‍🏫 Teachers</a>
-                <a href="#students">🎓 Students</a>
-                <a href="#halloffame">🏆 Hall of Fame</a>
-                <a href="#gallery">📸 Gallery</a>
-                <a href="#memories">📖 Memory Book</a>
-                <a href="#graduation">🎓 Graduation</a>
-                <a href="#stats">📊 Statistics</a>
-                <a href="#timeline">⏳ Timeline</a>
-                <a href="#search">🔍 Search</a>
-            </div>
-            <div class="nav-group-mobile">
-                <span>✨ EXTRAS</span>
-                <a href="halloffame.html">🏅 Hall of Fame (ext)</a>
-                <a href="messages.html">💬 Messages</a>
-                <a href="computerroom.html">🖥️ Computer Room</a>
-                <a href="secret-archive.html">🔒 Secret Archive</a>
-                <a href="about.html">👤 About</a>
-                <a href="game.html">🎮 Game</a>
-            </div>
-            <div class="nav-group-mobile">
-                <span>⚙️ UTILITIES</span>
-                <button class="nav-util-mobile" id="mobileSecretBtn">🔐 Secret Panel</button>
-                <button class="nav-util-mobile" id="mobileJukeboxBtn">📻 Jukebox</button>
-                <button class="nav-util-mobile" id="mobileThemeBtn">🎨 Themes</button>
-                <button class="nav-util-mobile" id="mobileWeatherBtn">☀️ Weather FX</button>
-            </div>
+            <div class="nav-group-mobile"><span>📌 MAIN</span><a href="#officers">🏛 Officers</a><a href="#teachers">👩‍🏫 Teachers</a><a href="#students">🎓 Students</a><a href="#halloffame">🏆 Hall of Fame</a><a href="#gallery">📸 Gallery</a><a href="#memories">📖 Memory Book</a><a href="#graduation">🎓 Graduation</a><a href="#stats">📊 Statistics</a><a href="#timeline">⏳ Timeline</a><a href="#search">🔍 Search</a></div>
+            <div class="nav-group-mobile"><span>✨ EXTRAS</span><a href="#" class="prevent-reload" data-feature="Hall of Fame (ext)">🏅 Hall of Fame (ext)</a><a href="#" class="prevent-reload" data-feature="Messages">💬 Messages</a><a href="#" class="prevent-reload" data-feature="Computer Room">🖥️ Computer Room</a><a href="#" class="prevent-reload" data-feature="Secret Archive">🔒 Secret Archive</a><a href="#" class="prevent-reload" data-feature="About">👤 About</a><a href="#" class="prevent-reload" data-feature="Game">🎮 Game</a></div>
+            <div class="nav-group-mobile"><span>⚙️ UTILITIES</span><button class="nav-util-mobile" id="mobileSecretBtn">🔐 Secret Panel</button><button class="nav-util-mobile" id="mobileJukeboxBtn">📻 Jukebox</button><button class="nav-util-mobile" id="mobileThemeBtn">🎨 Themes</button><button class="nav-util-mobile" id="mobileWeatherBtn">☀️ Weather FX</button></div>
         </nav>
-
-        <!-- DESKTOP NAVIGATION -->
         <nav class="desktop-nav">
-            <div class="nav-group">
-                <span class="group-label">📌 MAIN</span>
-                <a href="#officers">Officers</a>
-                <a href="#teachers">Teachers</a>
-                <a href="#students">Students</a>
-                <a href="#halloffame">Hall of Fame</a>
-                <a href="#gallery">Gallery</a>
-                <a href="#memories">Memory Book</a>
-                <a href="#graduation">Graduation</a>
-                <a href="#stats">Stats</a>
-                <a href="#timeline">Timeline</a>
-                <a href="#search">Search</a>
-            </div>
-            <div class="nav-group">
-                <span class="group-label">✨ EXTRAS</span>
-                <a href="halloffame.html">Hall of Fame (ext)</a>
-                <a href="messages.html">Messages</a>
-                <a href="computerroom.html">Computer Room</a>
-                <a href="secret-archive.html">Secret Archive</a>
-                <a href="about.html">About</a>
-                <a href="game.html">Game</a>
-            </div>
-            <div class="nav-group">
-                <span class="group-label">⚙️ UTILITIES</span>
-                <button class="nav-util" id="deskSecretBtn">🔐 Secret</button>
-                <button class="nav-util" id="deskJukeboxBtn">📻 Jukebox</button>
-                <button class="nav-util" id="deskThemeBtn">🎨 Themes</button>
-                <button class="nav-util" id="deskWeatherBtn">☀️ Weather</button>
-            </div>
+            <div class="nav-group"><span class="group-label">📌 MAIN</span><a href="#officers">Officers</a><a href="#teachers">Teachers</a><a href="#students">Students</a><a href="#halloffame">Hall of Fame</a><a href="#gallery">Gallery</a><a href="#memories">Memory Book</a><a href="#graduation">Graduation</a><a href="#stats">Stats</a><a href="#timeline">Timeline</a><a href="#search">Search</a></div>
+            <div class="nav-group"><span class="group-label">✨ EXTRAS</span><a href="#" class="prevent-reload" data-feature="Hall of Fame (ext)">Hall of Fame (ext)</a><a href="#" class="prevent-reload" data-feature="Messages">Messages</a><a href="#" class="prevent-reload" data-feature="Computer Room">Computer Room</a><a href="#" class="prevent-reload" data-feature="Secret Archive">Secret Archive</a><a href="#" class="prevent-reload" data-feature="About">About</a><a href="#" class="prevent-reload" data-feature="Game">Game</a></div>
+            <div class="nav-group"><span class="group-label">⚙️ UTILITIES</span><button class="nav-util" id="deskSecretBtn">🔐 Secret</button><button class="nav-util" id="deskJukeboxBtn">📻 Jukebox</button><button class="nav-util" id="deskThemeBtn">🎨 Themes</button><button class="nav-util" id="deskWeatherBtn">☀️ Weather</button></div>
         </nav>
 
-        <!-- REST OF THE CONTENT -->
         <section id="officers"><h2>🏛 Class Officers (Grade 11 & 12)</h2><div class="retro-grid" id="officersGrid"></div></section>
-        <section id="teachers">
-            <h2>Teachers</h2>
-            <div class="retro-grid">
-                <div class="retro-card">
-                    <img src="images/teacher1.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Veronica'">
-                    <h3>Veronica Sta Monica</h3>
-                    <p><strong>ICT - Technical Drafting</strong></p>
-                    <p>"Always keep learning and stay curious!"</p>
-                </div>
-                <div class="retro-card">
-                    <img src="images/teacher2.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Paule'">
-                    <h3>Paul Jayme</h3>
-                    <p><strong>ICT - Programming</strong></p>
-                    <p>"Effortless Action - Align your behavior with the natural flow of the universe, acting without force, ego or resistance. 無爲"</p>
-                </div>
-                <div class="retro-card">
-                    <h3>G11 Teachers</h3>
-                    <ul class="teacher-list">
-                        <li>Rustie Manzano</li>
-                        <li>Teacher Name 2</li>
-                        <li>Teacher Name 3</li>
-                        <li>Teacher Name 4</li>
-                        <li>Teacher Name 5</li>
-                        <li>Teacher Name 6</li>
-                        <li>Teacher Name 7</li>
-                        <li>Teacher Name 8</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <section id="teachers"><h2>Teachers</h2><div class="retro-grid"><div class="retro-card"><img src="images/teacher1.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Veronica'"><h3>Veronica Sta Monica</h3><p><strong>ICT - Technical Drafting</strong></p><p>"Always keep learning and stay curious!"</p></div><div class="retro-card"><img src="images/teacher2.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Paule'"><h3>Paul Jayme</h3><p><strong>ICT - Programming</strong></p><p>"Effortless Action - Align your behavior with the natural flow of the universe, acting without force, ego or resistance. 無爲"</p></div><div class="retro-card"><h3>G11 Teachers</h3><ul class="teacher-list"><li>Rustie Manzano</li><li>Teacher Name 2</li><li>Teacher Name 3</li><li>Teacher Name 4</li><li>Teacher Name 5</li><li>Teacher Name 6</li><li>Teacher Name 7</li><li>Teacher Name 8</li></ul></div></div></section>
         <section id="students"><h2>🎓 Student Profiles</h2><div class="retro-grid" id="studentGrid"></div></section>
         <section id="halloffame"><h2>🏆 Hall of Fame</h2><div class="retro-grid" id="fameGrid"></div></section>
         <section id="gallery"><h2>📸 Photo Gallery</h2><div class="retro-grid" id="galleryGrid"></div><button id="slideshowBtn" style="margin-top:20px; padding:10px 20px; font-family:'VT323', monospace; font-size:1rem; cursor:pointer;">▶ Start Slideshow</button></section>
@@ -733,62 +367,65 @@
         <div id="retroDesktop"><div class="desktop-icon" onclick="openWindow('My Computer', 'Welcome to TechPro B system.')"><div>💻</div>My Computer</div><div class="desktop-icon" onclick="openWindow('Secret Folder', 'You found the hidden folder!')"><div>📁</div>Secret Folder</div><div class="desktop-icon" onclick="openWindow('Notepad', 'Dear diary, today we graduated...')"><div>📝</div>Notepad</div><button onclick="closeDesktop()" style="position:absolute; top:10px; right:10px; padding:5px 10px; font-family:'VT323', monospace;">Close</button></div>
         <button id="backToTop">⬆</button>
         <div id="win98Taskbar"><div class="taskbar-left"><button id="startBtn">🟩 Start</button><div id="taskbarClock">--:--</div></div><div class="taskbar-center"><span>TechPro B</span></div></div>
-        <div id="startMenu"><a href="#students">📁 Students</a><a href="#teachers">📁 Teachers</a><a href="#gallery">📁 Gallery</a><a href="#memories">📄 Memories</a><a href="#" onclick="openRetroDesktop()">🖥 Computer</a></div>
+        <div id="startMenu"><a href="#students">📁 Students</a><a href="#teachers">📁 Teachers</a><a href="#gallery">📁 Gallery</a><a href="#memories">📄 Memories</a><a href="#" onclick="openRetroDesktop(); return false;">🖥 Computer</a></div>
         <div id="secretPixel"></div><div id="creatorSecret">💻</div>
     </div>
 
     <script>
-        // ========== DATA ==========
+        // ======================= DATA =======================
         const students = [
-        { id: 1, name: "Alquza Almer Dela Cruz", nickname: "Alquza", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student1.jpg" },
-        { id: 2, name: "Edward Bautista Aquino", nickname: "Edward", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student2.jpg" },
-        { id: 3, name: "Prince Del Birut Gayrama", nickname: "Prince", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student3.jpg" },
-        { id: 4, name: "Ron Matthew Belisario Ferreras", nickname: "Ron", quote: "Whatever path you follow, keep moving forward", dreamJob: "Content Creator", section: "Grade 12", img: "images/student4.jpg" },
-        { id: 5, name: "Ryan Gaebriel Belisario Ferreras", nickname: "Ryan", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student5.jpg" },
-        { id: 6, name: "Jace Mathew Labicani", nickname: "Jace", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student6.jpg" },
-        { id: 7, name: "Jared Lee Barnuevo Lim", nickname: "Jared", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student7.jpg" },
-        { id: 8, name: "Jhovance Eldrick Pacheco Olan", nickname: "Jhovance", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student8.jpg" },
-        { id: 9, name: "Chriswin B. Palmones", nickname: "Chriswin", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student9.jpg" },
-        { id: 10, name: "Phil Cyprian Ogalesco Resuello", nickname: "Phil", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student10.jpg" },
-        { id: 11, name: "Gian Lee San Jose", nickname: "Gian", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student11.jpg" },
-        { id: 12, name: "Eziekiel Kyle Rios Sobremonte", nickname: "Eziekiel", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student12.jpg" },
-        { id: 13, name: "Ronald Silva Suba", nickname: "Ronald", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student13.jpg" },
-        { id: 14, name: "Calvin Claude Alipan Tala", nickname: "Calvin", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student14.jpg" },
-        { id: 15, name: "Yusieff Acas Tanawit", nickname: "Yusieff", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student15.jpg" },
-        { id: 16, name: "John Patrick Sarcilla", nickname: "John Patrick", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student16.jpg" },
-        { id: 17, name: "Mikaela Marcia Ababat", nickname: "Mikaela", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student17.jpg" },
-        { id: 18, name: "Richa Mae Cuevas Mejos", nickname: "Richa", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student18.jpg" },
-        { id: 19, name: "Aira Pecana Natividad", nickname: "Aira", quote: "Small step everyday leads to big achievements", dreamJob: "IT Specialist", section: "Grade 12", img: "images/student19.jpg" },
-        { id: 20, name: "Glyzel Ann Talvo Pagaduan", nickname: "Glyzel", quote: "Dream big, work hard, stay humble, and never give up. Every step, no matter how small. brings you closer to your goal.", dreamJob: "Coffee shop owner", section: "Grade 12", img: "images/student20.jpg" },
-        { id: 21, name: "Romea David Permejo", nickname: "Romea", quote: "Be happy for what you have while working for what you want", dreamJob: "Call Center Agent (CCA)", section: "Grade 12", img: "images/student21.jpg" },
-        { id: 22, name: "Mary Joy Picana Ramos", nickname: "Mary Joy", quote: "Being hardworking and stay humble and never give up in my dreams", dreamJob: "Web Developer", section: "Grade 12", img: "images/student22.jpg" },
-        { id: 23, name: "Zie Cliza Ballejos Sablada", nickname: "Zie", quote: "Every day is a chance to become better than yesterday", dreamJob: "Freelancer", section: "Grade 12", img: "images/student23.jpg" },
-        { id: 24, name: "Alyka Tarnate", nickname: "Alyka", quote: "Dreams will always stay dreams, unless you act upon them", dreamJob: "Active", section: "Grade 12", img: "images/student24.jpg" }
-    ];
+            { id:1,name:"Alquza Almer Dela Cruz",nickname:"Alquza",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student1.jpg",favoriteMemory:"First day" },
+            { id:2,name:"Edward Bautista Aquino",nickname:"Edward",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student2.jpg",favoriteMemory:"Intramurals" },
+            { id:3,name:"Prince Del Birut Gayrama",nickname:"Prince",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student3.jpg",favoriteMemory:"Field trip" },
+            { id:4,name:"Ron Matthew Belisario Ferreras",nickname:"Ron",quote:"Whatever path you follow, keep moving forward",dreamJob:"Content Creator",section:"Grade 12",img:"images/student4.jpg",favoriteMemory:"Coding nights" },
+            { id:5,name:"Ryan Gaebriel Belisario Ferreras",nickname:"Ryan",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student5.jpg",favoriteMemory:"Basketball" },
+            { id:6,name:"Jace Mathew Labicani",nickname:"Jace",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student6.jpg",favoriteMemory:"Hackathon" },
+            { id:7,name:"Jared Lee Barnuevo Lim",nickname:"Jared",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student7.jpg",favoriteMemory:"Group projects" },
+            { id:8,name:"Jhovance Eldrick Pacheco Olan",nickname:"Jhovance",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student8.jpg",favoriteMemory:"Christmas party" },
+            { id:9,name:"Chriswin B. Palmones",nickname:"Chriswin",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student9.jpg",favoriteMemory:"Graduation prep" },
+            { id:10,name:"Phil Cyprian Ogalesco Resuello",nickname:"Phil",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student10.jpg",favoriteMemory:"Tech exhibit" },
+            { id:11,name:"Gian Lee San Jose",nickname:"Gian",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student11.jpg",favoriteMemory:"Robotics" },
+            { id:12,name:"Eziekiel Kyle Rios Sobremonte",nickname:"Eziekiel",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student12.jpg",favoriteMemory:"Quiz bee" },
+            { id:13,name:"Ronald Silva Suba",nickname:"Ronald",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student13.jpg",favoriteMemory:"Retreat" },
+            { id:14,name:"Calvin Claude Alipan Tala",nickname:"Calvin",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student14.jpg",favoriteMemory:"Internship" },
+            { id:15,name:"Yusieff Acas Tanawit",nickname:"Yusieff",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student15.jpg",favoriteMemory:"Game dev" },
+            { id:16,name:"John Patrick Sarcilla",nickname:"John Patrick",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student16.jpg",favoriteMemory:"Camping" },
+            { id:17,name:"Mikaela Marcia Ababat",nickname:"Mikaela",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student17.jpg",favoriteMemory:"Dance practice" },
+            { id:18,name:"Richa Mae Cuevas Mejos",nickname:"Richa",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student18.jpg",favoriteMemory:"Film showing" },
+            { id:19,name:"Aira Pecana Natividad",nickname:"Aira",quote:"Small step everyday leads to big achievements",dreamJob:"IT Specialist",section:"Grade 12",img:"images/student19.jpg",favoriteMemory:"UI design" },
+            { id:20,name:"Glyzel Ann Talvo Pagaduan",nickname:"Glyzel",quote:"Dream big, work hard, stay humble",dreamJob:"Coffee shop owner",section:"Grade 12",img:"images/student20.jpg",favoriteMemory:"Open mic" },
+            { id:21,name:"Romea David Permejo",nickname:"Romea",quote:"Be happy for what you have while working for what you want",dreamJob:"Call Center Agent",section:"Grade 12",img:"images/student21.jpg",favoriteMemory:"Career guidance" },
+            { id:22,name:"Mary Joy Picana Ramos",nickname:"Mary Joy",quote:"Being hardworking and stay humble",dreamJob:"Web Developer",section:"Grade 12",img:"images/student22.jpg",favoriteMemory:"Web dev contest" },
+            { id:23,name:"Zie Cliza Ballejos Sablada",nickname:"Zie",quote:"Every day is a chance to become better",dreamJob:"Freelancer",section:"Grade 12",img:"images/student23.jpg",favoriteMemory:"Freelancing 101" },
+            { id:24,name:"Alyka Tarnate",nickname:"Alyka",quote:"Dreams will always stay dreams, unless you act upon them",dreamJob:"Active",section:"Grade 12",img:"images/student24.jpg",favoriteMemory:"Leadership camp" }
+        ];
         const officers = [
-            { title:"G11 President", name:"Prince Saimon Del Birut" }, { title:"G12 President", name:"Chriswin Palmones" },
-            { title:"G11 Vice President", name:"Romea D. Permejo" }, { title:"G12 Vice President", name:"Romea D. Permejo" },
-            { title:"G11 Secretary", name:"Briane Diaz" }, { title:"G12 Secretary", name:"Glyzel Pagaduan" },
-            { title:"G11 Treasurer", name:"Mikaella Ababat" }, { title:"G12 Treasurer", name:"Zie Cliza Sablada" },
-            { title:"G11 Auditor", name:"(vacant)" }, { title:"G12 Auditor", name:"(vacant)" },
-            { title:"G11 P.I.O", name:"Chriswin Palmones" }, { title:"G12 P.I.O", name:"(vacant)" },
-            { title:"G11 P.O", name:"(vacant)" }, { title:"G12 P.O", name:"(vacant)" }
+            { title:"G11 President", name:"Prince Saimon Del Birut" },{ title:"G12 President", name:"Chriswin Palmones" },
+            { title:"G11 Vice President", name:"Romea D. Permejo" },{ title:"G12 Vice President", name:"Romea D. Permejo" },
+            { title:"G11 Secretary", name:"Briane Diaz" },{ title:"G12 Secretary", name:"Glyzel Pagaduan" },
+            { title:"G11 Treasurer", name:"Mikaella Ababat" },{ title:"G12 Treasurer", name:"Zie Cliza Sablada" },
+            { title:"G11 Auditor", name:"(vacant)" },{ title:"G12 Auditor", name:"(vacant)" },
+            { title:"G11 P.I.O", name:"Chriswin Palmones" },{ title:"G12 P.I.O", name:"(vacant)" },
+            { title:"G11 P.O", name:"(vacant)" },{ title:"G12 P.O", name:"(vacant)" }
         ];
         const fameAwards = [{ title:"Most Helpful", recipient:"Prince Saimon Del Birut", badge:"🏅" },{ title:"Class Comedian", recipient:"Chriswin Palmones", badge:"😂" },{ title:"Tech Wizard", recipient:"Briane Diaz", badge:"💻" },{ title:"Most Creative", recipient:"Glyzel Pagaduan", badge:"🎨" },{ title:"Best Attendance", recipient:"Mikaella Ababat", badge:"✅" }];
         const memoryEvents = [{ title:"First Day of School", date:"2025-06-15", description:"Meeting new classmates and teachers.", type:"event" },{ title:"Intramurals 2025", date:"2025-10-10", description:"TechPro B won 2nd place in basketball.", type:"activity" },{ title:"Programming Contest", date:"2026-02-20", description:"Our team built a mobile app in 24 hours.", type:"competition" },{ title:"Field Trip to Tech Museum", date:"2026-03-15", description:"Explored the latest in robotics and AI.", type:"field trip" },{ title:"Research Defense", date:"2026-08-25", description:"Successfully defended our capstone project.", type:"research" },{ title:"Teachers' Day Surprise", date:"2025-10-05", description:"We organized a surprise party for our teachers.", type:"event" },{ title:"Christmas Party 2025", date:"2025-12-18", description:"Gift exchange and games.", type:"activity" },{ title:"Web Design Challenge", date:"2026-01-12", description:"Inter-class competition on best UI.", type:"competition" }];
         const achievements = [ "Best in Programming 2026", "Most Innovative Project", "100% Passing Rate in NCII", "Community Tech Outreach", "Outstanding Attendance Award" ];
         const gradMemories = [ "Graduation rehearsal fun", "Final class picture", "Last day of school", "Goodbye messages to teachers", "Signing each other's yearbooks" ];
-        const galleryImages = ["gallery/photo1.jpg", "gallery/photo2.jpg", "gallery/photo3.jpg", "gallery/photo4.jpg"];
-        const hiddenGalleryImages = ["gallery/secret1.jpg", "gallery/secret2.jpg"];
+        const galleryImages = ["gallery/photo1.jpg","gallery/photo2.jpg","gallery/photo3.jpg","gallery/photo4.jpg"];
+        const hiddenGalleryImages = ["gallery/secret1.jpg","gallery/secret2.jpg"];
         const playlist = [{ title:"Theme 1 (Pixel Pop)", src:"audio/theme1.mp3" },{ title:"Pixel Theme (Chiptune)", src:"audio/pixel-theme.mp3" },{ title:"Windows 98 Theme", src:"audio/windows98-theme.mp3" }];
 
+        // ======================= GLOBALS =======================
         let currentAudio = null, currentPlaylistIndex = 0, shuffledPlaylist = [...playlist], slideshowInterval = null, weatherState = 0;
         let secretsFound = 0;
         const discoveredSecrets = new Set(JSON.parse(localStorage.getItem('techproSecrets') || '[]'));
         secretsFound = discoveredSecrets.size;
-        document.getElementById('secretCountDisplay').textContent = secretsFound + '/10';
-        if (secretsFound === 10) { document.getElementById('secretBadge').style.display = 'block'; document.getElementById('secretRewards').style.display = 'block'; document.getElementById('hiddenGallery').innerHTML = hiddenGalleryImages.map(src => `<img src="${src}" style="width:100%; border:3px solid white;">`).join(''); document.body.classList.add('rainbowMode'); }
+        let introFinished = false;
+        let themeClicks = 0, studentClicks = 0, logoClicks = 0, konamiPos = 0, scrolled = false;
+        const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
 
+        // ======================= UTILITIES =======================
         function unlockSecret(id, name, listId) {
             if (discoveredSecrets.has(id)) return;
             discoveredSecrets.add(id);
@@ -805,15 +442,52 @@
             }
             localStorage.setItem('techproSecrets', JSON.stringify([...discoveredSecrets]));
         }
+        function stopAllMusic() { document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; }); }
+        function playThemeMusic() { stopAllMusic(); const theme = localStorage.getItem('theme') || 'blue'; let src = 'audio/pixel-theme.mp3'; if (theme === 'win98') src = 'audio/windows98-theme.mp3'; const audio = document.querySelector(`audio[src="${src}"]`); if (audio) { audio.volume = document.getElementById('volumeSlider').value; audio.play().catch(()=>{}); } currentAudio = audio; document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + (theme === 'win98' ? 'Windows 98' : 'Pixel Theme'); }
+        function animateValue(id, target) { let val = 0; const interval = setInterval(() => { val++; document.getElementById(id).innerText = val; if (val >= target) clearInterval(interval); }, 50); }
+        function launchYearbook() {
+            if (introFinished) return;
+            introFinished = true;
+            document.getElementById('startupSound').play().catch(()=>{});
+            const intro = document.getElementById('introScreen');
+            intro.classList.add('fade-out');
+            setTimeout(() => {
+                intro.style.display = 'none';
+                const website = document.getElementById('website');
+                website.style.display = 'block';
+                website.classList.add('fade-in');
+                animateValue('studentCount', 24);
+                animateValue('teacherCount', 10);
+                animateValue('yearCount', 2);
+                playThemeMusic();
+            }, 800);
+        }
+        // Prevent reload on external links
+        function preventExternalReload() {
+            document.querySelectorAll('.prevent-reload').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const feature = link.getAttribute('data-feature') || 'this feature';
+                    alert(`✨ "${feature}" is coming soon! Stay tuned. ✨`);
+                });
+            });
+            // Also handle any other anchor that might have href="#" without class but could cause issues
+            document.querySelectorAll('a[href="#"]').forEach(link => {
+                if (!link.hasAttribute('data-handled')) {
+                    link.setAttribute('data-handled', 'true');
+                    link.addEventListener('click', (e) => { e.preventDefault(); });
+                }
+            });
+        }
 
+        // ======================= RENDER FUNCTIONS =======================
         function renderOfficers() { document.getElementById('officersGrid').innerHTML = officers.map(o => `<div class="retro-card"><h3>${o.title}</h3><p>${o.name || 'TBA'}</p></div>`).join(''); }
-        function renderStudents(filtered = null) { const list = filtered || students; document.getElementById('studentGrid').innerHTML = list.map(s => `<div class="flip-card"><div class="flip-inner"><div class="flip-front"><img src="${s.img}" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=${s.name}'"><h3>${s.name}</h3><p>${s.nickname ? '"'+s.nickname+'"' : ''}</p><p>${s.section}</p></div><div class="flip-back"><p><strong>Quote:</strong> "${s.quote}"</p><p><strong>Dream Job:</strong> ${s.dreamJob}</p><p><strong>Favorite Memory:</strong> ${s.favoriteMemory}</p></div></div></div>`).join(''); }
+        function renderStudents() { document.getElementById('studentGrid').innerHTML = students.map(s => `<div class="flip-card"><div class="flip-inner"><div class="flip-front"><img src="${s.img}" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=${s.name}'"><h3>${s.name}</h3><p>${s.nickname ? '"'+s.nickname+'"' : ''}</p><p>${s.section}</p></div><div class="flip-back"><p><strong>Quote:</strong> "${s.quote}"</p><p><strong>Dream Job:</strong> ${s.dreamJob}</p><p><strong>Favorite Memory:</strong> ${s.favoriteMemory}</p></div></div></div>`).join(''); }
         function renderFame() { document.getElementById('fameGrid').innerHTML = fameAwards.map(a => `<div class="retro-card"><span class="badge">${a.badge}</span><h3>${a.title}</h3><p>${a.recipient}</p></div>`).join(''); }
         function renderGallery() { document.getElementById('galleryGrid').innerHTML = galleryImages.map((src, i) => `<img src="${src}" alt="Gallery ${i+1}" onclick="openLightbox(${i})" style="cursor:pointer; border:3px solid var(--border); width:100%;">`).join(''); }
         function renderMemories() { document.getElementById('memoryGrid').innerHTML = memoryEvents.map(m => `<div class="retro-card"><h3>${m.title}</h3><p>${m.date}</p><p>${m.description}</p><span>[${m.type.toUpperCase()}]</span></div>`).join(''); }
         function renderGraduation() { document.getElementById('achievementGrid').innerHTML = achievements.map(a => `<div class="retro-card"><p>🏆 ${a}</p></div>`).join(''); document.getElementById('gradMemoriesGrid').innerHTML = gradMemories.map(m => `<div class="retro-card"><p>🎓 ${m}</p></div>`).join(''); }
-        function filterStudents() { const query = document.getElementById('searchInput').value.toLowerCase(); const section = document.getElementById('sectionFilter').value; const filtered = students.filter(s => (section === 'all' || s.section === section) && (s.name.toLowerCase().includes(query) || s.quote.toLowerCase().includes(query) || s.favoriteMemory.toLowerCase().includes(query))); document.getElementById('searchResults').innerHTML = filtered.map(s => `<div class="retro-card"><img src="${s.img}" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=${s.name}'"><h3>${s.name}</h3><p>${s.section}</p><p>${s.quote}</p></div>`).join(''); }
-        document.getElementById('searchInput').addEventListener('input', filterStudents); document.getElementById('sectionFilter').addEventListener('change', filterStudents);
+        function filterStudents() { const query = document.getElementById('searchInput').value.toLowerCase(); const section = document.getElementById('sectionFilter').value; const filtered = students.filter(s => (section === 'all' || s.section === section) && (s.name.toLowerCase().includes(query) || s.quote.toLowerCase().includes(query) || (s.favoriteMemory || "").toLowerCase().includes(query))); document.getElementById('searchResults').innerHTML = filtered.map(s => `<div class="retro-card"><img src="${s.img}" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=${s.name}'"><h3>${s.name}</h3><p>${s.section}</p><p>${s.quote}</p></div>`).join(''); }
         function updatePlaylistUI() { const container = document.getElementById('playlistContainer'); container.innerHTML = shuffledPlaylist.map((song, i) => `<li style="cursor:pointer; padding:5px; ${i===currentPlaylistIndex?'font-weight:bold;':''}" onclick="jukeboxSelect(${i})">${song.title}</li>`).join(''); }
         function jukeboxSelect(index) { currentPlaylistIndex = index; playMusicByIndex(); updatePlaylistUI(); }
         function playMusicByIndex() { stopAllMusic(); const song = shuffledPlaylist[currentPlaylistIndex]; currentAudio = document.querySelector(`audio[src="${song.src}"]`); if (currentAudio) { currentAudio.volume = document.getElementById('volumeSlider').value; currentAudio.play().catch(()=>{}); } document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + song.title; }
@@ -822,17 +496,12 @@
         window.jukeboxShuffle = function() { for (let i = shuffledPlaylist.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shuffledPlaylist[i], shuffledPlaylist[j]] = [shuffledPlaylist[j], shuffledPlaylist[i]]; } currentPlaylistIndex = 0; playMusicByIndex(); updatePlaylistUI(); };
         window.stopMusic = function() { stopAllMusic(); currentAudio = null; document.getElementById('currentSongDisplay').textContent = 'No song playing'; };
         document.getElementById('volumeSlider').addEventListener('input', (e) => { if (currentAudio) currentAudio.volume = e.target.value; });
-        function stopAllMusic() { document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; }); }
         let lightboxIndex = 0; window.openLightbox = function(index) { lightboxIndex = index; document.getElementById('lightboxImg').src = galleryImages[index]; document.getElementById('lightbox').style.display = 'flex'; };
         document.getElementById('closeLightbox').onclick = () => document.getElementById('lightbox').style.display = 'none';
         document.getElementById('prevImg').onclick = () => { lightboxIndex = (lightboxIndex - 1 + galleryImages.length) % galleryImages.length; document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
         document.getElementById('nextImg').onclick = () => { lightboxIndex = (lightboxIndex + 1) % galleryImages.length; document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
         document.getElementById('slideshowBtn').addEventListener('click', function() { if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; this.textContent = '▶ Start Slideshow'; } else { slideshowInterval = setInterval(() => { lightboxIndex = (lightboxIndex + 1) % galleryImages.length; if (document.getElementById('lightbox').style.display === 'flex') { document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; } }, 3000); this.textContent = '⏸ Stop Slideshow'; } });
-        document.addEventListener('keydown', (e) => { if (e.key === '`' && !e.target.matches('input, textarea')) { document.getElementById('terminalOverlay').style.display = 'block'; document.getElementById('terminalInput').focus(); e.preventDefault(); } });
-        document.getElementById('terminalOverlay').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
-        const terminalOutput = document.getElementById('terminalOutput'); const terminalInput = document.getElementById('terminalInput');
-        terminalInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { const cmd = this.value.trim().toLowerCase(); this.value = ''; let response = ''; switch(cmd) { case 'help': response = 'Commands: help, students, teachers, gallery, secrets, date, cls'; break; case 'students': response = students.map(s => s.name).join(', '); break; case 'teachers': response = "Veronica Sta Monica, Paule Jayme, Paul Jayme, Teacher Name 2..."; break; case 'gallery': response = galleryImages.join(', '); break; case 'secrets': response = `Secrets found: ${secretsFound}/10`; break; case 'date': response = new Date().toString(); break; case 'cls': terminalOutput.innerHTML = ''; return; default: response = `Unknown command: ${cmd}`; } terminalOutput.innerHTML += `<div>> ${cmd}</div><div>${response}</div>`; terminalOutput.scrollTop = terminalOutput.scrollHeight; } });
-        function openRetroDesktop() { document.getElementById('retroDesktop').style.display = 'flex'; }
+        window.openRetroDesktop = function() { document.getElementById('retroDesktop').style.display = 'flex'; };
         window.closeDesktop = function() { document.getElementById('retroDesktop').style.display = 'none'; };
         window.openWindow = function(title, content) { const win = document.createElement('div'); win.className = 'window'; win.innerHTML = `<div class="window-title">${title}</div><div>${content}</div><button onclick="this.parentElement.remove()" style="margin-top:5px;">Close</button>`; win.style.left = Math.random() * 60 + '%'; win.style.top = Math.random() * 60 + '%'; document.getElementById('retroDesktop').appendChild(win); let offsetX, offsetY; win.querySelector('.window-title').addEventListener('mousedown', (e) => { offsetX = e.clientX - win.offsetLeft; offsetY = e.clientY - win.offsetTop; function move(e) { win.style.left = (e.clientX - offsetX) + 'px'; win.style.top = (e.clientY - offsetY) + 'px'; } document.addEventListener('mousemove', move); document.addEventListener('mouseup', () => document.removeEventListener('mousemove', move), { once: true }); }); };
         const themeCollection = new Set(); function registerTheme(theme) { themeCollection.add(theme); if (themeCollection.size === 6) unlockSecret('allThemes', 'Theme Collector', 's6'); }
@@ -840,29 +509,15 @@
         window.toggleDayNight = function() { document.body.classList.toggle('day-mode'); localStorage.setItem('dayMode', document.body.classList.contains('day-mode')); };
         function autoDayNight() { const hour = new Date().getHours(); if (hour >= 6 && hour < 18) document.body.classList.add('day-mode'); else document.body.classList.remove('day-mode'); } autoDayNight(); if (localStorage.getItem('dayMode') === 'true') document.body.classList.add('day-mode');
         function cycleWeather() { weatherState = (weatherState + 1) % 4; const weatherOverlay = document.getElementById('weatherOverlay'); weatherOverlay.className = ''; weatherOverlay.style.display = 'none'; if (weatherState === 1) { weatherOverlay.classList.add('sunny'); weatherOverlay.style.display='block'; } else if (weatherState === 2) { weatherOverlay.classList.add('rainy'); weatherOverlay.style.display='block'; } else if (weatherState === 3) { weatherOverlay.classList.add('starry-night'); weatherOverlay.style.display='block'; } else weatherOverlay.style.display='none'; }
-        document.getElementById('hamburgerBtn').addEventListener('click', () => { document.getElementById('mobileMenu').classList.toggle('open'); });
-        document.querySelectorAll('.mobile-menu a').forEach(a => { a.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open')); });
-        window.addEventListener('scroll', () => { document.getElementById('backToTop').style.display = window.scrollY > 500 ? 'block' : 'none'; });
+        function updateClocks() { const now = new Date(); const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); document.getElementById('taskbarClock').innerText = time; document.getElementById('fallbackClock').innerHTML = `📅 ${now.toLocaleDateString()} 🕒 ${time}`; }
+
+        // ======================= EVENT LISTENERS & INIT =======================
+        document.getElementById('searchInput').addEventListener('input', filterStudents);
+        document.getElementById('sectionFilter').addEventListener('change', filterStudents);
+        document.getElementById('hamburgerBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('open'));
+        document.querySelectorAll('.mobile-menu a').forEach(a => a.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open')));
+        window.addEventListener('scroll', () => document.getElementById('backToTop').style.display = window.scrollY > 500 ? 'block' : 'none');
         document.getElementById('backToTop').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
-        let visits = parseInt(localStorage.getItem('visitorCount') || '0'); visits++; localStorage.setItem('visitorCount', visits); document.getElementById('visitCount').textContent = visits;
-        const gradDate = new Date('2027-03-31T00:00:00').getTime(); setInterval(() => { const now = Date.now(); const distance = gradDate - now; if (distance < 0) { document.getElementById('countdown').textContent = '🎓 Graduated!'; return; } const days = Math.floor(distance / (1000*60*60*24)); const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60)); const mins = Math.floor((distance % (1000*60*60)) / (1000*60)); const secs = Math.floor((distance % (1000*60)) / 1000); document.getElementById('countdown').textContent = `🎓 ${days}d ${hours}h ${mins}m ${secs}s until Graduation`; }, 1000);
-        const bannerImages = ['images/class-photo.jpg', 'gallery/photo1.jpg', 'gallery/photo2.jpg']; let bannerIndex = 0; setInterval(() => { bannerIndex = (bannerIndex + 1) % bannerImages.length; document.getElementById('mainHeader').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${bannerImages[bannerIndex]}')`; }, 5000);
-        let logoClicks = 0; document.querySelectorAll('.logo').forEach(logo => logo.addEventListener('click', () => { if (++logoClicks === 5) unlockSecret('logo', 'TechPro Logo Secret', 's1'); }));
-        const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a']; let konamiPos = 0; document.addEventListener('keydown', e => { if (e.key === konami[konamiPos]) { konamiPos++; if (konamiPos === konami.length) { unlockSecret('konami', 'Retro Gamer', 's2'); konamiPos = 0; } } else konamiPos = 0; });
-        let scrolled = false; window.addEventListener('scroll', () => { if (!scrolled && window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) { scrolled = true; unlockSecret('bottom', 'Deep Explorer', 's3'); } });
-        setTimeout(() => unlockSecret('time', 'Patient Visitor', 's4'), 60000);
-        let themeClicks = 0; document.getElementById('deskThemeBtn')?.addEventListener('click', () => { if (++themeClicks === 10) unlockSecret('theme', 'Theme Master', 's5'); });
-        let studentClicks = 0; document.addEventListener('click', e => { if (e.target.closest('.retro-card') || e.target.closest('.flip-card')) { if (++studentClicks === 20) unlockSecret('students', 'Social Butterfly', 's7'); } });
-        if (new Date().getHours() >= 22 || new Date().getHours() <= 5) unlockSecret('night', 'Night Owl', 's8');
-        document.getElementById('secretPixel').onclick = () => unlockSecret('pixel', 'Hidden Pixel', 's9');
-        document.getElementById('creatorSecret').addEventListener('click', () => unlockSecret('creator', 'Developer Access', 's10'));
-        const starsContainer = document.querySelector('.stars'); for (let i = 0; i < 40; i++) { const star = document.createElement('div'); star.className = 'star'; star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%'; star.style.animationDelay = Math.random() * 3 + 's'; starsContainer.appendChild(star); }
-        const particlesDiv = document.getElementById('particles'); for (let i = 0; i < 15; i++) { const pixel = document.createElement('div'); pixel.className = 'pixel'; pixel.style.left = Math.random() * 100 + '%'; pixel.style.animationDelay = Math.random() * 15 + 's'; particlesDiv.appendChild(pixel); }
-        if (!window.matchMedia('(max-width:768px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) { for (let i = 0; i < 8; i++) { const drop = document.createElement('div'); drop.className = 'rain'; drop.style.left = Math.random() * 100 + '%'; drop.style.animationDelay = Math.random() * 2 + 's'; document.body.appendChild(drop); } }
-        let introFinished = false; document.addEventListener('keydown', e => { if (introFinished || e.key !== "Enter") return; introFinished = true; document.getElementById('startupSound').play().catch(() => {}); const intro = document.getElementById('introScreen'); intro.classList.add('fade-out'); setTimeout(() => { intro.style.display = 'none'; const website = document.getElementById('website'); website.style.display = 'block'; website.classList.add('fade-in'); animateValue('studentCount', 22); animateValue('teacherCount', 10); animateValue('yearCount', 2); playThemeMusic(); }, 800); });
-        function animateValue(id, target) { let val = 0; const interval = setInterval(() => { val++; document.getElementById(id).innerText = val; if (val >= target) clearInterval(interval); }, 50); }
-        function playThemeMusic() { stopAllMusic(); const theme = localStorage.getItem('theme') || 'blue'; let src = 'audio/pixel-theme.mp3'; if (theme === 'win98') src = 'audio/windows98-theme.mp3'; const audio = document.querySelector(`audio[src="${src}"]`); if (audio) { audio.volume = document.getElementById('volumeSlider').value; audio.play().catch(() => {}); } currentAudio = audio; document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + (theme === 'win98' ? 'Windows 98' : 'Pixel Theme'); }
-        function updateClocks() { const now = new Date(); const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); document.getElementById('taskbarClock').innerText = time; document.getElementById('fallbackClock').innerHTML = `📅 ${now.toLocaleDateString()} 🕒 ${time}`; } setInterval(updateClocks, 1000); updateClocks();
         document.getElementById('startBtn').onclick = e => { e.stopPropagation(); const menu = document.getElementById('startMenu'); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
         document.addEventListener('click', e => { if (!e.target.closest('#startMenu') && e.target !== document.getElementById('startBtn')) document.getElementById('startMenu').style.display = 'none'; });
         document.getElementById('deskSecretBtn').addEventListener('click', () => document.getElementById('secretPanel').classList.toggle('open'));
@@ -873,8 +528,35 @@
         document.getElementById('mobileJukeboxBtn').addEventListener('click', () => { document.getElementById('jukeboxPanel').classList.toggle('open'); document.getElementById('mobileMenu').classList.remove('open'); });
         document.getElementById('mobileThemeBtn').addEventListener('click', () => { const menu = document.getElementById('themeMenu'); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; document.getElementById('mobileMenu').classList.remove('open'); });
         document.getElementById('mobileWeatherBtn').addEventListener('click', () => { cycleWeather(); document.getElementById('mobileMenu').classList.remove('open'); });
-
-        renderOfficers(); renderStudents(); renderFame(); renderGallery(); renderMemories(); renderGraduation(); updatePlaylistUI(); filterStudents(); window.setTheme(localStorage.getItem('theme') || 'blue'); setTimeout(() => { document.getElementById('enterPrompt').style.display = 'block'; }, 8000);
+        document.getElementById('deskThemeBtn')?.addEventListener('click', () => { if (++themeClicks === 10) unlockSecret('theme', 'Theme Master', 's5'); });
+        document.addEventListener('click', e => { if (e.target.closest('.retro-card') || e.target.closest('.flip-card')) { if (++studentClicks === 20) unlockSecret('students', 'Social Butterfly', 's7'); } });
+        document.querySelectorAll('.logo').forEach(logo => logo.addEventListener('click', () => { if (++logoClicks === 5) unlockSecret('logo', 'TechPro Logo Secret', 's1'); }));
+        document.addEventListener('keydown', e => {
+            if (e.key === konami[konamiPos]) { konamiPos++; if (konamiPos === konami.length) { unlockSecret('konami', 'Retro Gamer', 's2'); konamiPos = 0; } } else konamiPos = 0;
+            if (e.key === '`' && !e.target.matches('input, textarea')) { document.getElementById('terminalOverlay').style.display = 'block'; document.getElementById('terminalInput').focus(); e.preventDefault(); }
+        });
+        window.addEventListener('scroll', () => { if (!scrolled && window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) { scrolled = true; unlockSecret('bottom', 'Deep Explorer', 's3'); } });
+        setTimeout(() => unlockSecret('time', 'Patient Visitor', 's4'), 60000);
+        if (new Date().getHours() >= 22 || new Date().getHours() <= 5) unlockSecret('night', 'Night Owl', 's8');
+        document.getElementById('secretPixel').onclick = () => unlockSecret('pixel', 'Hidden Pixel', 's9');
+        document.getElementById('creatorSecret').addEventListener('click', () => unlockSecret('creator', 'Developer Access', 's10'));
+        const starsContainer = document.querySelector('.stars'); for (let i = 0; i < 40; i++) { const star = document.createElement('div'); star.className = 'star'; star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%'; star.style.animationDelay = Math.random() * 3 + 's'; starsContainer.appendChild(star); }
+        const particlesDiv = document.getElementById('particles'); for (let i = 0; i < 15; i++) { const pixel = document.createElement('div'); pixel.className = 'pixel'; pixel.style.left = Math.random() * 100 + '%'; pixel.style.animationDelay = Math.random() * 15 + 's'; particlesDiv.appendChild(pixel); }
+        if (!window.matchMedia('(max-width:768px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) { for (let i = 0; i < 8; i++) { const drop = document.createElement('div'); drop.className = 'rain'; drop.style.left = Math.random() * 100 + '%'; drop.style.animationDelay = Math.random() * 2 + 's'; document.body.appendChild(drop); } }
+        document.getElementById('terminalOverlay').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+        const terminalOutput = document.getElementById('terminalOutput'), terminalInput = document.getElementById('terminalInput');
+        terminalInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { const cmd = this.value.trim().toLowerCase(); this.value = ''; let response = ''; switch(cmd) { case 'help': response = 'Commands: help, students, teachers, gallery, secrets, date, cls'; break; case 'students': response = students.map(s => s.name).join(', '); break; case 'teachers': response = "Veronica Sta Monica, Paul Jayme, plus G11 teachers"; break; case 'gallery': response = galleryImages.join(', '); break; case 'secrets': response = `Secrets found: ${secretsFound}/10`; break; case 'date': response = new Date().toString(); break; case 'cls': terminalOutput.innerHTML = ''; return; default: response = `Unknown command: ${cmd}`; } terminalOutput.innerHTML += `<div>> ${cmd}</div><div>${response}</div>`; terminalOutput.scrollTop = terminalOutput.scrollHeight; } });
+        let visits = parseInt(localStorage.getItem('visitorCount') || '0'); visits++; localStorage.setItem('visitorCount', visits); document.getElementById('visitCount').textContent = visits;
+        const gradDate = new Date('2027-03-31T00:00:00').getTime(); setInterval(() => { const now = Date.now(); const distance = gradDate - now; if (distance < 0) { document.getElementById('countdown').textContent = '🎓 Graduated!'; return; } const days = Math.floor(distance / (1000*60*60*24)), hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60)), mins = Math.floor((distance % (1000*60*60)) / (1000*60)), secs = Math.floor((distance % (1000*60)) / 1000); document.getElementById('countdown').textContent = `🎓 ${days}d ${hours}h ${mins}m ${secs}s until Graduation`; }, 1000);
+        const bannerImages = ['images/class-photo.jpg', 'gallery/photo1.jpg', 'gallery/photo2.jpg']; let bannerIndex = 0; setInterval(() => { bannerIndex = (bannerIndex + 1) % bannerImages.length; document.getElementById('mainHeader').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${bannerImages[bannerIndex]}')`; }, 5000);
+        setInterval(updateClocks, 1000); updateClocks();
+        renderOfficers(); renderStudents(); renderFame(); renderGallery(); renderMemories(); renderGraduation(); updatePlaylistUI(); filterStudents(); window.setTheme(localStorage.getItem('theme') || 'blue');
+        setTimeout(() => { document.getElementById('enterPrompt').style.display = 'block'; }, 8000);
+        document.getElementById('introScreen').addEventListener('click', () => launchYearbook());
+        document.addEventListener('keydown', (e) => { if (!introFinished && e.key === 'Enter') { e.preventDefault(); launchYearbook(); } });
+        if (document.getElementById('secretCountDisplay')) document.getElementById('secretCountDisplay').textContent = secretsFound + '/10';
+        if (secretsFound === 10) { document.getElementById('secretBadge').style.display = 'block'; document.getElementById('secretRewards').style.display = 'block'; document.getElementById('hiddenGallery').innerHTML = hiddenGalleryImages.map(src => `<img src="${src}" style="width:100%; border:3px solid white;">`).join(''); document.body.classList.add('rainbowMode'); }
+        preventExternalReload();
     </script>
 </body>
 </html>
