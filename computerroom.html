@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechPro Computer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-teal: #008080;
+            --win95-gray: #c0c0c0;
+            --win95-dark: #808080;
+            --win95-light: #dfdfdf;
+            --taskbar: #000080;
+            --title-bar: #000080;
+            --title-text: white;
+            --window-bg: #ffffff;
+            --text-dark: #222;
+            --accent: #ffcc00;
+            --pixel-border: 2px solid;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #008080;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            user-select: none;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="font-size:12px"><text y="12">🖱️</text></svg>'), auto;
+            image-rendering: pixelated;
+        }
+
+        /* ═══════════════ SCANLINES OVERLAY ═══════════════ */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            background: repeating-linear-gradient(0deg,
+                    rgba(0, 0, 0, 0.08) 0px,
+                    rgba(0, 0, 0, 0.08) 2px,
+                    transparent 2px,
+                    transparent 4px);
+            animation: scanMove 0.1s linear infinite;
+        }
+
+        @keyframes scanMove {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 4px;
+            }
+        }
+
+        /* ═══════════════ BOOT SCREEN ═══════════════ */
+        .boot-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #00ff00;
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            animation: bootFadeOut 0.6s ease 3.5s forwards;
+        }
+
+        .boot-logo {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            animation: bootGlow 1.5s ease-in-out infinite;
+        }
+
+        .boot-bar {
+            width: 280px;
+            height: 24px;
+            border: 3px solid #00ff00;
+            margin-top: 25px;
+            padding: 2px;
+        }
+
+        .boot-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #00ff00;
+            animation: bootLoad 3s ease-in-out forwards;
+        }
+
+        @keyframes bootLoad {
+            0% {
+                width: 0%;
+            }
+            70% {
+                width: 85%;
+            }
+            90% {
+                width: 98%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes bootFadeOut {
+            0% {
+                opacity: 1;
+                pointer-events: all;
+            }
+            99% {
+                opacity: 0;
+                pointer-events: all;
+            }
+            100% {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        @keyframes bootGlow {
+            0%,
+            100% {
+                text-shadow: 0 0 10px #00ff00;
+            }
+            50% {
+                text-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00;
+            }
+        }
+
+        /* ═══════════════ DESKTOP ═══════════════ */
+        .desktop {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 28px;
+            padding: 40px 30px;
+            height: calc(100vh - 50px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+            padding: 10px 8px;
+            border: 2px solid transparent;
+            border-radius: 2px;
+        }
+
+        .icon:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px dotted rgba(255, 255, 255, 0.7);
+            transform: scale(1.02);
+        }
+
+        .icon:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .icon .icon-img {
+            font-size: 3.2rem;
+            filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.5));
+            margin-bottom: 6px;
+        }
+
+        .icon p {
+            font-size: 0.55rem;
+            letter-spacing: 1px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* ═══════════════ WINDOWS ═══════════════ */
+        .window {
+            position: absolute;
+            top: 120px;
+            left: 130px;
+            width: 340px;
+            background: #c0c0c0;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3), inset 1px 1px 0 white;
+            display: none;
+            z-index: 10;
+            flex-direction: column;
+            min-width: 250px;
+            font-family: 'Press Start 2P', cursive;
+            color: #000;
+            image-rendering: pixelated;
+        }
+
+        .window.active {
+            z-index: 20;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5), inset 1px 1px 0 white;
+        }
+
+        .title-bar {
+            background: #000080;
+            color: white;
+            padding: 5px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            font-size: 0.5rem;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #000;
+        }
+
+        .title-bar .window-title {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .title-bar .window-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .title-bar button {
+            width: 20px;
+            height: 20px;
+            background: #c0c0c0;
+            border: 2px solid #000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 1px 1px 0 white, inset -1px -1px 0 #555;
+            color: black;
+        }
+
+        .title-bar button:active {
+            box-shadow: inset -1px -1px 0 white, inset 1px 1px 0 #555;
+        }
+
+        .window-content {
+            padding: 15px;
+            background: #fff;
+            flex: 1;
+            overflow-y: auto;
+            font-size: 0.55rem;
+            line-height: 1.8;
+            max-height: 260px;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #dfdfdf;
+            border-bottom: 2px solid #dfdfdf;
+        }
+
+        .window-content p {
+            margin-bottom: 8px;
+        }
+
+        .window-content .list-item {
+            padding: 5px 0;
+            border-bottom: 1px dashed #aaa;
+        }
+
+        /* ═══════════════ TASKBAR ═══════════════ */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 46px;
+            background: #c0c0c0;
+            border-top: 3px solid #dfdfdf;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            z-index: 50;
+            box-shadow: inset 0 1px 0 white;
+        }
+
+        .start-button {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #c0c0c0;
+            border: 2px solid #000;
+            padding: 5px 12px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            cursor: pointer;
+            box-shadow: inset 1px 1px 0 white, inset -1px -1px 0 #555;
+            margin-right: 15px;
+            letter-spacing: 1px;
+        }
+
+        .start-button:active {
+            box-shadow: inset -1px -1px 0 white, inset 1px 1px 0 #555;
+        }
+
+        .taskbar-time {
+            margin-left: auto;
+            font-size: 0.55rem;
+            padding: 5px 12px;
+            border: 2px solid #808080;
+            background: #fff;
+            box-shadow: inset 1px 1px 0 #555, inset -1px -1px 0 white;
+            letter-spacing: 1px;
+        }
+
+        /* Start menu popup */
+        .start-menu {
+            position: fixed;
+            bottom: 52px;
+            left: 8px;
+            background: #c0c0c0;
+            border: 2px solid #000;
+            width: 200px;
+            padding: 8px 0;
+            display: none;
+            z-index: 60;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .start-menu .menu-item {
+            padding: 8px 16px;
+            font-size: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #808080;
+        }
+
+        .start-menu .menu-item:hover {
+            background: #000080;
+            color: white;
+        }
+
+        /* ═══════════════ RESPONSIVE ═══════════════ */
+        @media (max-width: 600px) {
+            .icon {
+                width: 80px;
+            }
+            .icon .icon-img {
+                font-size: 2.5rem;
+            }
+            .window {
+                width: 260px;
+                left: 20px;
+                top: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Boot Screen -->
+    <div class="boot-screen">
+        <div class="boot-logo">💻 TechPro OS</div>
+        <div style="font-size:0.6rem; color:#00cc00;">Version 1.0 (Retro Edition)</div>
+        <div class="boot-bar">
+            <div class="boot-bar-fill"></div>
+        </div>
+    </div>
+
+    <!-- Scanlines -->
+    <div class="scanlines"></div>
+
+    <!-- Desktop Icons -->
+    <div class="desktop" id="desktop">
+        <div class="icon" data-window="students">
+            <div class="icon-img">📁</div>
+            <p>Students</p>
+        </div>
+        <div class="icon" data-window="teachers">
+            <div class="icon-img">📁</div>
+            <p>Teachers</p>
+        </div>
+        <div class="icon" data-window="gallery">
+            <div class="icon-img">📁</div>
+            <p>Gallery</p>
+        </div>
+        <div class="icon" data-window="secrets">
+            <div class="icon-img">📁</div>
+            <p>Secrets</p>
+        </div>
+    </div>
+
+    <!-- Windows Container -->
+    <div id="windows-container">
+        <!-- Students Window -->
+        <div class="window" id="window-students">
+            <div class="title-bar" data-window="students">
+                <span class="window-title">📁 Students</span>
+                <div class="window-controls">
+                    <button class="minimize-btn">–</button>
+                    <button class="close-btn">✕</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <p><b>🌟 Class of 2024</b></p>
+                <div class="list-item">🎓 Hana Tanaka – Valedictorian</div>
+                <div class="list-item">🚀 Leo Martinez – Tech Club</div>
+                <div class="list-item">🎨 Aisha Patel – Art Champion</div>
+                <div class="list-item">📚 Jun-Seo Kim – Bookworm</div>
+                <p style="margin-top:10px;">Total: 24 students</p>
+            </div>
+        </div>
+
+        <!-- Teachers Window -->
+        <div class="window" id="window-teachers">
+            <div class="title-bar" data-window="teachers">
+                <span class="window-title">📁 Teachers</span>
+                <div class="window-controls">
+                    <button class="minimize-btn">–</button>
+                    <button class="close-btn">✕</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <p><b>🍎 Faculty</b></p>
+                <div class="list-item">👩‍🏫 Ms. Rodriguez – Math</div>
+                <div class="list-item">👨‍🏫 Mr. Chen – Science</div>
+                <div class="list-item">👩‍🎨 Mrs. Patel – Art</div>
+                <div class="list-item">🎵 Mr. Thompson – Music</div>
+            </div>
+        </div>
+
+        <!-- Gallery Window -->
+        <div class="window" id="window-gallery">
+            <div class="title-bar" data-window="gallery">
+                <span class="window-title">🖼️ Gallery</span>
+                <div class="window-controls">
+                    <button class="minimize-btn">–</button>
+                    <button class="close-btn">✕</button>
+                </div>
+            </div>
+            <div class="window-content" style="text-align:center;">
+                <p>📸 Class Trip 2024</p>
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                    <span style="font-size:2rem;">🏞️</span>
+                    <span style="font-size:2rem;">🎢</span>
+                    <span style="font-size:2rem;">🌌</span>
+                </div>
+                <p style="margin-top:10px;">📸 Science Fair</p>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <span style="font-size:2rem;">🔬</span>
+                    <span style="font-size:2rem;">🧪</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secrets Window -->
+        <div class="window" id="window-secrets">
+            <div class="title-bar" data-window="secrets">
+                <span class="window-title">🔒 Secrets</span>
+                <div class="window-controls">
+                    <button class="minimize-btn">–</button>
+                    <button class="close-btn">✕</button>
+                </div>
+            </div>
+            <div class="window-content" style="text-align:center;">
+                <p style="font-size:1rem;">🎮</p>
+                <p><b>Konami Code?</b></p>
+                <p style="font-size:0.45rem;">↑ ↑ ↓ ↓ ← → ← → B A</p>
+                <p style="margin-top:12px; color:#000080;">✨ You're awesome! ✨</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="start-button" id="startButton">
+            <span>🖥️</span> Start
+        </div>
+        <div class="taskbar-time" id="taskbarTime">12:00 PM</div>
+    </div>
+
+    <!-- Start Menu -->
+    <div class="start-menu" id="startMenu">
+        <div class="menu-item" id="menu-shutdown">🔌 Shut Down</div>
+        <div class="menu-item" id="menu-home">🏠 Back to Home</div>
+    </div>
+
+    <script>
+        // Wait for boot screen to finish (3.5s) then enable interactions
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.boot-screen').style.display = 'none';
+            }, 3600);
+        });
+
+        // ═══════════════ CLOCK UPDATE ═══════════════
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            document.getElementById('taskbarTime').textContent = `${hours}:${minutes} ${ampm}`;
+        }
+        updateClock();
+        setInterval(updateClock, 30000);
+
+        // ═══════════════ WINDOW MANAGEMENT ═══════════════
+        const windows = document.querySelectorAll('.window');
+        const desktop = document.getElementById('desktop');
+        const icons = document.querySelectorAll('.icon');
+        let zIndexCounter = 10;
+        let activeWindow = null;
+
+        // Open window on double-click (or single for touch)
+        icons.forEach(icon => {
+            icon.addEventListener('dblclick', () => {
+                const windowId = icon.getAttribute('data-window');
+                openWindow(windowId);
+            });
+            // For mobile/tablet, single click opens
+            icon.addEventListener('click', (e) => {
+                if (window.innerWidth < 768) {
+                    const windowId = icon.getAttribute('data-window');
+                    openWindow(windowId);
+                }
+            });
+        });
+
+        function openWindow(windowId) {
+            const win = document.getElementById(`window-${windowId}`);
+            if (!win) return;
+            win.style.display = 'flex';
+            zIndexCounter++;
+            win.style.zIndex = zIndexCounter;
+            if (activeWindow) activeWindow.classList.remove('active');
+            win.classList.add('active');
+            activeWindow = win;
+            // Random position offset if not yet positioned
+            if (!win.style.top || win.style.top === '120px') {
+                win.style.top = (80 + Math.random() * 100) + 'px';
+                win.style.left = (80 + Math.random() * 200) + 'px';
+            }
+        }
+
+        // Close and minimize buttons
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const win = e.target.closest('.window');
+                win.style.display = 'none';
+                if (activeWindow === win) {
+                    activeWindow = null;
+                }
+            });
+        });
+
+        document.querySelectorAll('.minimize-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const win = e.target.closest('.window');
+                win.style.display = 'none';
+                if (activeWindow === win) {
+                    activeWindow = null;
+                }
+                // Could add taskbar button, but keeping simple
+            });
+        });
+
+        // Make windows draggable
+        document.querySelectorAll('.title-bar').forEach(titleBar => {
+            titleBar.addEventListener('mousedown', function(e) {
+                const win = titleBar.closest('.window');
+                if (!win) return;
+                // Bring to front
+                zIndexCounter++;
+                win.style.zIndex = zIndexCounter;
+                if (activeWindow) activeWindow.classList.remove('active');
+                win.classList.add('active');
+                activeWindow = win;
+
+                const rect = win.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+                const offsetY = e.clientY - rect.top;
+
+                function onMouseMove(e) {
+                    win.style.left = (e.clientX - offsetX) + 'px';
+                    win.style.top = (e.clientY - offsetY) + 'px';
+                }
+
+                function onMouseUp() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+        });
+
+        // Click on desktop to deactivate windows? Not needed.
+
+        // ═══════════════ START MENU ═══════════════
+        const startButton = document.getElementById('startButton');
+        const startMenu = document.getElementById('startMenu');
+
+        startButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!startMenu.contains(e.target) && e.target !== startButton) {
+                startMenu.style.display = 'none';
+            }
+        });
+
+        document.getElementById('menu-shutdown').addEventListener('click', () => {
+            document.body.style.transition = 'opacity 0.5s';
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.innerHTML =
+                    '<div style="background:black;height:100vh;display:flex;align-items:center;justify-content:center;color:#00ff00;font-family:\'Press Start 2P\';">It\'s now safe to turn off your computer.<br>🖥️⚡</div>';
+            }, 500);
+        });
+
+        document.getElementById('menu-home').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        // ═══════════════ KONAMI CODE EASTER EGG ═══════════════
+        const konamiCode = [
+            'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+            'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+            'KeyB', 'KeyA'
+        ];
+        let konamiIndex = 0;
+        document.addEventListener('keydown', (e) => {
+            if (e.code === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    // Trigger secret
+                    const secretWin = document.getElementById('window-secrets');
+                    if (secretWin) {
+                        secretWin.querySelector('.window-content').innerHTML +=
+                            '<p style="color:red; margin-top:10px;">🌟 KONAMI ACTIVATED! 🌟</p>';
+                    }
+                    openWindow('secrets');
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+    </script>
+</body>
+</html>

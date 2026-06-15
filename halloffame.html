@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Hall of Fame</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #09142e;
+            --card-bg: #132040;
+            --card-border: #3a5fc8;
+            --accent: #ffd700;
+            --accent-glow: #ff9500;
+            --text: #e8edf5;
+            --muted: #8899bb;
+            --pink: #ff6b9d;
+            --teal: #00e5c0;
+            --purple: #b388ff;
+            --orange: #ff8a50;
+            --sky: #4dc9f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text);
+            font-family: 'Press Start 2P', cursive;
+            min-height: 100vh;
+            padding: 40px 20px 60px;
+            position: relative;
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        /* ═══════════════ STARFIELD ═══════════════ */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--dur) ease-in-out infinite;
+            animation-delay: var(--delay);
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.8);
+            }
+        }
+
+        /* ═══════════════ SHOOTING STARS ═══════════════ */
+        .shooting-star {
+            position: fixed;
+            top: -10px;
+            left: 70%;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(255, 215, 0, 0.9), transparent);
+            border-radius: 50%;
+            animation: shoot 4s ease-in infinite;
+            animation-delay: 2s;
+            pointer-events: none;
+            z-index: 0;
+            transform: rotate(-25deg);
+            filter: blur(1px);
+        }
+
+        .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 20px 8px rgba(255, 215, 0, 0.8);
+        }
+
+        .shooting-star:nth-child(2) {
+            left: 20%;
+            animation-delay: 5s;
+            animation-duration: 5s;
+            height: 60px;
+        }
+        .shooting-star:nth-child(3) {
+            left: 50%;
+            animation-delay: 8s;
+            animation-duration: 3.5s;
+            height: 100px;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translate(0, 0) rotate(-25deg);
+                opacity: 1;
+            }
+            15% {
+                transform: translate(-300px, 500px) rotate(-25deg);
+                opacity: 0;
+            }
+            16% {
+                transform: translate(0, 0) rotate(-25deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(0, 0) rotate(-25deg);
+                opacity: 0;
+            }
+        }
+
+        /* ═══════════════ MAIN CONTENT ═══════════════ */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        /* ═══════════════ HEADER ═══════════════ */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header .trophy-icon {
+            font-size: 3rem;
+            display: block;
+            animation: trophyBounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.7));
+            margin-bottom: 8px;
+        }
+
+        @keyframes trophyBounce {
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+            30% {
+                transform: translateY(-16px) scale(1.1);
+            }
+            50% {
+                transform: translateY(0) scale(1);
+            }
+            70% {
+                transform: translateY(-8px) scale(1.05);
+            }
+            85% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--accent), #ffe580, var(--accent-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 22px rgba(255, 180, 50, 0.6));
+            animation: titleGlow 2s ease-in-out infinite;
+            margin-bottom: 6px;
+        }
+
+        @keyframes titleGlow {
+            0%,
+            100% {
+                filter: drop-shadow(0 0 22px rgba(255, 180, 50, 0.6));
+            }
+            50% {
+                filter: drop-shadow(0 0 38px rgba(255, 200, 60, 0.95));
+            }
+        }
+
+        .header .subtitle {
+            font-size: 0.5rem;
+            color: var(--muted);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .header .pixel-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .header .pixel-divider span {
+            display: block;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+            animation: dividerPulse 1.4s ease-in-out infinite;
+        }
+        .header .pixel-divider span:nth-child(2) {
+            animation-delay: 0.2s;
+            background: var(--pink);
+            box-shadow: 0 0 8px var(--pink);
+        }
+        .header .pixel-divider span:nth-child(3) {
+            animation-delay: 0.4s;
+            background: var(--teal);
+            box-shadow: 0 0 8px var(--teal);
+        }
+        .header .pixel-divider span:nth-child(4) {
+            animation-delay: 0.6s;
+            background: var(--purple);
+            box-shadow: 0 0 8px var(--purple);
+        }
+        .header .pixel-divider span:nth-child(5) {
+            animation-delay: 0.8s;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        @keyframes dividerPulse {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.6);
+                opacity: 1;
+            }
+        }
+
+        /* ═══════════════ AWARDS GRID ═══════════════ */
+        .awards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 22px;
+            margin-bottom: 50px;
+        }
+
+        @media (min-width: 550px) {
+            .awards-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .awards-grid .award-card:last-child {
+                grid-column: 1 / -1;
+                max-width: 400px;
+                justify-self: center;
+                width: 100%;
+            }
+        }
+
+        /* ═══════════════ AWARD CARD ═══════════════ */
+        .award-card {
+            background: var(--card-bg);
+            border: 3px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px 20px 22px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            box-shadow:
+                0 4px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            text-align: left;
+        }
+
+        .award-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center,
+                    rgba(255, 255, 255, 0.03) 0%,
+                    transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .award-card:hover::before {
+            opacity: 1;
+        }
+
+        .award-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.55),
+                0 0 40px rgba(255, 180, 30, 0.18),
+                0 0 80px rgba(255, 180, 30, 0.07),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .award-card:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease;
+        }
+
+        /* Accent stripe on left */
+        .award-card .card-accent-stripe {
+            position: absolute;
+            left: 0;
+            top: 10%;
+            height: 80%;
+            width: 5px;
+            border-radius: 0 4px 4px 0;
+            transition: all 0.35s ease;
+        }
+
+        .award-card:hover .card-accent-stripe {
+            width: 7px;
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        /* Award icon */
+        .award-card .award-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
+            transition: all 0.35s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .award-card:hover .award-icon {
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: rotate(-8deg) scale(1.1);
+        }
+
+        /* Award text */
+        .award-card .award-text {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .award-card .award-label {
+            font-size: 0.55rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .award-card:hover .award-label {
+            color: var(--accent);
+        }
+
+        .award-card .award-title {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--text);
+            transition: color 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .award-card:hover .award-title {
+            color: #ffffff;
+        }
+
+        /* Sparkle corner */
+        .award-card .sparkle-corner {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .award-card:hover .sparkle-corner {
+            opacity: 1;
+            animation: sparklePop 0.6s ease-out;
+        }
+
+        @keyframes sparklePop {
+            0% {
+                transform: scale(0) rotate(-30deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.5) rotate(10deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* ── Individual Card Colors ── */
+        .award-card:nth-child(1) {
+            --card-color: #ff6b9d;
+        }
+        .award-card:nth-child(2) {
+            --card-color: #4dc9f6;
+        }
+        .award-card:nth-child(3) {
+            --card-color: #b388ff;
+        }
+        .award-card:nth-child(4) {
+            --card-color: #ffd700;
+        }
+        .award-card:nth-child(5) {
+            --card-color: #00e5c0;
+        }
+
+        .award-card:nth-child(1) .card-accent-stripe {
+            background: var(--card-color);
+            box-shadow: 0 0 14px var(--card-color);
+        }
+        .award-card:nth-child(2) .card-accent-stripe {
+            background: var(--card-color);
+            box-shadow: 0 0 14px var(--card-color);
+        }
+        .award-card:nth-child(3) .card-accent-stripe {
+            background: var(--card-color);
+            box-shadow: 0 0 14px var(--card-color);
+        }
+        .award-card:nth-child(4) .card-accent-stripe {
+            background: var(--card-color);
+            box-shadow: 0 0 14px var(--card-color);
+        }
+        .award-card:nth-child(5) .card-accent-stripe {
+            background: var(--card-color);
+            box-shadow: 0 0 14px var(--card-color);
+        }
+
+        .award-card:nth-child(1) .award-icon {
+            background: linear-gradient(135deg, #ff6b9d, #c0392b);
+            box-shadow: 0 0 20px rgba(255, 107, 157, 0.35);
+        }
+        .award-card:nth-child(2) .award-icon {
+            background: linear-gradient(135deg, #4dc9f6, #1565c0);
+            box-shadow: 0 0 20px rgba(77, 201, 246, 0.35);
+        }
+        .award-card:nth-child(3) .award-icon {
+            background: linear-gradient(135deg, #b388ff, #512da8);
+            box-shadow: 0 0 20px rgba(179, 136, 255, 0.35);
+        }
+        .award-card:nth-child(4) .award-icon {
+            background: linear-gradient(135deg, #ffd700, #e65100);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.35);
+        }
+        .award-card:nth-child(5) .award-icon {
+            background: linear-gradient(135deg, #00e5c0, #00695c);
+            box-shadow: 0 0 20px rgba(0, 229, 192, 0.35);
+        }
+
+        /* ═══════════════ BACK BUTTON ═══════════════ */
+        .back-button-wrapper {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            letter-spacing: 3px;
+            text-decoration: none;
+            color: var(--text);
+            background: var(--card-bg);
+            border: 3px solid var(--card-border);
+            padding: 14px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+        }
+
+        .back-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.06),
+                    transparent);
+            transition: left 0.5s ease;
+        }
+
+        .back-button:hover::after {
+            left: 100%;
+        }
+
+        .back-button:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow:
+                0 12px 35px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(255, 180, 30, 0.2);
+            transform: translateY(-4px);
+            letter-spacing: 5px;
+        }
+
+        .back-button:active {
+            transform: scale(0.94);
+            transition: transform 0.1s ease;
+        }
+
+        .back-button .arrow {
+            display: inline-block;
+            transition: transform 0.35s ease;
+            font-size: 0.7rem;
+        }
+
+        .back-button:hover .arrow {
+            transform: translateX(-6px);
+        }
+
+        /* ═══════════════ FLOATING PARTICLES ═══════════════ */
+        .floating-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            font-size: 1.2rem;
+            animation: floatUp var(--dur) linear infinite;
+            animation-delay: var(--delay);
+            opacity: 0;
+            bottom: -30px;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            80% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-110vh) translateX(var(--drift)) rotate(var(--spin));
+                opacity: 0;
+            }
+        }
+
+        /* ═══════════════ CONFETTI BURST (on click) ═══════════════ */
+        .confetti-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            font-size: 1rem;
+            animation: confettiFall var(--fall-dur) ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--drift-x), var(--drift-y)) rotate(var(--spin)) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        /* ═══════════════ SCROLLBAR ═══════════════ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-deep);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--card-border);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* ═══════════════ RESPONSIVE ═══════════════ */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+            .header .trophy-icon {
+                font-size: 2.2rem;
+            }
+            .award-card {
+                padding: 18px 14px 16px;
+                border-radius: 12px;
+                gap: 12px;
+            }
+            .award-card .award-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 1.2rem;
+            }
+            .award-card .award-title {
+                font-size: 0.55rem;
+                letter-spacing: 1px;
+            }
+            .award-card .award-label {
+                font-size: 0.45rem;
+            }
+            .back-button {
+                font-size: 0.45rem;
+                padding: 12px 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════ STARFIELD ═══════════════ -->
+    <div class="starfield" id="starfield"></div>
+
+    <!-- ═══════════════ SHOOTING STARS ═══════════════ -->
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+
+    <!-- ═══════════════ FLOATING PARTICLES ═══════════════ -->
+    <div id="particles-container"></div>
+
+    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+    <div class="main-content">
+
+        <!-- Header -->
+        <div class="header">
+            <span class="trophy-icon">🏆</span>
+            <h1>Hall of Fame</h1>
+            <p class="subtitle">Celebrating Our Best &amp; Brightest</p>
+            <div class="pixel-divider">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <!-- Awards Grid -->
+        <div class="awards-grid">
+
+            <!-- Award 1: Class Comedian -->
+            <div class="award-card">
+                <div class="card-accent-stripe"></div>
+                <div class="award-icon">😂</div>
+                <div class="award-text">
+                    <div class="award-label">🏅 Award</div>
+                    <div class="award-title">Class Comedian</div>
+                </div>
+                <span class="sparkle-corner">✨</span>
+            </div>
+
+            <!-- Award 2: Tech Wizard -->
+            <div class="award-card">
+                <div class="card-accent-stripe"></div>
+                <div class="award-icon">💻</div>
+                <div class="award-text">
+                    <div class="award-label">🏅 Award</div>
+                    <div class="award-title">Tech Wizard</div>
+                </div>
+                <span class="sparkle-corner">⚡</span>
+            </div>
+
+            <!-- Award 3: Most Creative -->
+            <div class="award-card">
+                <div class="card-accent-stripe"></div>
+                <div class="award-icon">🎨</div>
+                <div class="award-text">
+                    <div class="award-label">🏅 Award</div>
+                    <div class="award-title">Most Creative</div>
+                </div>
+                <span class="sparkle-corner">🌟</span>
+            </div>
+
+            <!-- Award 4: Most Helpful -->
+            <div class="award-card">
+                <div class="card-accent-stripe"></div>
+                <div class="award-icon">⭐</div>
+                <div class="award-text">
+                    <div class="award-label">🏅 Award</div>
+                    <div class="award-title">Most Helpful</div>
+                </div>
+                <span class="sparkle-corner">💛</span>
+            </div>
+
+            <!-- Award 5: Best Attendance -->
+            <div class="award-card">
+                <div class="card-accent-stripe"></div>
+                <div class="award-icon">📚</div>
+                <div class="award-text">
+                    <div class="award-label">🏅 Award</div>
+                    <div class="award-title">Best Attendance</div>
+                </div>
+                <span class="sparkle-corner">🎯</span>
+            </div>
+
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-button-wrapper">
+            <a href="index.html" class="back-button">
+                <span class="arrow">◀</span> BACK TO HOME
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        // ═══════════════ STARFIELD GENERATOR ═══════════════
+        const starfield = document.getElementById('starfield');
+        const starCount = 90;
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--dur', (Math.random() * 3 + 2) + 's');
+            star.style.setProperty('--delay', Math.random() * 4 + 's');
+            starfield.appendChild(star);
+        }
+
+        // ═══════════════ FLOATING PARTICLES ═══════════════
+        const particlesContainer = document.getElementById('particles-container');
+        const emojis = ['🏆', '⭐', '🌟', '💫', '✨', '🎖️', '💛', '🏅', '🔮', '🎯'];
+
+        function spawnParticle() {
+            const particle = document.createElement('span');
+            particle.classList.add('floating-particle');
+            particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            particle.style.left = Math.random() * 95 + '%';
+            particle.style.setProperty('--dur', (Math.random() * 10 + 8) + 's');
+            particle.style.setProperty('--delay', Math.random() * 2 + 's');
+            particle.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+            particle.style.setProperty('--spin', (Math.random() * 360 - 180) + 'deg');
+            particlesContainer.appendChild(particle);
+
+            const duration = parseFloat(particle.style.getPropertyValue('--dur')) +
+                parseFloat(particle.style.getPropertyValue('--delay'));
+            setTimeout(() => {
+                if (particle.parentNode) particle.remove();
+            }, duration * 1000 + 500);
+        }
+
+        setInterval(spawnParticle, 1800);
+        for (let i = 0; i < 8; i++) {
+            setTimeout(spawnParticle, i * 300);
+        }
+
+        // ═══════════════ CONFETTI ON AWARD CLICK ═══════════════
+        const confettiEmojis = ['🌟', '✨', '💛', '🎉', '🎊', '⭐', '🏆', '💫', '🎖️', '🥇'];
+
+        document.querySelectorAll('.award-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                const rect = card.getBoundingClientRect();
+                const originX = rect.left + rect.width / 2;
+                const originY = rect.top + rect.height / 2;
+
+                for (let i = 0; i < 18; i++) {
+                    const confetti = document.createElement('span');
+                    confetti.classList.add('confetti-particle');
+                    confetti.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis
+                        .length)];
+                    confetti.style.left = originX + 'px';
+                    confetti.style.top = originY + 'px';
+                    confetti.style.setProperty('--drift-x', (Math.random() * 250 - 125) + 'px');
+                    confetti.style.setProperty('--drift-y', (Math.random() * -200 - 40) + 'px');
+                    confetti.style.setProperty('--spin', (Math.random() * 540 - 270) + 'deg');
+                    confetti.style.setProperty('--fall-dur', (Math.random() * 0.8 + 0.6) + 's');
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        if (confetti.parentNode) confetti.remove();
+                    }, 1600);
+                }
+
+                // Brief scale pulse on the card itself
+                card.style.transition = 'transform 0.15s ease';
+                card.style.transform = 'scale(0.94)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // ═══════════════ CONSOLE EASTER EGG ═══════════════
+        console.log(`
+        🏆  HALL OF FAME  🏆
+        "Success is not the key to happiness.
+         Happiness is the key to success."
+         — Albert Schweitzer
+
+        🌟 Congratulations to all awardees! 🌟
+        `);
+    </script>
+
+</body>
+</html>

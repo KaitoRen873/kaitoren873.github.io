@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About TechPro B | Digital Yearbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #060d1f;
+            --bg-card: #0f1a38;
+            --bg-card-alt: #111d40;
+            --border: #ffffff;
+            --border-glow: #5b8def;
+            --accent: #ffd76d;
+            --accent-pink: #ff6b9d;
+            --text: #e8ecf4;
+            --text-muted: #b0c0e0;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --glow-blue: rgba(91, 141, 239, 0.4);
+            --glow-pink: rgba(255, 107, 157, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text);
+            font-family: 'Press Start 2P', cursive;
+            padding: 20px;
+            line-height: 2;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(1px 1px at 10% 15%, rgba(255, 255, 255, 0.4), transparent),
+                radial-gradient(1px 1px at 25% 30%, rgba(255, 255, 255, 0.3), transparent),
+                radial-gradient(1.5px 1.5px at 40% 10%, rgba(255, 255, 255, 0.5), transparent),
+                radial-gradient(1px 1px at 55% 45%, rgba(255, 255, 255, 0.35), transparent),
+                radial-gradient(1.5px 1.5px at 70% 20%, rgba(255, 255, 255, 0.45), transparent),
+                radial-gradient(1px 1px at 85% 35%, rgba(255, 255, 255, 0.3), transparent),
+                radial-gradient(1px 1px at 15% 60%, rgba(255, 255, 255, 0.35), transparent),
+                radial-gradient(1.5px 1.5px at 30% 75%, rgba(255, 255, 255, 0.4), transparent),
+                radial-gradient(1px 1px at 50% 65%, rgba(255, 255, 255, 0.3), transparent),
+                radial-gradient(1px 1px at 65% 80%, rgba(255, 255, 255, 0.4), transparent),
+                radial-gradient(1.5px 1.5px at 80% 70%, rgba(255, 255, 255, 0.35), transparent),
+                radial-gradient(1px 1px at 90% 55%, rgba(255, 255, 255, 0.3), transparent),
+                radial-gradient(1px 1px at 5% 85%, rgba(255, 255, 255, 0.4), transparent),
+                radial-gradient(1.5px 1.5px at 45% 90%, rgba(255, 255, 255, 0.35), transparent),
+                radial-gradient(1px 1px at 75% 15%, rgba(255, 255, 255, 0.3), transparent);
+            background-size: 100% 100%;
+            animation: starTwinkle 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes starTwinkle {
+            0% {
+                background-image:
+                    radial-gradient(1px 1px at 10% 15%, rgba(255, 255, 255, 0.4), transparent),
+                    radial-gradient(1px 1px at 25% 30%, rgba(255, 255, 255, 0.3), transparent),
+                    radial-gradient(1.5px 1.5px at 40% 10%, rgba(255, 255, 255, 0.5), transparent),
+                    radial-gradient(1px 1px at 55% 45%, rgba(255, 255, 255, 0.35), transparent),
+                    radial-gradient(1.5px 1.5px at 70% 20%, rgba(255, 255, 255, 0.45), transparent),
+                    radial-gradient(1px 1px at 85% 35%, rgba(255, 255, 255, 0.3), transparent),
+                    radial-gradient(1px 1px at 15% 60%, rgba(255, 255, 255, 0.35), transparent),
+                    radial-gradient(1.5px 1.5px at 30% 75%, rgba(255, 255, 255, 0.4), transparent),
+                    radial-gradient(1px 1px at 50% 65%, rgba(255, 255, 255, 0.3), transparent),
+                    radial-gradient(1px 1px at 65% 80%, rgba(255, 255, 255, 0.4), transparent),
+                    radial-gradient(1.5px 1.5px at 80% 70%, rgba(255, 255, 255, 0.35), transparent),
+                    radial-gradient(1px 1px at 90% 55%, rgba(255, 255, 255, 0.3), transparent),
+                    radial-gradient(1px 1px at 5% 85%, rgba(255, 255, 255, 0.4), transparent),
+                    radial-gradient(1.5px 1.5px at 45% 90%, rgba(255, 255, 255, 0.35), transparent),
+                    radial-gradient(1px 1px at 75% 15%, rgba(255, 255, 255, 0.3), transparent);
+            }
+            100% {
+                background-image:
+                    radial-gradient(1px 1px at 10% 15%, rgba(255, 255, 255, 0.6), transparent),
+                    radial-gradient(1px 1px at 25% 30%, rgba(255, 255, 255, 0.5), transparent),
+                    radial-gradient(1.5px 1.5px at 40% 10%, rgba(255, 255, 255, 0.7), transparent),
+                    radial-gradient(1px 1px at 55% 45%, rgba(255, 255, 255, 0.55), transparent),
+                    radial-gradient(1.5px 1.5px at 70% 20%, rgba(255, 255, 255, 0.65), transparent),
+                    radial-gradient(1px 1px at 85% 35%, rgba(255, 255, 255, 0.5), transparent),
+                    radial-gradient(1px 1px at 15% 60%, rgba(255, 255, 255, 0.55), transparent),
+                    radial-gradient(1.5px 1.5px at 30% 75%, rgba(255, 255, 255, 0.6), transparent),
+                    radial-gradient(1px 1px at 50% 65%, rgba(255, 255, 255, 0.5), transparent),
+                    radial-gradient(1px 1px at 65% 80%, rgba(255, 255, 255, 0.6), transparent),
+                    radial-gradient(1.5px 1.5px at 80% 70%, rgba(255, 255, 255, 0.55), transparent),
+                    radial-gradient(1px 1px at 90% 55%, rgba(255, 255, 255, 0.5), transparent),
+                    radial-gradient(1px 1px at 5% 85%, rgba(255, 255, 255, 0.6), transparent),
+                    radial-gradient(1.5px 1.5px at 45% 90%, rgba(255, 255, 255, 0.55), transparent),
+                    radial-gradient(1px 1px at 75% 15%, rgba(255, 255, 255, 0.5), transparent);
+            }
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+            opacity: 0.5;
+        }
+
+        /* ═══════════════════════ INTRO OVERLAY ═══════════════════════ */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020816;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            visibility: visible;
+            opacity: 1;
+        }
+        #intro-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .intro-title {
+            font-size: 1.4rem;
+            color: #5b8def;
+            text-shadow: 0 0 20px #5b8def, 0 0 40px #1e3a6b;
+            animation: glitchText 2s infinite;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+        @keyframes glitchText {
+            0%, 100% { text-shadow: 0 0 20px #5b8def, 0 0 40px #1e3a6b; }
+            20% { text-shadow: -3px 0 #ff6b9d, 3px 0 #5b8def; }
+            40% { text-shadow: 3px 0 #ff6b9d, -3px 0 #5b8def; }
+            60% { text-shadow: 0 0 20px #5b8def; }
+        }
+        .intro-bar-outer {
+            width: 320px;
+            height: 22px;
+            border: 3px solid #5b8def;
+            background: #0a1230;
+            padding: 2px;
+            box-shadow: 0 0 15px rgba(91,141,239,0.4);
+        }
+        .intro-bar-inner {
+            height: 100%;
+            width: 0%;
+            background: #5b8def;
+            animation: introLoad 2.5s steps(20) forwards;
+            box-shadow: 0 0 12px #5b8def;
+        }
+        @keyframes introLoad {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        .intro-status {
+            margin-top: 18px;
+            font-size: 0.5rem;
+            color: #aac0f0;
+            animation: blink 1s infinite;
+            letter-spacing: 2px;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ═══════════════════════ MAIN CONTENT ═══════════════════════ */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            padding: 20px 0 60px;
+            opacity: 0;
+            transition: opacity 0.8s ease 0.4s;
+        }
+        .container.visible {
+            opacity: 1;
+        }
+
+        .page-header { text-align: center; margin-bottom: 40px; }
+        .page-header .pixel-icon { display: block; font-size: 3rem; margin-bottom: 8px; animation: floatIcon 2.5s ease-in-out infinite; filter: drop-shadow(0 0 12px var(--glow-blue)); }
+        @keyframes floatIcon { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-10px); } }
+        .page-header h1 { font-size: 1.3rem; color: #fff; text-shadow: 0 0 10px var(--glow-blue), 0 0 30px var(--glow-blue), 0 0 60px rgba(91,141,239,0.6); letter-spacing: 2px; margin-bottom: 6px; }
+        .page-header .subtitle { font-size: 0.55rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; }
+
+        .retro-card { background: var(--bg-card); padding: 28px 24px; border: 4px solid var(--border); box-shadow: 8px 8px 0 var(--shadow-color), 0 0 20px rgba(91,141,239,0.08), inset 0 0 40px rgba(91,141,239,0.03); margin-bottom: 28px; position: relative; transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); }
+        .retro-card:hover { transform: translateY(-5px); border-color: #c0d4ff; box-shadow: 12px 12px 0 var(--shadow-color), 0 0 35px rgba(91,141,239,0.2), 0 0 60px rgba(91,141,239,0.08), inset 0 0 50px rgba(91,141,239,0.05); }
+        .retro-card.alt-accent { border-color: #ff9db5; box-shadow: 8px 8px 0 var(--shadow-color), 0 0 20px var(--glow-pink), inset 0 0 40px rgba(255,107,157,0.03); }
+        .retro-card.alt-accent:hover { border-color: #ffccd5; box-shadow: 12px 12px 0 var(--shadow-color), 0 0 35px var(--glow-pink), 0 0 55px rgba(255,107,157,0.15), inset 0 0 50px rgba(255,107,157,0.05); }
+        .retro-card.creator-card { border-color: var(--accent); box-shadow: 8px 8px 0 var(--shadow-color), 0 0 25px rgba(255,215,109,0.2), inset 0 0 40px rgba(255,215,109,0.03); text-align: center; }
+        .retro-card.creator-card:hover { border-color: #ffe9a0; box-shadow: 12px 12px 0 var(--shadow-color), 0 0 40px rgba(255,215,109,0.35), 0 0 70px rgba(255,215,109,0.1), inset 0 0 50px rgba(255,215,109,0.06); }
+
+        .card-label { display: inline-block; font-size: 0.45rem; letter-spacing: 2px; text-transform: uppercase; color: #fff; background: #1a2e5c; padding: 6px 12px; border: 2px solid #3b5fa0; margin-bottom: 14px; position: relative; top: -6px; }
+        .retro-card.alt-accent .card-label { background: #3d1a2e; border-color: #a03b6f; }
+        .retro-card.creator-card .card-label { background: #3d301a; border-color: #a08b3b; }
+
+        .retro-card h2 { font-size: 0.8rem; color: #fff; margin-bottom: 14px; text-shadow: 0 0 8px rgba(255,255,255,0.3); letter-spacing: 1px; display: inline-block; position: relative; }
+        .retro-card h2::after { content:''; position:absolute; bottom:-4px; left:0; width:100%; height:3px; background:var(--border-glow); box-shadow:0 0 10px var(--glow-blue); }
+        .retro-card.alt-accent h2::after { background:#ff6b9d; box-shadow:0 0 10px var(--glow-pink); }
+        .retro-card.creator-card h2::after { background:var(--accent); box-shadow:0 0 10px rgba(255,215,109,0.6); }
+        .retro-card p { font-size:0.58rem; color:var(--text-muted); line-height:2; margin-bottom:6px; }
+        .retro-card p strong { color:#fff; text-shadow:0 0 6px rgba(255,255,255,0.2); }
+
+        .creator-pfp-wrapper { position:relative; display:inline-block; margin:10px 0 16px; }
+        .creator-pfp { width:110px; height:110px; object-fit:cover; border:4px solid var(--accent); box-shadow:0 0 20px rgba(255,215,109,0.4), 0 0 50px rgba(255,215,109,0.15); display:block; }
+        .retro-card.creator-card:hover .creator-pfp { border-color:#ffe9a0; box-shadow:0 0 30px rgba(255,215,109,0.6),0 0 65px rgba(255,215,109,0.25); }
+        .creator-pfp-placeholder { width:110px; height:110px; border:4px solid var(--accent); background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:var(--accent); box-shadow:0 0 20px rgba(255,215,109,0.4); margin:10px auto 16px; }
+        .creator-name { font-size:0.7rem; color:#fff; margin-bottom:4px; text-shadow:0 0 8px rgba(255,215,109,0.5); }
+        .creator-role { font-size:0.5rem; color:var(--accent); letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; }
+        .creator-quote { font-size:0.5rem; color:#c8b87a; font-style:italic; line-height:1.8; max-width:550px; margin:0 auto; padding:14px; border-left:3px solid var(--accent); background:rgba(255,215,109,0.04); text-align:left; }
+
+        .pixel-divider { text-align:center; margin:10px 0 30px; font-size:0.6rem; letter-spacing:6px; color:#3b5fa0; user-select:none; }
+        .back-btn-wrapper { text-align:center; margin-top:30px; }
+        .back-btn { display:inline-flex; align-items:center; gap:10px; padding:16px 26px; background:#1a2e5c; color:#fff; text-decoration:none; border:3px solid #fff; font-family:'Press Start 2P',cursive; font-size:0.6rem; letter-spacing:1px; cursor:pointer; transition:all 0.3s; box-shadow:4px 4px 0 rgba(0,0,0,0.5); text-transform:uppercase; }
+        .back-btn:hover { background:#2a4580; transform:translateY(-4px); border-color:#c0d4ff; box-shadow:8px 8px 0 rgba(0,0,0,0.5), 0 0 25px var(--glow-blue),0 0 50px rgba(91,141,239,0.3); }
+        .back-btn:active { transform:translateY(0); box-shadow:2px 2px 0 rgba(0,0,0,0.5); }
+        .back-btn .arrow { display:inline-block; transition:transform 0.3s; font-size:0.7rem; }
+        .back-btn:hover .arrow { transform:translateX(-6px); animation:arrowBob 0.6s ease-in-out infinite; }
+        @keyframes arrowBob { 0%,100%{ transform:translateX(0); } 50%{ transform:translateX(-8px); } }
+
+        @media (max-width:768px) {
+            body { padding:12px; }
+            .retro-card { padding:20px 16px; border-width:3px; box-shadow:5px 5px 0 var(--shadow-color); clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px)); }
+            .page-header h1 { font-size:1rem; }
+            .retro-card h2 { font-size:0.65rem; }
+            .retro-card p { font-size:0.5rem; }
+            .creator-pfp,.creator-pfp-placeholder { width:85px; height:85px; }
+            .back-btn { font-size:0.5rem; padding:12px 18px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Intro screen overlay -->
+    <div id="intro-overlay">
+        <div class="intro-title">TECHPRO B YEARBOOK</div>
+        <div class="intro-bar-outer"><div class="intro-bar-inner"></div></div>
+        <div class="intro-status">LOADING MEMORIES...</div>
+    </div>
+
+    <div class="container" id="main-content">
+        <header class="page-header">
+            <span class="pixel-icon">📖</span>
+            <h1>About TechPro B</h1>
+            <p class="subtitle">✦ Digital Yearbook • 2025–2027 ✦</p>
+        </header>
+
+        <div class="retro-card">
+            <span class="card-label">📌 Introduction</span>
+            <h2>Welcome to the Yearbook</h2>
+            <p>Welcome to the official <strong>TechPro B Digital Yearbook</strong>. This website was created to preserve the <strong>memories</strong>, <strong>achievements</strong>, <strong>friendships</strong>, and <strong>experiences</strong> of the students of TechPro B — a time capsule of our shared journey through senior high school.</p>
+        </div>
+
+        <div class="retro-card alt-accent">
+            <span class="card-label">🏫 Institution</span>
+            <h2>About the School</h2>
+            <p><strong>Mabayuhan Senior High School (MSHS)</strong><br>School Year: <strong>2025–2027</strong><br>A place where knowledge meets character, and where lifelong bonds are forged.</p>
+        </div>
+
+        <div class="retro-card">
+            <span class="card-label">🎓 The Class</span>
+            <h2>About the Class</h2>
+            <p><strong>TechPro B</strong> consists of <strong>22 students</strong> who shared their journey together through <strong>learning</strong>, <strong>teamwork</strong>, and <strong>unforgettable memories</strong>. From late-night study sessions to classroom laughter — every moment became a story worth telling.</p>
+        </div>
+
+        <div class="retro-card alt-accent">
+            <span class="card-label">🎯 Mission</span>
+            <h2>Purpose of this Website</h2>
+            <p>This digital yearbook serves as a <strong>collection of class memories</strong>, <strong>student profiles</strong>, <strong>teacher acknowledgements</strong>, <strong>class photos</strong>, and <strong>milestones</strong> — a permanent home for the moments that defined our senior high school life.</p>
+        </div>
+
+        <div class="retro-card">
+            <span class="card-label">🤝 Credits</span>
+            <h2>Created By</h2>
+            <p><strong>TechPro B</strong><br>Mabayuhan Senior High School<br>Batch 2025–2027</p>
+        </div>
+
+        <div class="pixel-divider">◆ ◇ ◆ ◇ ◆</div>
+
+        <div class="retro-card creator-card">
+            <span class="card-label">💻 Website Creator</span>
+            <h2>Meet the Developer</h2>
+            <div class="creator-pfp-wrapper">
+                <img src="images/student4.jpg" alt="Ron Matthew Ferreras" class="creator-pfp" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'creator-pfp-placeholder\'>&#128187;</div>';">
+            </div>
+            <h3 class="creator-name">Ron Matthew Ferreras</h3>
+            <p class="creator-role">Developer &amp; Content Creator</p>
+            <p class="creator-quote"><strong>"</strong> I developed this digital yearbook to preserve the memories and achievements of <strong>TechPro B</strong>. Created with passion for <strong>technology</strong>, <strong>creativity</strong>, and the <strong>TechPro B family</strong>. <strong>"</strong></p>
+            <p style="font-size:0.45rem;color:#887744;margin-top:10px;">aka <strong>Kaitorenn</strong></p>
+        </div>
+
+        <div class="back-btn-wrapper">
+            <a href="index.html" class="back-btn"><span class="arrow">◄</span> Back to Yearbook</a>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            const introOverlay = document.getElementById('intro-overlay');
+            const mainContent = document.getElementById('main-content');
+            // Intro animation lasts 2.5s, then fade out
+            setTimeout(() => {
+                introOverlay.classList.add('hidden');
+                mainContent.classList.add('visible');
+            }, 2600);
+        });
+    </script>
+</body>
+</html>
