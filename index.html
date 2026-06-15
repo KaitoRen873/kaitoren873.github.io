@@ -6,14 +6,17 @@
     ║   SY 2025-2027                         ║
     ║   Complete Interactive Yearbook        ║
     ║   Single HTML File · Retro Pixel Style ║
-    ║   ENTER or CLICK anywhere to begin     ║
+    ║   MOBILE-FRIENDLY · Tap anywhere       ║
     ║   + No reload on external links        ║
     ╚══════════════════════════════════════════╝
 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover, maximum-scale=5.0">
+    <meta name="theme-color" content="#09142e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>TechPro B (ICT) Digital Yearbook</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,10 +35,18 @@
             --day-card: #f5f6fa;
             --day-border: #2f3640;
             --day-header: #8395a7;
-            --pixel-shadow: 4px 4px 0 rgba(0,0,0,.3);
+            --pixel-shadow: 4px 4px 0 rgba(0, 0, 0, .3);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; font-size: 25px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html {
+            scroll-behavior: smooth;
+            font-size: 25px;
+        }
         body {
             background: var(--bg);
             color: var(--text);
@@ -43,18 +54,26 @@
             overflow-x: hidden;
             transition: background .3s ease, color .3s ease;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        body.day-mode { background: var(--day-bg); color: var(--day-text); }
+        body.day-mode {
+            background: var(--day-bg);
+            color: var(--day-text);
+        }
+
+        /* Scanlines overlay - subtle on mobile */
         body::after {
             content: "";
             position: fixed;
             inset: 0;
             pointer-events: none;
-            background: repeating-linear-gradient(transparent 0px, rgba(0,0,0,0.05) 2px, transparent 4px);
+            background: repeating-linear-gradient(transparent 0px, rgba(0, 0, 0, 0.04) 2px, transparent 4px);
             z-index: 999;
-            opacity: 0.6;
+            opacity: 0.5;
         }
-        /* INTRO SCREEN */
+
+        /* ========== INTRO SCREEN ========== */
         #introScreen {
             position: fixed;
             inset: 0;
@@ -65,22 +84,135 @@
             z-index: 10000;
             transition: opacity 0.8s ease;
             cursor: pointer;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
         }
-        .intro-content { text-align: center; padding: 20px; z-index: 2; pointer-events: none; }
-        #introTitle { font-size: 2.5rem; opacity: 0; animation: fadeIn 1s forwards; }
-        #introSchool { margin-top: 25px; font-size: 1.2rem; opacity: 0; animation: fadeIn 1s forwards 1s; }
-        #introYear { margin-top: 20px; font-size: 1rem; opacity: 0; animation: fadeIn 1s forwards 2s; }
-        #introMessage { margin-top: 40px; line-height: 2; font-size: 1rem; opacity: 0; animation: fadeIn 1s forwards 3s; }
-        #enterPrompt { display: none; margin-top: 40px; font-size: 1.2rem; animation: blink 1s infinite; }
-        .fade-out { animation: fadeOut 0.8s forwards; }
-        .fade-in { animation: fadeInPage 0.8s forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-        @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
-        .logo { width: 120px; image-rendering: pixelated; margin-bottom: 20px; animation: floatLogo 4s ease-in-out infinite; }
-        @keyframes floatLogo { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-        #website { display: none; opacity: 1; }
+        .intro-content {
+            text-align: center;
+            padding: 20px;
+            z-index: 2;
+            pointer-events: none;
+            max-width: 95vw;
+        }
+        #introTitle {
+            font-size: 2.5rem;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+        #introSchool {
+            margin-top: 25px;
+            font-size: 1.2rem;
+            opacity: 0;
+            animation: fadeIn 1s forwards 1s;
+        }
+        #introYear {
+            margin-top: 20px;
+            font-size: 1rem;
+            opacity: 0;
+            animation: fadeIn 1s forwards 2s;
+        }
+        #introMessage {
+            margin-top: 40px;
+            line-height: 2;
+            font-size: 1rem;
+            opacity: 0;
+            animation: fadeIn 1s forwards 3s;
+        }
+        #enterPrompt {
+            display: none;
+            margin-top: 40px;
+            font-size: 1.2rem;
+            animation: blink 1s infinite;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+        #tapButton {
+            display: none;
+            margin: 30px auto 0;
+            padding: 16px 36px;
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            background: #ffd700;
+            color: #09142e;
+            border: 4px solid #fff;
+            cursor: pointer;
+            pointer-events: auto;
+            animation: pulseBtn 2s infinite;
+            border-radius: 4px;
+            letter-spacing: 2px;
+        }
+        @keyframes pulseBtn {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6);
+            }
+            50% {
+                box-shadow: 0 0 0 18px rgba(255, 215, 0, 0);
+            }
+        }
+        .fade-out {
+            animation: fadeOut 0.8s forwards;
+        }
+        .fade-in {
+            animation: fadeInPage 0.8s forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes blink {
+            0%,
+            50% {
+                opacity: 1;
+            }
+            51%,
+            100% {
+                opacity: 0;
+            }
+        }
+        .logo {
+            width: 120px;
+            image-rendering: pixelated;
+            margin-bottom: 20px;
+            animation: floatLogo 4s ease-in-out infinite;
+        }
+        @keyframes floatLogo {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        #website {
+            display: none;
+            opacity: 1;
+        }
+
+        /* ========== HEADER ========== */
         header {
             text-align: center;
             padding: 60px 20px;
@@ -94,19 +226,31 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding-top: 70px;
         }
-        header h1 { font-size: 1.8rem; margin-bottom: 20px; text-shadow: 2px 2px 0 #000; }
-        .motto { margin-top: 20px; font-size: 1rem; }
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .motto {
+            margin-top: 20px;
+            font-size: 1rem;
+        }
         header::before {
             content: "";
             position: absolute;
             inset: 0;
-            background: repeating-linear-gradient(transparent 0px, rgba(255,255,255,0.02) 2px, transparent 4px);
+            background: repeating-linear-gradient(transparent 0px, rgba(255, 255, 255, 0.02) 2px, transparent 4px);
             pointer-events: none;
             z-index: 1;
         }
-        header > * { position: relative; z-index: 2; }
-        /* Navigation */
+        header>* {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ========== NAVIGATION ========== */
         .desktop-nav {
             display: flex;
             flex-wrap: wrap;
@@ -118,8 +262,19 @@
             border-bottom: 3px solid var(--border);
             font-size: 0.9rem;
         }
-        .nav-group { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; position: relative; }
-        .nav-group .group-label { font-size: 0.8rem; opacity: 0.7; letter-spacing: 1px; margin-right: 8px; }
+        .nav-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+        }
+        .nav-group .group-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            letter-spacing: 1px;
+            margin-right: 8px;
+        }
         .nav-group:not(:last-child)::after {
             content: "";
             position: absolute;
@@ -128,9 +283,10 @@
             transform: translateY(-50%);
             width: 2px;
             height: 20px;
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
-        .desktop-nav a, .desktop-nav .nav-util {
+        .desktop-nav a,
+        .desktop-nav .nav-util {
             color: var(--text);
             text-decoration: none;
             font-size: 0.9rem;
@@ -142,48 +298,83 @@
             transition: all 0.15s ease;
             white-space: nowrap;
         }
-        .desktop-nav a:hover, .desktop-nav .nav-util:hover {
-            background: rgba(255,255,255,0.2);
+        .desktop-nav a:hover,
+        .desktop-nav .nav-util:hover {
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
         }
+
+        /* ========== HAMBURGER & MOBILE MENU ========== */
         .hamburger {
             display: none;
             position: fixed;
-            top: 15px;
-            left: 15px;
+            top: 12px;
+            left: 12px;
             z-index: 8000;
             background: var(--header);
             border: 3px solid white;
             color: white;
-            font-size: 24px;
-            width: 50px;
-            height: 50px;
+            font-size: 22px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            border-radius: 6px;
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+            touch-action: manipulation;
+        }
+        .hamburger:active {
+            transform: scale(0.93);
+            transition: transform 0.1s;
+        }
+
+        .mobile-menu-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 7400;
             cursor: pointer;
         }
+        .mobile-menu-backdrop.open {
+            display: block;
+        }
+
         .mobile-menu {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 280px;
+            max-width: 82vw;
             height: 100vh;
+            height: 100dvh;
             background: var(--header);
             z-index: 7500;
             padding: 20px;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
             overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+            border-right: 3px solid var(--border);
+            -webkit-overflow-scrolling: touch;
         }
         .mobile-menu .nav-group-mobile {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 15px;
-            margin-bottom: 10px;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 14px;
+            margin-bottom: 8px;
         }
-        .mobile-menu .nav-group-mobile span { font-size: 0.8rem; opacity: 0.7; margin-bottom: 8px; }
-        .mobile-menu a, .mobile-menu .nav-util-mobile {
+        .mobile-menu .nav-group-mobile span {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .mobile-menu a,
+        .mobile-menu .nav-util-mobile {
             color: white;
             text-decoration: none;
             font-size: 1rem;
@@ -192,14 +383,52 @@
             text-align: left;
             font-family: 'VT323', monospace;
             cursor: pointer;
-            padding: 8px 0;
+            padding: 10px 8px;
+            border-radius: 4px;
+            transition: background 0.15s;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.15);
         }
-        .mobile-menu.open { display: flex; }
-        /* Sections */
-        section { padding: 60px 10%; border-bottom: 2px solid rgba(255,255,255,0.1); }
-        section:last-of-type { border-bottom: none; }
-        section h2 { margin-bottom: 30px; text-align: center; font-size: 1.6rem; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); }
-        .retro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .mobile-menu a:active,
+        .mobile-menu .nav-util-mobile:active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .mobile-menu-close {
+            align-self: flex-end;
+            background: none;
+            border: 2px solid white;
+            color: white;
+            font-size: 1.2rem;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+        }
+        .mobile-menu.open {
+            display: flex;
+        }
+
+        /* ========== SECTIONS ========== */
+        section {
+            padding: 60px 10%;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+        section h2 {
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.6rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+        .retro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
         .retro-card {
             background: var(--card);
             padding: 20px;
@@ -208,28 +437,70 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             box-shadow: var(--pixel-shadow);
             font-size: 1rem;
+            word-break: break-word;
         }
-        .retro-card:hover { transform: translateY(-4px); box-shadow: 6px 6px 0 rgba(0,0,0,.3); }
-        .pfp { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid var(--border); }
-        .teacher-list { list-style: none; padding: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
+        .retro-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, .3);
+        }
+        .retro-card:active {
+            transform: translateY(-2px);
+        }
+        .pfp {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid var(--border);
+        }
+        .teacher-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
         .teacher-list li {
             padding: 10px 12px;
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             border: 2px solid var(--border);
             font-size: 0.9rem;
             line-height: 1.6;
             text-align: left;
             transition: 0.3s;
         }
-        .teacher-list li:hover { transform: translateX(5px); background: rgba(255,255,255,0.15); border-color: #ffd700; }
-        .flip-card { height: 340px; perspective: 1000px; }
-        .flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.4s ease; transform-style: preserve-3d; }
-        .flip-card:hover .flip-inner { transform: rotateY(180deg); }
-        .flip-front, .flip-back {
+        .teacher-list li:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ffd700;
+        }
+
+        /* ========== FLIP CARDS (with touch support) ========== */
+        .flip-card {
+            height: 340px;
+            perspective: 1000px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+        }
+        .flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s ease;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-front,
+        .flip-back {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
             border-radius: 8px;
             padding: 15px;
             background: var(--card);
@@ -240,80 +511,760 @@
             align-items: center;
             justify-content: center;
             font-size: 1rem;
+            -webkit-overflow-scrolling: touch;
         }
-        .flip-back { transform: rotateY(180deg); font-size: 0.9rem; line-height: 1.6; }
-        /* Panels */
-        #secretPanel { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background: #132040; border-right: 4px solid white; padding: 20px; transition: 0.3s; z-index: 7000; overflow-y: auto; }
-        #secretPanel.open { left: 0; }
-        #jukeboxPanel { position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background: #132040; border-left: 4px solid white; padding: 20px; transition: 0.3s; z-index: 7000; overflow-y: auto; }
-        #jukeboxPanel.open { right: 0; }
-        #themeMenu { display: none; position: fixed; right: 25px; bottom: 100px; padding: 12px; background: #132040; border: 4px solid white; border-radius: 12px; z-index: 5000; }
-        #themeMenu button { display: block; width: 200px; padding: 10px; margin: 6px 0; background: #243b72; color: white; border: 3px solid white; cursor: pointer; font-family: 'VT323', monospace; font-size: 1rem; text-align: left; }
-        #weatherOverlay { position: fixed; inset: 0; pointer-events: none; z-index: 100; display: none; }
-        .sunny { background: radial-gradient(circle at 50% 10%, rgba(255,255,0,0.3) 0%, transparent 50%); }
-        .rainy { background: linear-gradient(transparent, rgba(0,0,255,0.1)); }
-        .starry-night { background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 1px, transparent 1px); }
-        /* Win98 taskbar */
-        #win98Taskbar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background: #c0c0c0; border-top: 2px solid white; padding: 5px 15px; align-items: center; color: black; z-index: 4000; }
-        .taskbar-left { display: flex; align-items: center; gap: 12px; }
-        .taskbar-center { flex: 1; text-align: center; font-family: Tahoma, sans-serif; font-size: 14px; font-weight: bold; }
-        #taskbarClock { background: white; padding: 4px 8px; border: 1px solid gray; font-family: monospace; font-size: 12px; }
-        #startBtn { height: 28px; padding: 0 15px; font-weight: bold; background: #c0c0c0; border-top: 2px solid white; border-left: 2px solid white; border-right: 2px solid gray; border-bottom: 2px solid gray; cursor: pointer; font-family: 'VT323', monospace; }
-        #startMenu { display: none; position: fixed; bottom: 40px; left: 0; width: 220px; background: #c0c0c0; border: 2px solid white; padding: 10px; z-index: 5000; }
-        #startMenu a { display: block; padding: 10px; color: black; text-decoration: none; font-family: 'VT323', monospace; font-size: 1rem; }
-        #startMenu a:hover { background: #000080; color: white; }
-        #fallbackClock { position: fixed; bottom: 10px; left: 10px; background: var(--card); border: 2px solid var(--border); padding: 6px 12px; font-family: monospace; font-size: 10px; z-index: 5000; display: none; }
-        body:not(.win98-mode) #fallbackClock { display: block; }
-        /* Background effects */
-        .stars, #particles, .rain { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: -1; }
-        .star { position: absolute; width: 3px; height: 3px; background: white; opacity: 0.5; animation: twinkle 3s infinite; }
-        @keyframes twinkle { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
-        .pixel { position: absolute; width: 3px; height: 3px; background: white; opacity: 0.3; animation: floatPixel 15s linear infinite; }
-        @keyframes floatPixel { from { transform: translateY(100vh); } to { transform: translateY(-100px); } }
-        .rain { position: fixed; width: 2px; height: 12px; background: white; opacity: 0.2; animation: rainFall 3s linear infinite; }
-        @keyframes rainFall { from { transform: translateY(-20px); } to { transform: translateY(100vh); } }
-        .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9000; justify-content: center; align-items: center; flex-direction: column; }
-        .lightbox img { max-width: 90%; max-height: 80vh; border: 4px solid white; }
-        .lightbox-controls { margin-top: 20px; }
-        .lightbox-controls button { padding: 10px 20px; margin: 0 10px; background: var(--header); color: white; border: 2px solid white; cursor: pointer; font-family: 'VT323', monospace; }
-        #terminalOverlay { display: none; position: fixed; inset: 0; background: #000; color: #0f0; z-index: 9500; font-family: monospace; padding: 20px; overflow-y: auto; }
-        #terminalInput { background: transparent; border: none; color: #0f0; width: 100%; outline: none; font-family: monospace; font-size: 14px; }
-        #retroDesktop { display: none; position: fixed; inset: 0; background: #008080; z-index: 9800; flex-direction: column; justify-content: flex-start; align-items: flex-start; padding: 20px; }
-        .desktop-icon { width: 70px; text-align: center; color: white; cursor: pointer; margin: 10px; font-size: 12px; font-family: 'VT323', monospace; }
-        .window { position: absolute; background: #c0c0c0; border: 2px solid black; padding: 10px; min-width: 200px; z-index: 9900; box-shadow: 4px 4px 0 rgba(0,0,0,.5); font-family: 'VT323', monospace; }
-        .window-title { background: #000080; color: white; padding: 2px 5px; margin: -10px -10px 5px -10px; cursor: move; font-family: Tahoma, sans-serif; }
-        #backToTop { position: fixed; bottom: 100px; right: 25px; width: 50px; height: 50px; background: var(--header); border: 3px solid white; color: white; font-size: 24px; cursor: pointer; display: none; z-index: 6000; }
-        .badge { display: inline-block; padding: 5px 10px; background: gold; color: black; border-radius: 5px; animation: bounceBadge 1s infinite; margin: 5px; font-size: 12px; }
-        @keyframes bounceBadge { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        .rainbowMode { animation: rainbow 5s linear infinite; }
-        @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
-        #secretPixel { position: fixed; right: 5px; bottom: 5px; width: 8px; height: 8px; background: white; opacity: 0.15; cursor: pointer; z-index: 9999; }
-        #creatorSecret { position: absolute; bottom: 10px; right: 10px; font-size: 12px; opacity: 0.2; cursor: pointer; }
+        .flip-back {
+            transform: rotateY(180deg);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .flip-hint {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* ========== PANELS ========== */
+        #secretPanel {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            max-width: 80vw;
+            height: 100vh;
+            height: 100dvh;
+            background: #132040;
+            border-right: 4px solid white;
+            padding: 20px;
+            transition: 0.3s;
+            z-index: 7000;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #secretPanel.open {
+            left: 0;
+        }
+        #jukeboxPanel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            max-width: 80vw;
+            height: 100vh;
+            height: 100dvh;
+            background: #132040;
+            border-left: 4px solid white;
+            padding: 20px;
+            transition: 0.3s;
+            z-index: 7000;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #jukeboxPanel.open {
+            right: 0;
+        }
+        #themeMenu {
+            display: none;
+            position: fixed;
+            right: 20px;
+            bottom: 90px;
+            padding: 12px;
+            background: #132040;
+            border: 4px solid white;
+            border-radius: 12px;
+            z-index: 5000;
+            max-height: 70vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #themeMenu button {
+            display: block;
+            width: 200px;
+            padding: 12px;
+            margin: 6px 0;
+            background: #243b72;
+            color: white;
+            border: 3px solid white;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            text-align: left;
+            border-radius: 4px;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.15);
+        }
+        #themeMenu button:active {
+            background: #3a5a9e;
+        }
+        #weatherOverlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+        .sunny {
+            background: radial-gradient(circle at 50% 10%, rgba(255, 255, 0, 0.3) 0%, transparent 50%);
+        }
+        .rainy {
+            background: linear-gradient(transparent, rgba(0, 0, 255, 0.1));
+        }
+        .starry-night {
+            background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+        }
+
+        /* ========== TASKBAR & START MENU ========== */
+        #win98Taskbar {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: #c0c0c0;
+            border-top: 2px solid white;
+            padding: 5px 15px;
+            align-items: center;
+            color: black;
+            z-index: 4000;
+        }
+        .taskbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .taskbar-center {
+            flex: 1;
+            text-align: center;
+            font-family: Tahoma, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        #taskbarClock {
+            background: white;
+            padding: 4px 8px;
+            border: 1px solid gray;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        #startBtn {
+            height: 28px;
+            padding: 0 15px;
+            font-weight: bold;
+            background: #c0c0c0;
+            border-top: 2px solid white;
+            border-left: 2px solid white;
+            border-right: 2px solid gray;
+            border-bottom: 2px solid gray;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        }
+        #startMenu {
+            display: none;
+            position: fixed;
+            bottom: 40px;
+            left: 0;
+            width: 220px;
+            background: #c0c0c0;
+            border: 2px solid white;
+            padding: 10px;
+            z-index: 5000;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        #startMenu a {
+            display: block;
+            padding: 12px 10px;
+            color: black;
+            text-decoration: none;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            border-radius: 2px;
+        }
+        #startMenu a:hover,
+        #startMenu a:active {
+            background: #000080;
+            color: white;
+        }
+
+        #fallbackClock {
+            position: fixed;
+            bottom: 8px;
+            left: 8px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            padding: 5px 10px;
+            font-family: monospace;
+            font-size: 9px;
+            z-index: 5000;
+            display: none;
+            border-radius: 4px;
+            opacity: 0.75;
+        }
+        body:not(.win98-mode) #fallbackClock {
+            display: block;
+        }
+
+        /* ========== BACKGROUND EFFECTS ========== */
+        .stars,
+        #particles,
+        .rain {
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            opacity: 0.5;
+            animation: twinkle 3s infinite;
+        }
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        .pixel {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            opacity: 0.3;
+            animation: floatPixel 15s linear infinite;
+        }
+        @keyframes floatPixel {
+            from {
+                transform: translateY(100vh);
+            }
+            to {
+                transform: translateY(-100px);
+            }
+        }
+        .rain {
+            position: fixed;
+            width: 2px;
+            height: 12px;
+            background: white;
+            opacity: 0.2;
+            animation: rainFall 3s linear infinite;
+        }
+        @keyframes rainFall {
+            from {
+                transform: translateY(-20px);
+            }
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        /* ========== LIGHTBOX ========== */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 75vh;
+            border: 4px solid white;
+            object-fit: contain;
+        }
+        .lightbox-controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .lightbox-controls button {
+            padding: 12px 20px;
+            margin: 0 5px;
+            background: var(--header);
+            color: white;
+            border: 3px solid white;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            border-radius: 4px;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+            touch-action: manipulation;
+        }
+        .lightbox-controls button:active {
+            background: #3a5a9e;
+        }
+
+        /* ========== TERMINAL & DESKTOP ========== */
+        #terminalOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            color: #0f0;
+            z-index: 9500;
+            font-family: monospace;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #terminalInput {
+            background: transparent;
+            border: none;
+            color: #0f0;
+            width: 100%;
+            outline: none;
+            font-family: monospace;
+            font-size: 14px;
+            caret-color: #0f0;
+        }
+        #retroDesktop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #008080;
+            z-index: 9800;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .desktop-icon {
+            width: 70px;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 12px;
+            font-family: 'VT323', monospace;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+        }
+        .window {
+            position: absolute;
+            background: #c0c0c0;
+            border: 2px solid black;
+            padding: 10px;
+            min-width: 180px;
+            z-index: 9900;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, .5);
+            font-family: 'VT323', monospace;
+            max-width: 90vw;
+        }
+        .window-title {
+            background: #000080;
+            color: white;
+            padding: 2px 5px;
+            margin: -10px -10px 5px -10px;
+            cursor: move;
+            font-family: Tahoma, sans-serif;
+        }
+
+        /* ========== BACK TO TOP ========== */
+        #backToTop {
+            position: fixed;
+            bottom: 75px;
+            right: 16px;
+            width: 42px;
+            height: 42px;
+            background: var(--header);
+            border: 3px solid white;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            z-index: 6000;
+            border-radius: 50%;
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+            touch-action: manipulation;
+        }
+        #backToTop:active {
+            transform: scale(0.9);
+        }
+
+        /* ========== MISC ========== */
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background: gold;
+            color: black;
+            border-radius: 5px;
+            animation: bounceBadge 1s infinite;
+            margin: 5px;
+            font-size: 12px;
+        }
+        @keyframes bounceBadge {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        .rainbowMode {
+            animation: rainbow 5s linear infinite;
+        }
+        @keyframes rainbow {
+            0% {
+                filter: hue-rotate(0deg);
+            }
+            100% {
+                filter: hue-rotate(360deg);
+            }
+        }
+        #secretPixel {
+            position: fixed;
+            right: 5px;
+            bottom: 5px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            opacity: 0.2;
+            cursor: pointer;
+            z-index: 9999;
+            border-radius: 2px;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
+        }
+        #creatorSecret {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            opacity: 0.2;
+            cursor: pointer;
+            z-index: 10;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ========== MOBILE MEDIA QUERIES ========== */
         @media (max-width: 768px) {
-            .desktop-nav { display: none; }
-            .hamburger, .mobile-menu { display: flex; }
-            .logo { width: 70px; }
-            #introTitle { font-size: 1.6rem; }
-            .retro-grid { grid-template-columns: 1fr; }
-            .pfp { width: 90px; height: 90px; }
-            .star, .pixel, .rain { display: none; }
+            html {
+                font-size: 17px;
+            }
+            body::after {
+                opacity: 0.25;
+                background: repeating-linear-gradient(transparent 0px, rgba(0, 0, 0, 0.03) 3px, transparent 6px);
+            }
+
+            .desktop-nav {
+                display: none;
+            }
+            .hamburger {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .logo {
+                width: 65px;
+            }
+            #introTitle {
+                font-size: 1.5rem;
+            }
+            #introSchool {
+                font-size: 1rem;
+            }
+            #introMessage {
+                font-size: 0.9rem;
+                line-height: 1.7;
+            }
+            #enterPrompt {
+                font-size: 1rem;
+            }
+            #tapButton {
+                display: block;
+                font-size: 1.1rem;
+                padding: 14px 30px;
+            }
+
+            header {
+                padding: 50px 15px 40px;
+                min-height: 200px;
+                padding-top: 60px;
+            }
+            header h1 {
+                font-size: 1.3rem;
+            }
+            .motto {
+                font-size: 0.85rem;
+                padding: 0 10px;
+            }
+
+            section {
+                padding: 40px 5%;
+            }
+            section h2 {
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+            }
+
+            .retro-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .retro-card {
+                padding: 16px;
+                font-size: 0.9rem;
+                border-width: 3px;
+            }
+            .pfp {
+                width: 80px;
+                height: 80px;
+            }
+
+            .flip-card {
+                height: 300px;
+            }
+            .flip-front,
+            .flip-back {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            .flip-back {
+                font-size: 0.8rem;
+            }
+            .flip-hint {
+                display: block;
+            }
+
+            .star,
+            .pixel,
+            .rain {
+                display: none;
+            }
+
+            #backToTop {
+                bottom: 60px;
+                right: 10px;
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+            #fallbackClock {
+                bottom: 5px;
+                left: 5px;
+                font-size: 8px;
+                padding: 4px 7px;
+                opacity: 0.6;
+            }
+            #secretPixel {
+                width: 16px;
+                height: 16px;
+                right: 3px;
+                bottom: 3px;
+                opacity: 0.25;
+            }
+            #themeMenu {
+                right: 10px;
+                bottom: 70px;
+                max-width: 85vw;
+                padding: 10px;
+            }
+            #themeMenu button {
+                width: 100%;
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            #secretPanel,
+            #jukeboxPanel {
+                max-width: 85vw;
+            }
+            #secretPanel {
+                left: -85vw;
+                width: 85vw;
+            }
+            #jukeboxPanel {
+                right: -85vw;
+                width: 85vw;
+            }
+            .lightbox img {
+                max-width: 95%;
+                max-height: 65vh;
+            }
+            .lightbox-controls button {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+            #terminalOverlay {
+                padding: 15px;
+                font-size: 13px;
+            }
+            #terminalInput {
+                font-size: 13px;
+            }
+            .window {
+                min-width: 140px;
+                max-width: 85vw;
+            }
+            .teacher-list li {
+                font-size: 0.8rem;
+                padding: 8px 10px;
+            }
+            #startMenu {
+                width: 180px;
+                max-height: 50vh;
+            }
+            #startMenu a {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+            #win98Taskbar {
+                height: 36px;
+                padding: 4px 10px;
+            }
+            #taskbarClock {
+                font-size: 10px;
+                padding: 3px 6px;
+            }
+            #startBtn {
+                height: 24px;
+                padding: 0 10px;
+                font-size: 0.8rem;
+            }
+            #countdown {
+                font-size: 1.1rem !important;
+            }
+            #searchInput,
+            #sectionFilter {
+                font-size: 0.9rem !important;
+                padding: 8px !important;
+            }
         }
+
+        @media (max-width: 400px) {
+            html {
+                font-size: 15px;
+            }
+            .hamburger {
+                width: 38px;
+                height: 38px;
+                top: 8px;
+                left: 8px;
+                font-size: 18px;
+                border-width: 2px;
+            }
+            header {
+                padding-top: 55px;
+                min-height: 180px;
+            }
+            header h1 {
+                font-size: 1.1rem;
+            }
+            .logo {
+                width: 50px;
+            }
+            section {
+                padding: 30px 3%;
+            }
+            .retro-card {
+                padding: 12px;
+                border-width: 2px;
+            }
+            .pfp {
+                width: 65px;
+                height: 65px;
+            }
+            .flip-card {
+                height: 260px;
+            }
+            #backToTop {
+                width: 34px;
+                height: 34px;
+                bottom: 50px;
+                right: 8px;
+            }
+            .mobile-menu {
+                width: 85vw;
+                max-width: 85vw;
+                padding: 15px;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
-            .star, .pixel, .rain, .flip-inner, .logo, .retro-card { animation: none !important; transition: none !important; }
+            .star,
+            .pixel,
+            .rain,
+            .flip-inner,
+            .logo,
+            .retro-card {
+                animation: none !important;
+                transition: none !important;
+            }
         }
-        .win98-card { background: #c0c0c0 !important; color: black !important; border-style: solid; border-width: 2px; border-color: white gray gray white; box-shadow: none; }
+
+        /* Win98 card style */
+        .win98-card {
+            background: #c0c0c0 !important;
+            color: black !important;
+            border-style: solid;
+            border-width: 2px;
+            border-color: white gray gray white;
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
-    <!-- Panels -->
-    <div id="secretPanel"><h3>🔐 Secrets Found</h3><div id="secretCountDisplay">0/10</div><ul style="list-style:none; padding:0;"><li id="s1">???</li><li id="s2">???</li><li id="s3">???</li><li id="s4">???</li><li id="s5">???</li><li id="s6">???</li><li id="s7">???</li><li id="s8">???</li><li id="s9">???</li><li id="s10">???</li></ul><div id="secretBadge" style="display:none; margin-top:20px;"><span class="badge">🏆 SECRET MASTER</span></div></div>
-    <div id="jukeboxPanel"><h3>📻 Jukebox</h3><div id="currentSongDisplay">No song playing</div><input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" style="width:100%; margin:10px 0;"><button onclick="jukeboxPlayPause()">⏯ Play/Pause</button><button onclick="jukeboxNext()">⏭ Next</button><button onclick="jukeboxShuffle()">🔀 Shuffle</button><button onclick="stopMusic()">⏹ Stop</button><div style="margin-top:15px;">Playlist:</div><ul id="playlistContainer" style="list-style:none; padding:0;"></ul></div>
-    <div id="themeMenu"><button onclick="setTheme('blue')">💙 Classic Blue</button><button onclick="setTheme('green')">💚 Terminal Green</button><button onclick="setTheme('amber')">🧡 Amber CRT</button><button onclick="setTheme('purple')">💜 Pixel Purple</button><button onclick="setTheme('dark')">🖤 Dark Mode</button><button onclick="setTheme('win98')">🟦 Windows 98</button><button onclick="toggleDayNight()">🌗 Day/Night</button></div>
+    <!-- ========== PANELS ========== -->
+    <div id="secretPanel">
+        <h3>🔐 Secrets Found</h3>
+        <div id="secretCountDisplay">0/10</div>
+        <ul style="list-style:none; padding:0;">
+            <li id="s1">???</li>
+            <li id="s2">???</li>
+            <li id="s3">???</li>
+            <li id="s4">???</li>
+            <li id="s5">???</li>
+            <li id="s6">???</li>
+            <li id="s7">???</li>
+            <li id="s8">???</li>
+            <li id="s9">???</li>
+            <li id="s10">???</li>
+        </ul>
+        <div id="secretBadge" style="display:none; margin-top:20px;"><span class="badge">🏆 SECRET MASTER</span></div>
+        <button onclick="document.getElementById('secretPanel').classList.remove('open')" style="margin-top:15px; padding:8px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">✕ Close Panel</button>
+    </div>
+    <div id="jukeboxPanel">
+        <h3>📻 Jukebox</h3>
+        <div id="currentSongDisplay">No song playing</div>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" style="width:100%; margin:10px 0; cursor:pointer;">
+        <button onclick="jukeboxPlayPause()" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">⏯ Play/Pause</button>
+        <button onclick="jukeboxNext()" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">⏭ Next</button>
+        <button onclick="jukeboxShuffle()" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">🔀 Shuffle</button>
+        <button onclick="stopMusic()" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">⏹ Stop</button>
+        <button onclick="document.getElementById('jukeboxPanel').classList.remove('open')" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">✕ Close</button>
+        <div style="margin-top:15px;">Playlist:</div>
+        <ul id="playlistContainer" style="list-style:none; padding:0;"></ul>
+    </div>
+    <div id="themeMenu">
+        <button onclick="setTheme('blue')">💙 Classic Blue</button>
+        <button onclick="setTheme('green')">💚 Terminal Green</button>
+        <button onclick="setTheme('amber')">🧡 Amber CRT</button>
+        <button onclick="setTheme('purple')">💜 Pixel Purple</button>
+        <button onclick="setTheme('dark')">🖤 Dark Mode</button>
+        <button onclick="setTheme('win98')">🟦 Windows 98</button>
+        <button onclick="toggleDayNight()">🌗 Day/Night</button>
+        <button onclick="document.getElementById('themeMenu').style.display='none'" style="background:#a00; border-color:#faa;">✕ Close</button>
+    </div>
     <div id="weatherOverlay"></div>
     <div id="fallbackClock">📅 --/--/---- 🕒 --:--</div>
-    <div class="stars"></div><div id="particles"></div>
+    <div class="stars"></div>
+    <div id="particles"></div>
 
-    <!-- INTRO SCREEN (clickable + Enter) -->
+    <!-- ========== INTRO SCREEN ========== -->
     <div id="introScreen">
         <div class="intro-content">
             <img src="images/logo.png" class="logo" alt="TechPro B Logo" onerror="this.style.display='none'">
@@ -321,7 +1272,8 @@
             <h2 id="introSchool">Mabayuhan Senior High School (MSHS)</h2>
             <h3 id="introYear">2025-2027</h3>
             <div id="introMessage">22 Active Students<br>One Class<br>One Legacy..<br>(The First Pilots Of The New Curriculum)</div>
-            <div id="enterPrompt">▶ PRESS ENTER OR CLICK ANYWHERE TO BEGIN</div>
+            <div id="enterPrompt">▶ PRESS ENTER OR TAP ANYWHERE TO BEGIN</div>
+            <button id="tapButton" onclick="launchYearbook(); event.stopPropagation();">🎓 ENTER YEARBOOK</button>
         </div>
     </div>
 
@@ -338,23 +1290,34 @@
             <p>School Year 2025-2027</p>
             <p class="motto">"We may walk different paths tomorrow, but the memories we built together will always connect us."</p>
         </header>
-        <button class="hamburger" id="hamburgerBtn">☰</button>
+
+        <!-- Hamburger Button -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">☰</button>
+
+        <!-- Mobile Menu Backdrop -->
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+
+        <!-- Mobile Menu -->
         <nav class="mobile-menu" id="mobileMenu">
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
             <div class="nav-group-mobile"><span>📌 MAIN</span><a href="#officers">🏛 Officers</a><a href="#teachers">👩‍🏫 Teachers</a><a href="#students">🎓 Students</a><a href="#halloffame">🏆 Hall of Fame</a><a href="#gallery">📸 Gallery</a><a href="#memories">📖 Memory Book</a><a href="#graduation">🎓 Graduation</a><a href="#stats">📊 Statistics</a><a href="#timeline">⏳ Timeline</a><a href="#search">🔍 Search</a></div>
             <div class="nav-group-mobile"><span>✨ EXTRAS</span><a href="#" class="prevent-reload" data-feature="Hall of Fame (ext)">🏅 Hall of Fame (ext)</a><a href="#" class="prevent-reload" data-feature="Messages">💬 Messages</a><a href="#" class="prevent-reload" data-feature="Computer Room">🖥️ Computer Room</a><a href="#" class="prevent-reload" data-feature="Secret Archive">🔒 Secret Archive</a><a href="#" class="prevent-reload" data-feature="About">👤 About</a><a href="#" class="prevent-reload" data-feature="Game">🎮 Game</a></div>
             <div class="nav-group-mobile"><span>⚙️ UTILITIES</span><button class="nav-util-mobile" id="mobileSecretBtn">🔐 Secret Panel</button><button class="nav-util-mobile" id="mobileJukeboxBtn">📻 Jukebox</button><button class="nav-util-mobile" id="mobileThemeBtn">🎨 Themes</button><button class="nav-util-mobile" id="mobileWeatherBtn">☀️ Weather FX</button></div>
         </nav>
+
+        <!-- Desktop Nav -->
         <nav class="desktop-nav">
             <div class="nav-group"><span class="group-label">📌 MAIN</span><a href="#officers">Officers</a><a href="#teachers">Teachers</a><a href="#students">Students</a><a href="#halloffame">Hall of Fame</a><a href="#gallery">Gallery</a><a href="#memories">Memory Book</a><a href="#graduation">Graduation</a><a href="#stats">Stats</a><a href="#timeline">Timeline</a><a href="#search">Search</a></div>
             <div class="nav-group"><span class="group-label">✨ EXTRAS</span><a href="#" class="prevent-reload" data-feature="Hall of Fame (ext)">Hall of Fame (ext)</a><a href="#" class="prevent-reload" data-feature="Messages">Messages</a><a href="#" class="prevent-reload" data-feature="Computer Room">Computer Room</a><a href="#" class="prevent-reload" data-feature="Secret Archive">Secret Archive</a><a href="#" class="prevent-reload" data-feature="About">About</a><a href="#" class="prevent-reload" data-feature="Game">Game</a></div>
             <div class="nav-group"><span class="group-label">⚙️ UTILITIES</span><button class="nav-util" id="deskSecretBtn">🔐 Secret</button><button class="nav-util" id="deskJukeboxBtn">📻 Jukebox</button><button class="nav-util" id="deskThemeBtn">🎨 Themes</button><button class="nav-util" id="deskWeatherBtn">☀️ Weather</button></div>
         </nav>
 
+        <!-- ========== SECTIONS ========== -->
         <section id="officers"><h2>🏛 Class Officers (Grade 11 & 12)</h2><div class="retro-grid" id="officersGrid"></div></section>
         <section id="teachers"><h2>Teachers</h2><div class="retro-grid"><div class="retro-card"><img src="images/teacher1.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Veronica'"><h3>Veronica Sta Monica</h3><p><strong>ICT - Technical Drafting</strong></p><p>"Always keep learning and stay curious!"</p></div><div class="retro-card"><img src="images/teacher2.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Paule'"><h3>Paul Jayme</h3><p><strong>ICT - Programming</strong></p><p>"Effortless Action - Align your behavior with the natural flow of the universe, acting without force, ego or resistance. 無爲"</p></div><div class="retro-card"><h3>G11 Teachers</h3><ul class="teacher-list"><li>Rustie Manzano</li><li>Teacher Name 2</li><li>Teacher Name 3</li><li>Teacher Name 4</li><li>Teacher Name 5</li><li>Teacher Name 6</li><li>Teacher Name 7</li><li>Teacher Name 8</li></ul></div></div></section>
-        <section id="students"><h2>🎓 Student Profiles</h2><div class="retro-grid" id="studentGrid"></div></section>
+        <section id="students"><h2>🎓 Student Profiles</h2><p style="text-align:center; opacity:0.7; margin-bottom:15px;" class="flip-hint">👆 Tap a card to flip it and see more info!</p><div class="retro-grid" id="studentGrid"></div></section>
         <section id="halloffame"><h2>🏆 Hall of Fame</h2><div class="retro-grid" id="fameGrid"></div></section>
-        <section id="gallery"><h2>📸 Photo Gallery</h2><div class="retro-grid" id="galleryGrid"></div><button id="slideshowBtn" style="margin-top:20px; padding:10px 20px; font-family:'VT323', monospace; font-size:1rem; cursor:pointer;">▶ Start Slideshow</button></section>
+        <section id="gallery"><h2>📸 Photo Gallery</h2><div class="retro-grid" id="galleryGrid"></div><button id="slideshowBtn" style="margin-top:20px; padding:12px 24px; font-family:'VT323', monospace; font-size:1rem; cursor:pointer; border:3px solid white; background:var(--header); color:white; border-radius:4px;">▶ Start Slideshow</button></section>
         <section id="memories"><h2>📖 Memory Book</h2><div class="retro-grid" id="memoryGrid"></div></section>
         <section id="graduation"><h2>🎓 Graduation</h2><div id="countdown" style="font-size:1.5rem; text-align:center; margin-bottom:30px;"></div><h3>Class Achievements</h3><div class="retro-grid" id="achievementGrid"></div><h3 style="margin-top:30px;">Graduation Memories</h3><div class="retro-grid" id="gradMemoriesGrid"></div></section>
         <section id="stats"><h2>📊 Class Statistics</h2><div class="retro-grid"><div class="retro-card"><h1 id="studentCount">0</h1><p>Students</p></div><div class="retro-card"><h1 id="teacherCount">0</h1><p>Teachers</p></div><div class="retro-card"><h1 id="yearCount">0</h1><p>School Years</p></div><div class="retro-card"><h1 id="visitCount">0</h1><p>Visitors</p></div></div></section>
@@ -362,93 +1325,188 @@
         <section id="search"><h2>🔍 Class Database</h2><input type="text" id="searchInput" placeholder="Search students, quotes, memories..." style="width:100%; padding:10px; margin-bottom:10px; font-family:'VT323', monospace; font-size:1rem;"><select id="sectionFilter" style="padding:10px; font-family:'VT323', monospace; font-size:1rem;"><option value="all">All Sections</option><option value="G11">Grade 11</option><option value="G12">Grade 12</option></select><div class="retro-grid" id="searchResults" style="margin-top:20px;"></div></section>
         <section id="secretRewards" style="display:none;"><h2>🏆 Secret Master Rewards</h2><p>Congratulations! You've unlocked the hidden class photo gallery.</p><div class="retro-grid" id="hiddenGallery"></div><span class="badge">SECRET ACHIEVEMENT</span></section>
 
-        <div class="lightbox" id="lightbox"><img id="lightboxImg" src=""><div class="lightbox-controls"><button id="prevImg">◀</button><button id="closeLightbox">✖</button><button id="nextImg">▶</button></div></div>
-        <div id="terminalOverlay"><div id="terminalOutput"></div><div style="display:flex;"><span>> </span><input type="text" id="terminalInput" autofocus></div></div>
-        <div id="retroDesktop"><div class="desktop-icon" onclick="openWindow('My Computer', 'Welcome to TechPro B system.')"><div>💻</div>My Computer</div><div class="desktop-icon" onclick="openWindow('Secret Folder', 'You found the hidden folder!')"><div>📁</div>Secret Folder</div><div class="desktop-icon" onclick="openWindow('Notepad', 'Dear diary, today we graduated...')"><div>📝</div>Notepad</div><button onclick="closeDesktop()" style="position:absolute; top:10px; right:10px; padding:5px 10px; font-family:'VT323', monospace;">Close</button></div>
-        <button id="backToTop">⬆</button>
+        <!-- ========== OVERLAYS ========== -->
+        <div class="lightbox" id="lightbox"><img id="lightboxImg" src="" alt="Gallery image"><div class="lightbox-controls"><button id="prevImg">◀</button><button id="closeLightbox">✖ Close</button><button id="nextImg">▶</button></div></div>
+        <div id="terminalOverlay"><div id="terminalOutput"></div><div style="display:flex;"><span>> </span><input type="text" id="terminalInput" autofocus></div><button onclick="document.getElementById('terminalOverlay').style.display='none'" style="margin-top:15px; padding:8px 16px; background:#333; color:#0f0; border:1px solid #0f0; cursor:pointer; font-family:monospace;">✕ Close Terminal</button></div>
+        <div id="retroDesktop"><div class="desktop-icon" onclick="openWindow('My Computer', 'Welcome to TechPro B system.')"><div>💻</div>My Computer</div><div class="desktop-icon" onclick="openWindow('Secret Folder', 'You found the hidden folder!')"><div>📁</div>Secret Folder</div><div class="desktop-icon" onclick="openWindow('Notepad', 'Dear diary, today we graduated...')"><div>📝</div>Notepad</div><button onclick="closeDesktop()" style="position:absolute; top:10px; right:10px; padding:8px 14px; font-family:'VT323', monospace; cursor:pointer; border:2px solid white; background:#c00; color:white; border-radius:4px;">✕ Close</button></div>
+        <button id="backToTop" aria-label="Back to top">⬆</button>
         <div id="win98Taskbar"><div class="taskbar-left"><button id="startBtn">🟩 Start</button><div id="taskbarClock">--:--</div></div><div class="taskbar-center"><span>TechPro B</span></div></div>
         <div id="startMenu"><a href="#students">📁 Students</a><a href="#teachers">📁 Teachers</a><a href="#gallery">📁 Gallery</a><a href="#memories">📄 Memories</a><a href="#" onclick="openRetroDesktop(); return false;">🖥 Computer</a></div>
-        <div id="secretPixel"></div><div id="creatorSecret">💻</div>
+        <div id="secretPixel" title="You found something..."></div>
+        <div id="creatorSecret">💻</div>
     </div>
 
     <script>
         // ======================= DATA =======================
         const students = [
-            { id:1,name:"Alquza Almer Dela Cruz",nickname:"Alquza",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student1.jpg",favoriteMemory:"First day" },
-            { id:2,name:"Edward Bautista Aquino",nickname:"Edward",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student2.jpg",favoriteMemory:"Intramurals" },
-            { id:3,name:"Prince Del Birut Gayrama",nickname:"Prince",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student3.jpg",favoriteMemory:"Field trip" },
-            { id:4,name:"Ron Matthew Belisario Ferreras",nickname:"Ron",quote:"Whatever path you follow, keep moving forward",dreamJob:"Content Creator",section:"Grade 12",img:"images/student4.jpg",favoriteMemory:"Coding nights" },
-            { id:5,name:"Ryan Gaebriel Belisario Ferreras",nickname:"Ryan",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student5.jpg",favoriteMemory:"Basketball" },
-            { id:6,name:"Jace Mathew Labicani",nickname:"Jace",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student6.jpg",favoriteMemory:"Hackathon" },
-            { id:7,name:"Jared Lee Barnuevo Lim",nickname:"Jared",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student7.jpg",favoriteMemory:"Group projects" },
-            { id:8,name:"Jhovance Eldrick Pacheco Olan",nickname:"Jhovance",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student8.jpg",favoriteMemory:"Christmas party" },
-            { id:9,name:"Chriswin B. Palmones",nickname:"Chriswin",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student9.jpg",favoriteMemory:"Graduation prep" },
-            { id:10,name:"Phil Cyprian Ogalesco Resuello",nickname:"Phil",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student10.jpg",favoriteMemory:"Tech exhibit" },
-            { id:11,name:"Gian Lee San Jose",nickname:"Gian",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student11.jpg",favoriteMemory:"Robotics" },
-            { id:12,name:"Eziekiel Kyle Rios Sobremonte",nickname:"Eziekiel",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student12.jpg",favoriteMemory:"Quiz bee" },
-            { id:13,name:"Ronald Silva Suba",nickname:"Ronald",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student13.jpg",favoriteMemory:"Retreat" },
-            { id:14,name:"Calvin Claude Alipan Tala",nickname:"Calvin",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student14.jpg",favoriteMemory:"Internship" },
-            { id:15,name:"Yusieff Acas Tanawit",nickname:"Yusieff",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student15.jpg",favoriteMemory:"Game dev" },
-            { id:16,name:"John Patrick Sarcilla",nickname:"John Patrick",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student16.jpg",favoriteMemory:"Camping" },
-            { id:17,name:"Mikaela Marcia Ababat",nickname:"Mikaela",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student17.jpg",favoriteMemory:"Dance practice" },
-            { id:18,name:"Richa Mae Cuevas Mejos",nickname:"Richa",quote:"No quote yet",dreamJob:"Undecided",section:"Grade 12",img:"images/student18.jpg",favoriteMemory:"Film showing" },
-            { id:19,name:"Aira Pecana Natividad",nickname:"Aira",quote:"Small step everyday leads to big achievements",dreamJob:"IT Specialist",section:"Grade 12",img:"images/student19.jpg",favoriteMemory:"UI design" },
-            { id:20,name:"Glyzel Ann Talvo Pagaduan",nickname:"Glyzel",quote:"Dream big, work hard, stay humble",dreamJob:"Coffee shop owner",section:"Grade 12",img:"images/student20.jpg",favoriteMemory:"Open mic" },
-            { id:21,name:"Romea David Permejo",nickname:"Romea",quote:"Be happy for what you have while working for what you want",dreamJob:"Call Center Agent",section:"Grade 12",img:"images/student21.jpg",favoriteMemory:"Career guidance" },
-            { id:22,name:"Mary Joy Picana Ramos",nickname:"Mary Joy",quote:"Being hardworking and stay humble",dreamJob:"Web Developer",section:"Grade 12",img:"images/student22.jpg",favoriteMemory:"Web dev contest" },
-            { id:23,name:"Zie Cliza Ballejos Sablada",nickname:"Zie",quote:"Every day is a chance to become better",dreamJob:"Freelancer",section:"Grade 12",img:"images/student23.jpg",favoriteMemory:"Freelancing 101" },
-            { id:24,name:"Alyka Tarnate",nickname:"Alyka",quote:"Dreams will always stay dreams, unless you act upon them",dreamJob:"Active",section:"Grade 12",img:"images/student24.jpg",favoriteMemory:"Leadership camp" }
+            { id: 1, name: "Alquza Almer Dela Cruz", nickname: "Alquza", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student1.jpg", favoriteMemory: "First day" },
+            { id: 2, name: "Edward Bautista Aquino", nickname: "Edward", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student2.jpg", favoriteMemory: "Intramurals" },
+            { id: 3, name: "Prince Del Birut Gayrama", nickname: "Prince", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student3.jpg", favoriteMemory: "Field trip" },
+            { id: 4, name: "Ron Matthew Belisario Ferreras", nickname: "Ron",
+                quote: "Whatever path you follow, keep moving forward", dreamJob: "Content Creator", section: "Grade 12",
+                img: "images/student4.jpg", favoriteMemory: "Coding nights" },
+            { id: 5, name: "Ryan Gaebriel Belisario Ferreras", nickname: "Ryan", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student5.jpg", favoriteMemory: "Basketball" },
+            { id: 6, name: "Jace Mathew Labicani", nickname: "Jace", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student6.jpg", favoriteMemory: "Hackathon" },
+            { id: 7, name: "Jared Lee Barnuevo Lim", nickname: "Jared", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student7.jpg", favoriteMemory: "Group projects" },
+            { id: 8, name: "Jhovance Eldrick Pacheco Olan", nickname: "Jhovance", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student8.jpg",
+            favoriteMemory: "Christmas party" },
+            { id: 9, name: "Chriswin B. Palmones", nickname: "Chriswin", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student9.jpg", favoriteMemory: "Graduation prep" },
+            { id: 10, name: "Phil Cyprian Ogalesco Resuello", nickname: "Phil", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student10.jpg", favoriteMemory: "Tech exhibit" },
+            { id: 11, name: "Gian Lee San Jose", nickname: "Gian", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student11.jpg", favoriteMemory: "Robotics" },
+            { id: 12, name: "Eziekiel Kyle Rios Sobremonte", nickname: "Eziekiel", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student12.jpg", favoriteMemory: "Quiz bee" },
+            { id: 13, name: "Ronald Silva Suba", nickname: "Ronald", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student13.jpg", favoriteMemory: "Retreat" },
+            { id: 14, name: "Calvin Claude Alipan Tala", nickname: "Calvin", quote: "No quote yet",
+            dreamJob: "Undecided", section: "Grade 12", img: "images/student14.jpg", favoriteMemory: "Internship" },
+            { id: 15, name: "Yusieff Acas Tanawit", nickname: "Yusieff", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student15.jpg", favoriteMemory: "Game dev" },
+            { id: 16, name: "John Patrick Sarcilla", nickname: "John Patrick", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student16.jpg", favoriteMemory: "Camping" },
+            { id: 17, name: "Mikaela Marcia Ababat", nickname: "Mikaela", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student17.jpg", favoriteMemory: "Dance practice" },
+            { id: 18, name: "Richa Mae Cuevas Mejos", nickname: "Richa", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student18.jpg", favoriteMemory: "Film showing" },
+            { id: 19, name: "Aira Pecana Natividad", nickname: "Aira",
+                quote: "Small step everyday leads to big achievements", dreamJob: "IT Specialist", section: "Grade 12",
+                img: "images/student19.jpg", favoriteMemory: "UI design" },
+            { id: 20, name: "Glyzel Ann Talvo Pagaduan", nickname: "Glyzel",
+                quote: "Dream big, work hard, stay humble", dreamJob: "Coffee shop owner", section: "Grade 12",
+                img: "images/student20.jpg", favoriteMemory: "Open mic" },
+            { id: 21, name: "Romea David Permejo", nickname: "Romea",
+                quote: "Be happy for what you have while working for what you want", dreamJob: "Call Center Agent",
+                section: "Grade 12", img: "images/student21.jpg", favoriteMemory: "Career guidance" },
+            { id: 22, name: "Mary Joy Picana Ramos", nickname: "Mary Joy",
+                quote: "Being hardworking and stay humble", dreamJob: "Web Developer", section: "Grade 12",
+                img: "images/student22.jpg", favoriteMemory: "Web dev contest" },
+            { id: 23, name: "Zie Cliza Ballejos Sablada", nickname: "Zie",
+                quote: "Every day is a chance to become better", dreamJob: "Freelancer", section: "Grade 12",
+                img: "images/student23.jpg", favoriteMemory: "Freelancing 101" },
+            { id: 24, name: "Alyka Tarnate", nickname: "Alyka",
+                quote: "Dreams will always stay dreams, unless you act upon them", dreamJob: "Active", section: "Grade 12",
+                img: "images/student24.jpg", favoriteMemory: "Leadership camp" }
         ];
         const officers = [
-            { title:"G11 President", name:"Prince Saimon Del Birut" },{ title:"G12 President", name:"Chriswin Palmones" },
-            { title:"G11 Vice President", name:"Romea D. Permejo" },{ title:"G12 Vice President", name:"Romea D. Permejo" },
-            { title:"G11 Secretary", name:"Briane Diaz" },{ title:"G12 Secretary", name:"Glyzel Pagaduan" },
-            { title:"G11 Treasurer", name:"Mikaella Ababat" },{ title:"G12 Treasurer", name:"Zie Cliza Sablada" },
-            { title:"G11 Auditor", name:"(vacant)" },{ title:"G12 Auditor", name:"(vacant)" },
-            { title:"G11 P.I.O", name:"Chriswin Palmones" },{ title:"G12 P.I.O", name:"(vacant)" },
-            { title:"G11 P.O", name:"(vacant)" },{ title:"G12 P.O", name:"(vacant)" }
+            { title: "G11 President", name: "Prince Saimon Del Birut" }, { title: "G12 President",
+                name: "Chriswin Palmones" },
+            { title: "G11 Vice President", name: "Romea D. Permejo" }, { title: "G12 Vice President",
+                name: "Romea D. Permejo" },
+            { title: "G11 Secretary", name: "Briane Diaz" }, { title: "G12 Secretary", name: "Glyzel Pagaduan" },
+            { title: "G11 Treasurer", name: "Mikaella Ababat" }, { title: "G12 Treasurer", name: "Zie Cliza Sablada" },
+            { title: "G11 Auditor", name: "(vacant)" }, { title: "G12 Auditor", name: "(vacant)" },
+            { title: "G11 P.I.O", name: "Chriswin Palmones" }, { title: "G12 P.I.O", name: "(vacant)" },
+            { title: "G11 P.O", name: "(vacant)" }, { title: "G12 P.O", name: "(vacant)" }
         ];
-        const fameAwards = [{ title:"Most Helpful", recipient:"Prince Saimon Del Birut", badge:"🏅" },{ title:"Class Comedian", recipient:"Chriswin Palmones", badge:"😂" },{ title:"Tech Wizard", recipient:"Briane Diaz", badge:"💻" },{ title:"Most Creative", recipient:"Glyzel Pagaduan", badge:"🎨" },{ title:"Best Attendance", recipient:"Mikaella Ababat", badge:"✅" }];
-        const memoryEvents = [{ title:"First Day of School", date:"2025-06-15", description:"Meeting new classmates and teachers.", type:"event" },{ title:"Intramurals 2025", date:"2025-10-10", description:"TechPro B won 2nd place in basketball.", type:"activity" },{ title:"Programming Contest", date:"2026-02-20", description:"Our team built a mobile app in 24 hours.", type:"competition" },{ title:"Field Trip to Tech Museum", date:"2026-03-15", description:"Explored the latest in robotics and AI.", type:"field trip" },{ title:"Research Defense", date:"2026-08-25", description:"Successfully defended our capstone project.", type:"research" },{ title:"Teachers' Day Surprise", date:"2025-10-05", description:"We organized a surprise party for our teachers.", type:"event" },{ title:"Christmas Party 2025", date:"2025-12-18", description:"Gift exchange and games.", type:"activity" },{ title:"Web Design Challenge", date:"2026-01-12", description:"Inter-class competition on best UI.", type:"competition" }];
-        const achievements = [ "Best in Programming 2026", "Most Innovative Project", "100% Passing Rate in NCII", "Community Tech Outreach", "Outstanding Attendance Award" ];
-        const gradMemories = [ "Graduation rehearsal fun", "Final class picture", "Last day of school", "Goodbye messages to teachers", "Signing each other's yearbooks" ];
-        const galleryImages = ["gallery/photo1.jpg","gallery/photo2.jpg","gallery/photo3.jpg","gallery/photo4.jpg"];
-        const hiddenGalleryImages = ["gallery/secret1.jpg","gallery/secret2.jpg"];
-        const playlist = [{ title:"Theme 1 (Pixel Pop)", src:"audio/theme1.mp3" },{ title:"Pixel Theme (Chiptune)", src:"audio/pixel-theme.mp3" },{ title:"Windows 98 Theme", src:"audio/windows98-theme.mp3" }];
+        const fameAwards = [{ title: "Most Helpful", recipient: "Prince Saimon Del Birut", badge: "🏅" }, { title: "Class Comedian",
+            recipient: "Chriswin Palmones", badge: "😂" }, { title: "Tech Wizard", recipient: "Briane Diaz",
+            badge: "💻" }, { title: "Most Creative", recipient: "Glyzel Pagaduan", badge: "🎨" }, { title: "Best Attendance",
+            recipient: "Mikaella Ababat", badge: "✅" }];
+        const memoryEvents = [{ title: "First Day of School", date: "2025-06-15",
+            description: "Meeting new classmates and teachers.", type: "event" }, { title: "Intramurals 2025",
+            date: "2025-10-10", description: "TechPro B won 2nd place in basketball.", type: "activity" }, { title: "Programming Contest",
+            date: "2026-02-20", description: "Our team built a mobile app in 24 hours.", type: "competition" }, { title: "Field Trip to Tech Museum",
+            date: "2026-03-15", description: "Explored the latest in robotics and AI.", type: "field trip" }, { title: "Research Defense",
+            date: "2026-08-25", description: "Successfully defended our capstone project.", type: "research" }, { title: "Teachers' Day Surprise",
+            date: "2025-10-05", description: "We organized a surprise party for our teachers.", type: "event" }, { title: "Christmas Party 2025",
+            date: "2025-12-18", description: "Gift exchange and games.", type: "activity" }, { title: "Web Design Challenge",
+            date: "2026-01-12", description: "Inter-class competition on best UI.", type: "competition" }];
+        const achievements = ["Best in Programming 2026", "Most Innovative Project", "100% Passing Rate in NCII",
+            "Community Tech Outreach", "Outstanding Attendance Award"
+        ];
+        const gradMemories = ["Graduation rehearsal fun", "Final class picture", "Last day of school",
+            "Goodbye messages to teachers", "Signing each other's yearbooks"
+        ];
+        const galleryImages = ["gallery/photo1.jpg", "gallery/photo2.jpg", "gallery/photo3.jpg", "gallery/photo4.jpg"];
+        const hiddenGalleryImages = ["gallery/secret1.jpg", "gallery/secret2.jpg"];
+        const playlist = [{ title: "Theme 1 (Pixel Pop)", src: "audio/theme1.mp3" }, { title: "Pixel Theme (Chiptune)",
+            src: "audio/pixel-theme.mp3" }, { title: "Windows 98 Theme", src: "audio/windows98-theme.mp3" }];
 
         // ======================= GLOBALS =======================
-        let currentAudio = null, currentPlaylistIndex = 0, shuffledPlaylist = [...playlist], slideshowInterval = null, weatherState = 0;
+        let currentAudio = null,
+            currentPlaylistIndex = 0,
+            shuffledPlaylist = [...playlist],
+            slideshowInterval = null,
+            weatherState = 0;
         let secretsFound = 0;
         const discoveredSecrets = new Set(JSON.parse(localStorage.getItem('techproSecrets') || '[]'));
         secretsFound = discoveredSecrets.size;
         let introFinished = false;
-        let themeClicks = 0, studentClicks = 0, logoClicks = 0, konamiPos = 0, scrolled = false;
-        const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+        let themeClicks = 0,
+            studentClicks = 0,
+            logoClicks = 0,
+            konamiPos = 0,
+            scrolled = false;
+        const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft',
+            'ArrowRight', 'b', 'a'
+        ];
+
+        // ======================= MOBILE DETECTION =======================
+        const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.matchMedia(
+            '(max-width: 768px)').matches;
 
         // ======================= UTILITIES =======================
         function unlockSecret(id, name, listId) {
             if (discoveredSecrets.has(id)) return;
             discoveredSecrets.add(id);
             secretsFound++;
-            document.getElementById('secretCountDisplay').textContent = secretsFound + '/10';
-            document.getElementById(listId).textContent = name;
-            alert(`🔐 Secret Found!\n\n${name}\n\nDiscovered: ${secretsFound}/10`);
+            const countDisplay = document.getElementById('secretCountDisplay');
+            if (countDisplay) countDisplay.textContent = secretsFound + '/10';
+            const listItem = document.getElementById(listId);
+            if (listItem) listItem.textContent = name;
+            alert('🔐 Secret Found!\n\n' + name + '\n\nDiscovered: ' + secretsFound + '/10');
             if (secretsFound === 10) {
                 alert('🏆 SECRET MASTER\n\nYou found all 10 Secrets!\nHidden page unlocked!');
                 document.body.classList.add('rainbowMode');
-                document.getElementById('secretBadge').style.display = 'block';
-                document.getElementById('secretRewards').style.display = 'block';
-                document.getElementById('hiddenGallery').innerHTML = hiddenGalleryImages.map(src => `<img src="${src}" style="width:100%; border:3px solid white;">`).join('');
+                const badge = document.getElementById('secretBadge');
+                if (badge) badge.style.display = 'block';
+                const rewards = document.getElementById('secretRewards');
+                if (rewards) rewards.style.display = 'block';
+                const hiddenGallery = document.getElementById('hiddenGallery');
+                if (hiddenGallery) hiddenGallery.innerHTML = hiddenGalleryImages.map(src =>
+                    '<img src="' + src +
+                    '" style="width:100%; border:3px solid white; border-radius:4px;" alt="Secret photo">').join('');
             }
             localStorage.setItem('techproSecrets', JSON.stringify([...discoveredSecrets]));
         }
-        function stopAllMusic() { document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; }); }
-        function playThemeMusic() { stopAllMusic(); const theme = localStorage.getItem('theme') || 'blue'; let src = 'audio/pixel-theme.mp3'; if (theme === 'win98') src = 'audio/windows98-theme.mp3'; const audio = document.querySelector(`audio[src="${src}"]`); if (audio) { audio.volume = document.getElementById('volumeSlider').value; audio.play().catch(()=>{}); } currentAudio = audio; document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + (theme === 'win98' ? 'Windows 98' : 'Pixel Theme'); }
-        function animateValue(id, target) { let val = 0; const interval = setInterval(() => { val++; document.getElementById(id).innerText = val; if (val >= target) clearInterval(interval); }, 50); }
+
+        function stopAllMusic() { document.querySelectorAll('audio').forEach(a => { a.pause();
+                a.currentTime = 0; }); }
+
+        function playThemeMusic() {
+            stopAllMusic();
+            const theme = localStorage.getItem('theme') || 'blue';
+            let src = 'audio/pixel-theme.mp3';
+            if (theme === 'win98') src = 'audio/windows98-theme.mp3';
+            const audio = document.querySelector('audio[src="' + src + '"]');
+            if (audio) {
+                audio.volume = document.getElementById('volumeSlider').value;
+                audio.play().catch(() => {});
+            }
+            currentAudio = audio;
+            document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + (theme === 'win98' ?
+                'Windows 98' : 'Pixel Theme');
+        }
+
+        function animateValue(id, target) {
+            let val = 0;
+            const interval = setInterval(() => { val++;
+                document.getElementById(id).innerText = val; if (val >= target) clearInterval(interval); }, 50);
+        }
+
         function launchYearbook() {
             if (introFinished) return;
             introFinished = true;
-            document.getElementById('startupSound').play().catch(()=>{});
+            document.getElementById('startupSound').play().catch(() => {});
             const intro = document.getElementById('introScreen');
             intro.classList.add('fade-out');
             setTimeout(() => {
@@ -460,18 +1518,18 @@
                 animateValue('teacherCount', 10);
                 animateValue('yearCount', 2);
                 playThemeMusic();
+                document.body.style.overflow = '';
             }, 800);
         }
-        // Prevent reload on external links
+
         function preventExternalReload() {
             document.querySelectorAll('.prevent-reload').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const feature = link.getAttribute('data-feature') || 'this feature';
-                    alert(`✨ "${feature}" is coming soon! Stay tuned. ✨`);
+                    alert('✨ "' + feature + '" is coming soon! Stay tuned. ✨');
                 });
             });
-            // Also handle any other anchor that might have href="#" without class but could cause issues
             document.querySelectorAll('a[href="#"]').forEach(link => {
                 if (!link.hasAttribute('data-handled')) {
                     link.setAttribute('data-handled', 'true');
@@ -481,82 +1539,452 @@
         }
 
         // ======================= RENDER FUNCTIONS =======================
-        function renderOfficers() { document.getElementById('officersGrid').innerHTML = officers.map(o => `<div class="retro-card"><h3>${o.title}</h3><p>${o.name || 'TBA'}</p></div>`).join(''); }
-        function renderStudents() { document.getElementById('studentGrid').innerHTML = students.map(s => `<div class="flip-card"><div class="flip-inner"><div class="flip-front"><img src="${s.img}" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=${s.name}'"><h3>${s.name}</h3><p>${s.nickname ? '"'+s.nickname+'"' : ''}</p><p>${s.section}</p></div><div class="flip-back"><p><strong>Quote:</strong> "${s.quote}"</p><p><strong>Dream Job:</strong> ${s.dreamJob}</p><p><strong>Favorite Memory:</strong> ${s.favoriteMemory}</p></div></div></div>`).join(''); }
-        function renderFame() { document.getElementById('fameGrid').innerHTML = fameAwards.map(a => `<div class="retro-card"><span class="badge">${a.badge}</span><h3>${a.title}</h3><p>${a.recipient}</p></div>`).join(''); }
-        function renderGallery() { document.getElementById('galleryGrid').innerHTML = galleryImages.map((src, i) => `<img src="${src}" alt="Gallery ${i+1}" onclick="openLightbox(${i})" style="cursor:pointer; border:3px solid var(--border); width:100%;">`).join(''); }
-        function renderMemories() { document.getElementById('memoryGrid').innerHTML = memoryEvents.map(m => `<div class="retro-card"><h3>${m.title}</h3><p>${m.date}</p><p>${m.description}</p><span>[${m.type.toUpperCase()}]</span></div>`).join(''); }
-        function renderGraduation() { document.getElementById('achievementGrid').innerHTML = achievements.map(a => `<div class="retro-card"><p>🏆 ${a}</p></div>`).join(''); document.getElementById('gradMemoriesGrid').innerHTML = gradMemories.map(m => `<div class="retro-card"><p>🎓 ${m}</p></div>`).join(''); }
-        function filterStudents() { const query = document.getElementById('searchInput').value.toLowerCase(); const section = document.getElementById('sectionFilter').value; const filtered = students.filter(s => (section === 'all' || s.section === section) && (s.name.toLowerCase().includes(query) || s.quote.toLowerCase().includes(query) || (s.favoriteMemory || "").toLowerCase().includes(query))); document.getElementById('searchResults').innerHTML = filtered.map(s => `<div class="retro-card"><img src="${s.img}" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=${s.name}'"><h3>${s.name}</h3><p>${s.section}</p><p>${s.quote}</p></div>`).join(''); }
-        function updatePlaylistUI() { const container = document.getElementById('playlistContainer'); container.innerHTML = shuffledPlaylist.map((song, i) => `<li style="cursor:pointer; padding:5px; ${i===currentPlaylistIndex?'font-weight:bold;':''}" onclick="jukeboxSelect(${i})">${song.title}</li>`).join(''); }
-        function jukeboxSelect(index) { currentPlaylistIndex = index; playMusicByIndex(); updatePlaylistUI(); }
-        function playMusicByIndex() { stopAllMusic(); const song = shuffledPlaylist[currentPlaylistIndex]; currentAudio = document.querySelector(`audio[src="${song.src}"]`); if (currentAudio) { currentAudio.volume = document.getElementById('volumeSlider').value; currentAudio.play().catch(()=>{}); } document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + song.title; }
-        window.jukeboxPlayPause = function() { if (currentAudio) { if (currentAudio.paused) currentAudio.play().catch(()=>{}); else currentAudio.pause(); } else if (shuffledPlaylist.length) { jukeboxSelect(0); } };
-        window.jukeboxNext = function() { currentPlaylistIndex = (currentPlaylistIndex + 1) % shuffledPlaylist.length; playMusicByIndex(); updatePlaylistUI(); };
-        window.jukeboxShuffle = function() { for (let i = shuffledPlaylist.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shuffledPlaylist[i], shuffledPlaylist[j]] = [shuffledPlaylist[j], shuffledPlaylist[i]]; } currentPlaylistIndex = 0; playMusicByIndex(); updatePlaylistUI(); };
-        window.stopMusic = function() { stopAllMusic(); currentAudio = null; document.getElementById('currentSongDisplay').textContent = 'No song playing'; };
-        document.getElementById('volumeSlider').addEventListener('input', (e) => { if (currentAudio) currentAudio.volume = e.target.value; });
-        let lightboxIndex = 0; window.openLightbox = function(index) { lightboxIndex = index; document.getElementById('lightboxImg').src = galleryImages[index]; document.getElementById('lightbox').style.display = 'flex'; };
-        document.getElementById('closeLightbox').onclick = () => document.getElementById('lightbox').style.display = 'none';
-        document.getElementById('prevImg').onclick = () => { lightboxIndex = (lightboxIndex - 1 + galleryImages.length) % galleryImages.length; document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
-        document.getElementById('nextImg').onclick = () => { lightboxIndex = (lightboxIndex + 1) % galleryImages.length; document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
-        document.getElementById('slideshowBtn').addEventListener('click', function() { if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; this.textContent = '▶ Start Slideshow'; } else { slideshowInterval = setInterval(() => { lightboxIndex = (lightboxIndex + 1) % galleryImages.length; if (document.getElementById('lightbox').style.display === 'flex') { document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; } }, 3000); this.textContent = '⏸ Stop Slideshow'; } });
+        function renderOfficers() {
+            document.getElementById('officersGrid').innerHTML = officers.map(o =>
+                '<div class="retro-card"><h3>' + o.title + '</h3><p>' + (o.name || 'TBA') + '</p></div>').join('');
+        }
+
+        function renderStudents() {
+            document.getElementById('studentGrid').innerHTML = students.map(s =>
+                '<div class="flip-card" data-student-id="' + s.id +
+                '" onclick="toggleFlipCard(this)" role="button" tabindex="0" aria-label="Flip card for ' + s.name +
+                '"><div class="flip-inner"><div class="flip-front"><img src="' + s.img +
+                '" class="pfp" onerror="this.src=\'https://via.placeholder.com/120?text=' + encodeURIComponent(s
+                    .name) + '\'" alt="' + s.name + '"><h3>' + s.name + '</h3><p>' + (s.nickname ? '"' + s.nickname +
+                    '"' : '') + '</p><p>' + s.section +
+                '</p><p class="flip-hint">👆 Tap to flip</p></div><div class="flip-back"><p><strong>Quote:</strong> "' +
+                s.quote + '"</p><p><strong>Dream Job:</strong> ' + s.dreamJob +
+                '</p><p><strong>Favorite Memory:</strong> ' + s.favoriteMemory + '</p></div></div></div>').join('');
+        }
+
+        function renderFame() {
+            document.getElementById('fameGrid').innerHTML = fameAwards.map(a =>
+                '<div class="retro-card"><span class="badge">' + a.badge + '</span><h3>' + a.title + '</h3><p>' + a
+                .recipient + '</p></div>').join('');
+        }
+
+        function renderGallery() {
+            document.getElementById('galleryGrid').innerHTML = galleryImages.map((src, i) =>
+                '<img src="' + src + '" alt="Gallery ' + (i + 1) +
+                '" onclick="openLightbox(' + i +
+                ')" style="cursor:pointer; border:3px solid var(--border); width:100%; border-radius:4px; object-fit:cover; aspect-ratio:4/3;">'
+                ).join('');
+        }
+
+        function renderMemories() {
+            document.getElementById('memoryGrid').innerHTML = memoryEvents.map(m =>
+                '<div class="retro-card"><h3>' + m.title + '</h3><p>' + m.date + '</p><p>' + m.description +
+                '</p><span>[' + m.type.toUpperCase() + ']</span></div>').join('');
+        }
+
+        function renderGraduation() {
+            document.getElementById('achievementGrid').innerHTML = achievements.map(a =>
+                '<div class="retro-card"><p>🏆 ' + a + '</p></div>').join('');
+            document.getElementById('gradMemoriesGrid').innerHTML = gradMemories.map(m =>
+                '<div class="retro-card"><p>🎓 ' + m + '</p></div>').join('');
+        }
+
+        function filterStudents() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const section = document.getElementById('sectionFilter').value;
+            const filtered = students.filter(s => (section === 'all' || s.section === section) && (s.name.toLowerCase()
+                .includes(query) || s.quote.toLowerCase().includes(query) || (s.favoriteMemory || "").toLowerCase()
+                .includes(query)));
+            document.getElementById('searchResults').innerHTML = filtered.map(s =>
+                '<div class="retro-card"><img src="' + s.img +
+                '" class="pfp" onerror="this.src=\'https://via.placeholder.com/120?text=' + encodeURIComponent(s.name) +
+                '\'" alt="' + s.name + '"><h3>' + s.name + '</h3><p>' + s.section + '</p><p>' + s.quote + '</p></div>'
+                ).join('');
+        }
+
+        function updatePlaylistUI() {
+            const container = document.getElementById('playlistContainer');
+            container.innerHTML = shuffledPlaylist.map((song, i) =>
+                '<li style="cursor:pointer; padding:8px 5px; ' + (i === currentPlaylistIndex ? 'font-weight:bold; background:rgba(255,255,255,0.1); border-radius:4px;' :
+                    '') + '" onclick="jukeboxSelect(' + i + ')">' + song.title + '</li>').join('');
+        }
+
+        function jukeboxSelect(index) { currentPlaylistIndex = index;
+            playMusicByIndex();
+            updatePlaylistUI(); }
+
+        function playMusicByIndex() {
+            stopAllMusic();
+            const song = shuffledPlaylist[currentPlaylistIndex];
+            currentAudio = document.querySelector('audio[src="' + song.src + '"]');
+            if (currentAudio) { currentAudio.volume = document.getElementById('volumeSlider').value;
+                currentAudio.play().catch(() => {}); }
+            document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + song.title;
+        }
+
+        // ======================= FLIP CARD TOUCH SUPPORT =======================
+        function toggleFlipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        // ======================= GLOBAL FUNCTIONS =======================
+        window.jukeboxPlayPause = function() {
+            if (currentAudio) { if (currentAudio.paused) currentAudio.play().catch(() => {});
+                else currentAudio.pause(); } else if (shuffledPlaylist.length) { jukeboxSelect(0); }
+        };
+        window.jukeboxNext = function() { currentPlaylistIndex = (currentPlaylistIndex + 1) % shuffledPlaylist.length;
+            playMusicByIndex();
+            updatePlaylistUI(); };
+        window.jukeboxShuffle = function() {
+            for (let i = shuffledPlaylist.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [
+                    shuffledPlaylist[i], shuffledPlaylist[j]
+                ] = [shuffledPlaylist[j], shuffledPlaylist[i]]; }
+            currentPlaylistIndex = 0;
+            playMusicByIndex();
+            updatePlaylistUI();
+        };
+        window.stopMusic = function() { stopAllMusic();
+            currentAudio = null;
+            document.getElementById('currentSongDisplay').textContent = 'No song playing'; };
+        window.toggleFlipCard = toggleFlipCard;
+        window.jukeboxSelect = jukeboxSelect;
+        window.launchYearbook = launchYearbook;
+
+        document.getElementById('volumeSlider').addEventListener('input', (e) => { if (currentAudio) currentAudio
+                .volume = e.target.value; });
+
+        let lightboxIndex = 0;
+        window.openLightbox = function(index) { lightboxIndex = index;
+            document.getElementById('lightboxImg').src = galleryImages[index];
+            document.getElementById('lightbox').style.display = 'flex'; };
+        document.getElementById('closeLightbox').onclick = () => document.getElementById('lightbox').style.display =
+            'none';
+        document.getElementById('prevImg').onclick = () => { lightboxIndex = (lightboxIndex - 1 + galleryImages.length) %
+                galleryImages.length;
+            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
+        document.getElementById('nextImg').onclick = () => { lightboxIndex = (lightboxIndex + 1) % galleryImages.length;
+            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
+        document.getElementById('slideshowBtn').addEventListener('click', function() {
+            if (slideshowInterval) { clearInterval(slideshowInterval);
+                slideshowInterval = null;
+                this.textContent = '▶ Start Slideshow'; } else {
+                slideshowInterval = setInterval(() => { lightboxIndex = (lightboxIndex + 1) % galleryImages.length; if (
+                        document.getElementById('lightbox').style.display === 'flex') { document.getElementById(
+                            'lightboxImg').src = galleryImages[lightboxIndex]; } }, 3000);
+                this.textContent = '⏸ Stop Slideshow';
+            }
+        });
         window.openRetroDesktop = function() { document.getElementById('retroDesktop').style.display = 'flex'; };
         window.closeDesktop = function() { document.getElementById('retroDesktop').style.display = 'none'; };
-        window.openWindow = function(title, content) { const win = document.createElement('div'); win.className = 'window'; win.innerHTML = `<div class="window-title">${title}</div><div>${content}</div><button onclick="this.parentElement.remove()" style="margin-top:5px;">Close</button>`; win.style.left = Math.random() * 60 + '%'; win.style.top = Math.random() * 60 + '%'; document.getElementById('retroDesktop').appendChild(win); let offsetX, offsetY; win.querySelector('.window-title').addEventListener('mousedown', (e) => { offsetX = e.clientX - win.offsetLeft; offsetY = e.clientY - win.offsetTop; function move(e) { win.style.left = (e.clientX - offsetX) + 'px'; win.style.top = (e.clientY - offsetY) + 'px'; } document.addEventListener('mousemove', move); document.addEventListener('mouseup', () => document.removeEventListener('mousemove', move), { once: true }); }); };
-        const themeCollection = new Set(); function registerTheme(theme) { themeCollection.add(theme); if (themeCollection.size === 6) unlockSecret('allThemes', 'Theme Collector', 's6'); }
-        window.setTheme = function(theme) { localStorage.setItem('theme', theme); const root = document.documentElement; const themes = { blue: {'--bg':'#09142e','--text':'#ffffff','--card':'#132040','--header':'#243b72','--border':'#ffffff'}, green: {'--bg':'#000000','--text':'#00ff00','--card':'#001800','--header':'#002800','--border':'#00ff00'}, amber: {'--bg':'#000000','--text':'#ffb000','--card':'#221400','--header':'#332000','--border':'#ffb000'}, purple: {'--bg':'#1d1033','--text':'#dca6ff','--card':'#2f174f','--header':'#472470','--border':'#dca6ff'}, dark: {'--bg':'#111111','--text':'#ffffff','--card':'#1e1e1e','--header':'#222222','--border':'#666666'}, win98: {'--bg':'#008080','--text':'#ffffff','--card':'#c0c0c0','--header':'#000080','--border':'#808080'} }; const t = themes[theme]; if (t) for (let prop in t) root.style.setProperty(prop, t[prop]); document.querySelectorAll('.retro-card').forEach(card => { if (theme === 'win98') card.classList.add('win98-card'); else card.classList.remove('win98-card'); }); document.getElementById('win98Taskbar').style.display = theme === 'win98' ? 'flex' : 'none'; document.body.classList.toggle('win98-mode', theme === 'win98'); registerTheme(theme); playThemeMusic(); };
-        window.toggleDayNight = function() { document.body.classList.toggle('day-mode'); localStorage.setItem('dayMode', document.body.classList.contains('day-mode')); };
-        function autoDayNight() { const hour = new Date().getHours(); if (hour >= 6 && hour < 18) document.body.classList.add('day-mode'); else document.body.classList.remove('day-mode'); } autoDayNight(); if (localStorage.getItem('dayMode') === 'true') document.body.classList.add('day-mode');
-        function cycleWeather() { weatherState = (weatherState + 1) % 4; const weatherOverlay = document.getElementById('weatherOverlay'); weatherOverlay.className = ''; weatherOverlay.style.display = 'none'; if (weatherState === 1) { weatherOverlay.classList.add('sunny'); weatherOverlay.style.display='block'; } else if (weatherState === 2) { weatherOverlay.classList.add('rainy'); weatherOverlay.style.display='block'; } else if (weatherState === 3) { weatherOverlay.classList.add('starry-night'); weatherOverlay.style.display='block'; } else weatherOverlay.style.display='none'; }
-        function updateClocks() { const now = new Date(); const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); document.getElementById('taskbarClock').innerText = time; document.getElementById('fallbackClock').innerHTML = `📅 ${now.toLocaleDateString()} 🕒 ${time}`; }
+        window.openWindow = function(title, content) {
+            const win = document.createElement('div');
+            win.className = 'window';
+            win.innerHTML =
+                '<div class="window-title">' + title +
+                '</div><div>' + content +
+                '</div><button onclick="this.parentElement.remove()" style="margin-top:5px; padding:6px 10px; cursor:pointer; font-family:\'VT323\',monospace;">Close</button>';
+            win.style.left = Math.random() * 50 + '%';
+            win.style.top = Math.random() * 40 + '%';
+            document.getElementById('retroDesktop').appendChild(win);
+            let offsetX, offsetY;
+            const titleBar = win.querySelector('.window-title');
+            titleBar.addEventListener('mousedown', (e) => { offsetX = e.clientX - win.offsetLeft;
+                offsetY = e.clientY - win.offsetTop;
+
+                function move(e) { win.style.left = (e.clientX - offsetX) + 'px';
+                    win.style.top = (e.clientY - offsetY) + 'px'; }
+                document.addEventListener('mousemove', move);
+                document.addEventListener('mouseup', () => document.removeEventListener('mousemove', move), { once: true }); });
+            titleBar.addEventListener('touchstart', (e) => { const touch = e.touches[0];
+                offsetX = touch.clientX - win.offsetLeft;
+                offsetY = touch.clientY - win.offsetTop;
+
+                function moveTouch(e2) { const t = e2.touches[0];
+                    win.style.left = (t.clientX - offsetX) + 'px';
+                    win.style.top = (t.clientY - offsetY) + 'px'; }
+
+                function endTouch() { document.removeEventListener('touchmove', moveTouch);
+                    document.removeEventListener('touchend', endTouch); }
+                document.addEventListener('touchmove', moveTouch, { passive: false });
+                document.addEventListener('touchend', endTouch, { once: true }); }, { passive: false });
+        };
+
+        const themeCollection = new Set();
+
+        function registerTheme(theme) { themeCollection.add(theme); if (themeCollection.size === 6) unlockSecret(
+                'allThemes', 'Theme Collector', 's6'); }
+        window.setTheme = function(theme) {
+            localStorage.setItem('theme', theme);
+            const root = document.documentElement;
+            const themes = {
+                blue: { '--bg': '#09142e', '--text': '#ffffff', '--card': '#132040', '--header': '#243b72',
+                    '--border': '#ffffff' },
+                green: { '--bg': '#000000', '--text': '#00ff00', '--card': '#001800', '--header': '#002800',
+                    '--border': '#00ff00' },
+                amber: { '--bg': '#000000', '--text': '#ffb000', '--card': '#221400', '--header': '#332000',
+                    '--border': '#ffb000' },
+                purple: { '--bg': '#1d1033', '--text': '#dca6ff', '--card': '#2f174f', '--header': '#472470',
+                    '--border': '#dca6ff' },
+                dark: { '--bg': '#111111', '--text': '#ffffff', '--card': '#1e1e1e', '--header': '#222222',
+                    '--border': '#666666' },
+                win98: { '--bg': '#008080', '--text': '#ffffff', '--card': '#c0c0c0', '--header': '#000080',
+                    '--border': '#808080' }
+            };
+            const t = themes[theme];
+            if (t) for (let prop in t) root.style.setProperty(prop, t[prop]);
+            document.querySelectorAll('.retro-card').forEach(card => { if (theme === 'win98') card.classList.add(
+                    'win98-card');
+                else card.classList.remove('win98-card'); });
+            document.getElementById('win98Taskbar').style.display = theme === 'win98' ? 'flex' : 'none';
+            document.body.classList.toggle('win98-mode', theme === 'win98');
+            registerTheme(theme);
+            playThemeMusic();
+            document.getElementById('themeMenu').style.display = 'none';
+        };
+        window.toggleDayNight = function() { document.body.classList.toggle('day-mode');
+            localStorage.setItem('dayMode', document.body.classList.contains('day-mode'));
+            document.getElementById('themeMenu').style.display = 'none'; };
+
+        function autoDayNight() { const hour = new Date().getHours(); if (hour >= 6 && hour < 18) document.body.classList
+                .add('day-mode');
+            else document.body.classList.remove('day-mode'); }
+        autoDayNight();
+        if (localStorage.getItem('dayMode') === 'true') document.body.classList.add('day-mode');
+
+        function cycleWeather() {
+            weatherState = (weatherState + 1) % 4;
+            const weatherOverlay = document.getElementById('weatherOverlay');
+            weatherOverlay.className = '';
+            weatherOverlay.style.display = 'none';
+            if (weatherState === 1) { weatherOverlay.classList.add('sunny');
+                weatherOverlay.style.display = 'block'; } else if (weatherState === 2) { weatherOverlay.classList.add(
+                    'rainy');
+                weatherOverlay.style.display = 'block'; } else if (weatherState === 3) { weatherOverlay.classList.add(
+                    'starry-night');
+                weatherOverlay.style.display = 'block'; } else weatherOverlay.style.display = 'none';
+        }
+
+        function updateClocks() {
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const taskbarClock = document.getElementById('taskbarClock');
+            if (taskbarClock) taskbarClock.innerText = time;
+            const fallbackClock = document.getElementById('fallbackClock');
+            if (fallbackClock) fallbackClock.innerHTML = '📅 ' + now.toLocaleDateString() + ' 🕒 ' + time;
+        }
+
+        // ======================= MOBILE MENU FUNCTIONS =======================
+        function openMobileMenu() {
+            document.getElementById('mobileMenu').classList.add('open');
+            document.getElementById('mobileMenuBackdrop').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').classList.remove('open');
+            document.getElementById('mobileMenuBackdrop').classList.remove('open');
+            document.body.style.overflow = '';
+        }
 
         // ======================= EVENT LISTENERS & INIT =======================
         document.getElementById('searchInput').addEventListener('input', filterStudents);
         document.getElementById('sectionFilter').addEventListener('change', filterStudents);
-        document.getElementById('hamburgerBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('open'));
-        document.querySelectorAll('.mobile-menu a').forEach(a => a.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open')));
-        window.addEventListener('scroll', () => document.getElementById('backToTop').style.display = window.scrollY > 500 ? 'block' : 'none');
-        document.getElementById('backToTop').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
-        document.getElementById('startBtn').onclick = e => { e.stopPropagation(); const menu = document.getElementById('startMenu'); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
-        document.addEventListener('click', e => { if (!e.target.closest('#startMenu') && e.target !== document.getElementById('startBtn')) document.getElementById('startMenu').style.display = 'none'; });
-        document.getElementById('deskSecretBtn').addEventListener('click', () => document.getElementById('secretPanel').classList.toggle('open'));
-        document.getElementById('deskJukeboxBtn').addEventListener('click', () => document.getElementById('jukeboxPanel').classList.toggle('open'));
-        document.getElementById('deskThemeBtn').addEventListener('click', () => { const menu = document.getElementById('themeMenu'); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; });
-        document.getElementById('deskWeatherBtn').addEventListener('click', cycleWeather);
-        document.getElementById('mobileSecretBtn').addEventListener('click', () => { document.getElementById('secretPanel').classList.toggle('open'); document.getElementById('mobileMenu').classList.remove('open'); });
-        document.getElementById('mobileJukeboxBtn').addEventListener('click', () => { document.getElementById('jukeboxPanel').classList.toggle('open'); document.getElementById('mobileMenu').classList.remove('open'); });
-        document.getElementById('mobileThemeBtn').addEventListener('click', () => { const menu = document.getElementById('themeMenu'); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; document.getElementById('mobileMenu').classList.remove('open'); });
-        document.getElementById('mobileWeatherBtn').addEventListener('click', () => { cycleWeather(); document.getElementById('mobileMenu').classList.remove('open'); });
-        document.getElementById('deskThemeBtn')?.addEventListener('click', () => { if (++themeClicks === 10) unlockSecret('theme', 'Theme Master', 's5'); });
-        document.addEventListener('click', e => { if (e.target.closest('.retro-card') || e.target.closest('.flip-card')) { if (++studentClicks === 20) unlockSecret('students', 'Social Butterfly', 's7'); } });
-        document.querySelectorAll('.logo').forEach(logo => logo.addEventListener('click', () => { if (++logoClicks === 5) unlockSecret('logo', 'TechPro Logo Secret', 's1'); }));
-        document.addEventListener('keydown', e => {
-            if (e.key === konami[konamiPos]) { konamiPos++; if (konamiPos === konami.length) { unlockSecret('konami', 'Retro Gamer', 's2'); konamiPos = 0; } } else konamiPos = 0;
-            if (e.key === '`' && !e.target.matches('input, textarea')) { document.getElementById('terminalOverlay').style.display = 'block'; document.getElementById('terminalInput').focus(); e.preventDefault(); }
+        document.getElementById('hamburgerBtn').addEventListener('click', openMobileMenu);
+        document.getElementById('mobileMenuClose').addEventListener('click', closeMobileMenu);
+        document.getElementById('mobileMenuBackdrop').addEventListener('click', closeMobileMenu);
+        document.querySelectorAll('.mobile-menu a').forEach(a => a.addEventListener('click', closeMobileMenu));
+        document.querySelectorAll('.mobile-menu .nav-util-mobile').forEach(btn => btn.addEventListener('click',
+            closeMobileMenu));
+        window.addEventListener('scroll', () => {
+            const backBtn = document.getElementById('backToTop');
+            if (backBtn) backBtn.style.display = window.scrollY > 500 ? 'block' : 'none';
         });
-        window.addEventListener('scroll', () => { if (!scrolled && window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) { scrolled = true; unlockSecret('bottom', 'Deep Explorer', 's3'); } });
+        document.getElementById('backToTop').addEventListener('click', () => window.scrollTo({ top: 0,
+            behavior: 'smooth' }));
+        document.getElementById('startBtn').onclick = e => { e.stopPropagation(); const menu = document.getElementById(
+                'startMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
+        document.addEventListener('click', e => { if (!e.target.closest('#startMenu') && e.target !== document
+                .getElementById('startBtn')) document.getElementById('startMenu').style.display = 'none'; });
+        document.getElementById('deskSecretBtn').addEventListener('click', () => document.getElementById('secretPanel')
+            .classList.toggle('open'));
+        document.getElementById('deskJukeboxBtn').addEventListener('click', () => document.getElementById('jukeboxPanel')
+            .classList.toggle('open'));
+        document.getElementById('deskThemeBtn').addEventListener('click', () => { const menu = document.getElementById(
+                'themeMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; });
+        document.getElementById('deskWeatherBtn').addEventListener('click', cycleWeather);
+        document.getElementById('mobileSecretBtn').addEventListener('click', () => { document.getElementById(
+                'secretPanel').classList.toggle('open');
+            closeMobileMenu(); });
+        document.getElementById('mobileJukeboxBtn').addEventListener('click', () => { document.getElementById(
+                'jukeboxPanel').classList.toggle('open');
+            closeMobileMenu(); });
+        document.getElementById('mobileThemeBtn').addEventListener('click', () => { const menu = document.getElementById(
+                'themeMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            closeMobileMenu(); });
+        document.getElementById('mobileWeatherBtn').addEventListener('click', () => { cycleWeather();
+            closeMobileMenu(); });
+        document.getElementById('deskThemeBtn')?.addEventListener('click', () => { if (++themeClicks === 10) unlockSecret(
+                'theme', 'Theme Master', 's5'); });
+        document.addEventListener('click', e => { if (e.target.closest('.retro-card') || e.target.closest('.flip-card')) { if (
+                    ++studentClicks === 20) unlockSecret('students', 'Social Butterfly', 's7'); } });
+        document.querySelectorAll('.logo').forEach(logo => logo.addEventListener('click', () => { if (++logoClicks === 5)
+                unlockSecret('logo', 'TechPro Logo Secret', 's1'); }));
+        document.addEventListener('keydown', e => {
+            if (e.key === konami[konamiPos]) { konamiPos++; if (konamiPos === konami.length) { unlockSecret('konami',
+                    'Retro Gamer', 's2');
+                    konamiPos = 0; } } else konamiPos = 0;
+            if (e.key === '`' && !e.target.matches('input, textarea')) { document.getElementById('terminalOverlay')
+                    .style.display = 'block';
+                document.getElementById('terminalInput').focus();
+                e.preventDefault(); }
+            if (e.key === 'Escape') { closeMobileMenu();
+                document.getElementById('lightbox').style.display = 'none';
+                document.getElementById('terminalOverlay').style.display = 'none';
+                document.getElementById('themeMenu').style.display = 'none';
+                document.getElementById('startMenu').style.display = 'none'; }
+        });
+        window.addEventListener('scroll', () => { if (!scrolled && window.innerHeight + window.scrollY >= document.body
+                .offsetHeight - 50) { scrolled = true;
+                unlockSecret('bottom', 'Deep Explorer', 's3'); } });
         setTimeout(() => unlockSecret('time', 'Patient Visitor', 's4'), 60000);
         if (new Date().getHours() >= 22 || new Date().getHours() <= 5) unlockSecret('night', 'Night Owl', 's8');
         document.getElementById('secretPixel').onclick = () => unlockSecret('pixel', 'Hidden Pixel', 's9');
-        document.getElementById('creatorSecret').addEventListener('click', () => unlockSecret('creator', 'Developer Access', 's10'));
-        const starsContainer = document.querySelector('.stars'); for (let i = 0; i < 40; i++) { const star = document.createElement('div'); star.className = 'star'; star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%'; star.style.animationDelay = Math.random() * 3 + 's'; starsContainer.appendChild(star); }
-        const particlesDiv = document.getElementById('particles'); for (let i = 0; i < 15; i++) { const pixel = document.createElement('div'); pixel.className = 'pixel'; pixel.style.left = Math.random() * 100 + '%'; pixel.style.animationDelay = Math.random() * 15 + 's'; particlesDiv.appendChild(pixel); }
-        if (!window.matchMedia('(max-width:768px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) { for (let i = 0; i < 8; i++) { const drop = document.createElement('div'); drop.className = 'rain'; drop.style.left = Math.random() * 100 + '%'; drop.style.animationDelay = Math.random() * 2 + 's'; document.body.appendChild(drop); } }
-        document.getElementById('terminalOverlay').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
-        const terminalOutput = document.getElementById('terminalOutput'), terminalInput = document.getElementById('terminalInput');
-        terminalInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { const cmd = this.value.trim().toLowerCase(); this.value = ''; let response = ''; switch(cmd) { case 'help': response = 'Commands: help, students, teachers, gallery, secrets, date, cls'; break; case 'students': response = students.map(s => s.name).join(', '); break; case 'teachers': response = "Veronica Sta Monica, Paul Jayme, plus G11 teachers"; break; case 'gallery': response = galleryImages.join(', '); break; case 'secrets': response = `Secrets found: ${secretsFound}/10`; break; case 'date': response = new Date().toString(); break; case 'cls': terminalOutput.innerHTML = ''; return; default: response = `Unknown command: ${cmd}`; } terminalOutput.innerHTML += `<div>> ${cmd}</div><div>${response}</div>`; terminalOutput.scrollTop = terminalOutput.scrollHeight; } });
-        let visits = parseInt(localStorage.getItem('visitorCount') || '0'); visits++; localStorage.setItem('visitorCount', visits); document.getElementById('visitCount').textContent = visits;
-        const gradDate = new Date('2027-03-31T00:00:00').getTime(); setInterval(() => { const now = Date.now(); const distance = gradDate - now; if (distance < 0) { document.getElementById('countdown').textContent = '🎓 Graduated!'; return; } const days = Math.floor(distance / (1000*60*60*24)), hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60)), mins = Math.floor((distance % (1000*60*60)) / (1000*60)), secs = Math.floor((distance % (1000*60)) / 1000); document.getElementById('countdown').textContent = `🎓 ${days}d ${hours}h ${mins}m ${secs}s until Graduation`; }, 1000);
-        const bannerImages = ['images/class-photo.jpg', 'gallery/photo1.jpg', 'gallery/photo2.jpg']; let bannerIndex = 0; setInterval(() => { bannerIndex = (bannerIndex + 1) % bannerImages.length; document.getElementById('mainHeader').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${bannerImages[bannerIndex]}')`; }, 5000);
-        setInterval(updateClocks, 1000); updateClocks();
-        renderOfficers(); renderStudents(); renderFame(); renderGallery(); renderMemories(); renderGraduation(); updatePlaylistUI(); filterStudents(); window.setTheme(localStorage.getItem('theme') || 'blue');
-        setTimeout(() => { document.getElementById('enterPrompt').style.display = 'block'; }, 8000);
+        document.getElementById('creatorSecret').addEventListener('click', () => unlockSecret('creator',
+            'Developer Access', 's10'));
+
+        // Background effects (reduced for mobile)
+        const starsContainer = document.querySelector('.stars');
+        const starCount = isMobile ? 15 : 40;
+        for (let i = 0; i < starCount; i++) { const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star); }
+        const particlesDiv = document.getElementById('particles');
+        const particleCount = isMobile ? 5 : 15;
+        for (let i = 0; i < particleCount; i++) { const pixel = document.createElement('div');
+            pixel.className = 'pixel';
+            pixel.style.left = Math.random() * 100 + '%';
+            pixel.style.animationDelay = Math.random() * 15 + 's';
+            particlesDiv.appendChild(pixel); }
+        if (!isMobile && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) { for (let i = 0; i < 8; i++) { const
+                drop = document.createElement('div');
+            drop.className = 'rain';
+            drop.style.left = Math.random() * 100 + '%';
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(drop); } }
+
+        // Terminal
+        document.getElementById('terminalOverlay').addEventListener('click', function(e) { if (e.target === this) this
+                .style.display = 'none'; });
+        const terminalOutput = document.getElementById('terminalOutput'),
+            terminalInput = document.getElementById('terminalInput');
+        terminalInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { const cmd = this.value.trim().toLowerCase();
+                this.value = ''; let response = ''; switch (cmd) { case 'help': response =
+                        'Commands: help, students, teachers, gallery, secrets, date, cls'; break; case 'students': response =
+                        students.map(s => s.name).join(', '); break; case 'teachers': response =
+                        "Veronica Sta Monica, Paul Jayme, plus G11 teachers"; break; case 'gallery': response = galleryImages
+                        .join(', '); break; case 'secrets': response = 'Secrets found: ' + secretsFound + '/10'; break; case 'date': response =
+                        new Date().toString(); break; case 'cls': terminalOutput.innerHTML = ''; return; default: response =
+                        'Unknown command: ' + cmd; }
+                terminalOutput.innerHTML += '<div>> ' + cmd + '</div><div>' + response + '</div>';
+                terminalOutput.scrollTop = terminalOutput.scrollHeight; }
+        });
+
+        // Visitor count
+        let visits = parseInt(localStorage.getItem('visitorCount') || '0');
+        visits++;
+        localStorage.setItem('visitorCount', visits);
+        document.getElementById('visitCount').textContent = visits;
+
+        // Graduation countdown
+        const gradDate = new Date('2027-03-31T00:00:00').getTime();
+        setInterval(() => { const now = Date.now(); const distance = gradDate - now; if (distance < 0) { document
+                    .getElementById('countdown').textContent = '🎓 Graduated!'; return; } const days = Math.floor(distance /
+                    (1000 * 60 * 60 * 24)), hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)), secs = Math.floor((distance % (1000 * 60)) /
+                    1000);
+            document.getElementById('countdown').textContent = '🎓 ' + days + 'd ' + hours + 'h ' + mins + 'm ' + secs +
+                's until Graduation'; }, 1000);
+
+        // Banner rotation
+        const bannerImages = ['images/class-photo.jpg', 'gallery/photo1.jpg', 'gallery/photo2.jpg'];
+        let bannerIndex = 0;
+        setInterval(() => { bannerIndex = (bannerIndex + 1) % bannerImages.length;
+            document.getElementById('mainHeader').style.backgroundImage =
+                'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(\'' + bannerImages[bannerIndex] + '\')'; }, 5000);
+
+        // Clock updates
+        setInterval(updateClocks, 1000);
+        updateClocks();
+
+        // Initial renders
+        renderOfficers();
+        renderStudents();
+        renderFame();
+        renderGallery();
+        renderMemories();
+        renderGraduation();
+        updatePlaylistUI();
+        filterStudents();
+        window.setTheme(localStorage.getItem('theme') || 'blue');
+
+        // Intro screen setup
+        setTimeout(() => {
+            document.getElementById('enterPrompt').style.display = 'block';
+            if (isMobile) {
+                document.getElementById('tapButton').style.display = 'block';
+            }
+        }, isMobile ? 4000 : 8000);
+
+        // Intro screen event listeners
         document.getElementById('introScreen').addEventListener('click', () => launchYearbook());
-        document.addEventListener('keydown', (e) => { if (!introFinished && e.key === 'Enter') { e.preventDefault(); launchYearbook(); } });
-        if (document.getElementById('secretCountDisplay')) document.getElementById('secretCountDisplay').textContent = secretsFound + '/10';
-        if (secretsFound === 10) { document.getElementById('secretBadge').style.display = 'block'; document.getElementById('secretRewards').style.display = 'block'; document.getElementById('hiddenGallery').innerHTML = hiddenGalleryImages.map(src => `<img src="${src}" style="width:100%; border:3px solid white;">`).join(''); document.body.classList.add('rainbowMode'); }
+        document.getElementById('introScreen').addEventListener('touchend', (e) => {
+            if (!introFinished && e.target !== document.getElementById('tapButton')) {
+                launchYearbook();
+            }
+        });
+        document.getElementById('tapButton').addEventListener('click', (e) => {
+            e.stopPropagation();
+            launchYearbook();
+        });
+        document.addEventListener('keydown', (e) => { if (!introFinished && e.key === 'Enter') { e.preventDefault();
+                launchYearbook(); } });
+
+        // Restore secret state
+        if (document.getElementById('secretCountDisplay')) document.getElementById('secretCountDisplay').textContent =
+            secretsFound + '/10';
+        if (secretsFound === 10) {
+            const badge = document.getElementById('secretBadge');
+            if (badge) badge.style.display = 'block';
+            const rewards = document.getElementById('secretRewards');
+            if (rewards) rewards.style.display = 'block';
+            const hiddenGallery = document.getElementById('hiddenGallery');
+            if (hiddenGallery) hiddenGallery.innerHTML = hiddenGalleryImages.map(src => '<img src="' + src +
+                '" style="width:100%; border:3px solid white; border-radius:4px;" alt="Secret photo">').join('');
+            document.body.classList.add('rainbowMode');
+        }
+
         preventExternalReload();
+
+        // Prevent body scroll when intro is active
+        if (!introFinished) {
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close panels when tapping outside on mobile
+        document.addEventListener('click', function(e) {
+            const themeMenu = document.getElementById('themeMenu');
+            if (themeMenu.style.display === 'block' && !e.target.closest('#themeMenu') && !e.target.closest(
+                    '#deskThemeBtn') && !e.target.closest('#mobileThemeBtn')) {
+                themeMenu.style.display = 'none';
+            }
+        });
+
+        console.log('🚀 TechPro B Digital Yearbook Ready');
+        console.log('📱 Mobile-friendly version loaded');
+        console.log('💡 Tip: Tap student cards to flip them!');
+        console.log('🔍 Press ` key for terminal, ESC to close overlays');
     </script>
 </body>
 </html>
