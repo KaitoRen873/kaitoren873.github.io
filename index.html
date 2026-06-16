@@ -7,7 +7,7 @@
     ║   Complete Interactive Yearbook        ║
     ║   Single HTML File · Retro Pixel Style ║
     ║   MOBILE-FRIENDLY · Tap anywhere       ║
-    ║   + No reload on external links        ║
+    ║   + Royalty-free audio (SoundHelix)    ║
     ╚══════════════════════════════════════════╝
 -->
 <html lang="en">
@@ -1277,10 +1277,20 @@
         </div>
     </div>
 
-    <audio id="startupSound" preload="none"><source src="audio/startup.mp3" type="audio/mpeg"></audio>
-    <audio id="pixelMusic" loop preload="none"><source src="audio/pixel-theme.mp3" type="audio/mpeg"></audio>
-    <audio id="win98Music" loop preload="none"><source src="audio/windows98-theme.mp3" type="audio/mpeg"></audio>
-    <audio id="theme1Music" loop preload="none"><source src="audio/theme1.mp3" type="audio/mpeg"></audio>
+    <!-- ========== AUDIO SOURCES (Royalty-free from SoundHelix) ========== -->
+    <!-- Attribution: SoundHelix (https://www.soundhelix.com/examples/mp3/) - Creative Commons Attribution 3.0 -->
+    <audio id="startupSound" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="pixelMusic" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="win98Music" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="theme1Music" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="website">
         <header id="mainHeader">
@@ -1301,7 +1311,7 @@
         <nav class="mobile-menu" id="mobileMenu">
             <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
             <div class="nav-group-mobile"><span>📌 MAIN</span><a href="#officers">🏛 Officers</a><a href="#teachers">👩‍🏫 Teachers</a><a href="#students">🎓 Students</a><a href="#halloffame">🏆 Hall of Fame</a><a href="#gallery">📸 Gallery</a><a href="#memories">📖 Memory Book</a><a href="#graduation">🎓 Graduation</a><a href="#stats">📊 Statistics</a><a href="#timeline">⏳ Timeline</a><a href="#search">🔍 Search</a></div>
-            <div class="nav-group-mobile"><span>✨ EXTRAS</span><a href="#" class="prevent-reload" data-feature="Hall of Fame (ext)">🏅 Hall of Fame (ext)</a><a href="#" class="prevent-reload" data-feature="Messages">💬 Messages</a><a href="#" class="prevent-reload" data-feature="Computer Room">🖥️ Computer Room</a><a href="#" class="prevent-reload" data-feature="Secret Archive">🔒 Secret Archive</a><a href="#" class="prevent-reload" data-feature="About">👤 About</a><a href="#" class="prevent-reload" data-feature="Game">🎮 Game</a></div>
+            <div class="nav-group-mobile"><span>✨ EXTRAS</span><a href="halloffame.html" data-feature="Hall of Fame (ext)">🏅 Hall of Fame (ext)</a><a href="messages.html" data-feature="Messages">💬 Messages</a><a href="computerroom.html" class="prevent-reload" data-feature="Computer Room">🖥️ Computer Room</a><a href="secretarchive.html" data-feature="Secret Archive">🔒 Secret Archive</a><a href="about.html" data-feature="About">👤 About</a><a href="game.html" data-feature="Game">🎮 Game</a></div>
             <div class="nav-group-mobile"><span>⚙️ UTILITIES</span><button class="nav-util-mobile" id="mobileSecretBtn">🔐 Secret Panel</button><button class="nav-util-mobile" id="mobileJukeboxBtn">📻 Jukebox</button><button class="nav-util-mobile" id="mobileThemeBtn">🎨 Themes</button><button class="nav-util-mobile" id="mobileWeatherBtn">☀️ Weather FX</button></div>
         </nav>
 
@@ -1339,63 +1349,62 @@
     <script>
         // ======================= DATA =======================
         const students = [
-            { id: 1, name: "Alquza Almer Dela Cruz", nickname: "Alquza", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student1.jpg", favoriteMemory: "First day" },
-            { id: 2, name: "Edward Bautista Aquino", nickname: "Edward", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student2.jpg", favoriteMemory: "Intramurals" },
-            { id: 3, name: "Prince Del Birut Gayrama", nickname: "Prince", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student3.jpg", favoriteMemory: "Field trip" },
-            { id: 4, name: "Ron Matthew Belisario Ferreras", nickname: "Ron",
-                quote: "Whatever path you follow, keep moving forward", dreamJob: "Content Creator", section: "Grade 12",
-                img: "images/student4.jpg", favoriteMemory: "Coding nights" },
-            { id: 5, name: "Ryan Gaebriel Belisario Ferreras", nickname: "Ryan", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student5.jpg", favoriteMemory: "Basketball" },
-            { id: 6, name: "Jace Mathew Labicani", nickname: "Jace", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student6.jpg", favoriteMemory: "Hackathon" },
-            { id: 7, name: "Jared Lee Barnuevo Lim", nickname: "Jared", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student7.jpg", favoriteMemory: "Group projects" },
-            { id: 8, name: "Jhovance Eldrick Pacheco Olan", nickname: "Jhovance", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student8.jpg",
-            favoriteMemory: "Christmas party" },
-            { id: 9, name: "Chriswin B. Palmones", nickname: "Chriswin", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student9.jpg", favoriteMemory: "Graduation prep" },
-            { id: 10, name: "Phil Cyprian Ogalesco Resuello", nickname: "Phil", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student10.jpg", favoriteMemory: "Tech exhibit" },
-            { id: 11, name: "Gian Lee San Jose", nickname: "Gian", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student11.jpg", favoriteMemory: "Robotics" },
-            { id: 12, name: "Eziekiel Kyle Rios Sobremonte", nickname: "Eziekiel", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student12.jpg", favoriteMemory: "Quiz bee" },
-            { id: 13, name: "Ronald Silva Suba", nickname: "Ronald", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student13.jpg", favoriteMemory: "Retreat" },
-            { id: 14, name: "Calvin Claude Alipan Tala", nickname: "Calvin", quote: "No quote yet",
-            dreamJob: "Undecided", section: "Grade 12", img: "images/student14.jpg", favoriteMemory: "Internship" },
-            { id: 15, name: "Yusieff Acas Tanawit", nickname: "Yusieff", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student15.jpg", favoriteMemory: "Game dev" },
-            { id: 16, name: "John Patrick Sarcilla", nickname: "John Patrick", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student16.jpg", favoriteMemory: "Camping" },
-            { id: 17, name: "Mikaela Marcia Ababat", nickname: "Mikaela", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student17.jpg", favoriteMemory: "Dance practice" },
-            { id: 18, name: "Richa Mae Cuevas Mejos", nickname: "Richa", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student18.jpg", favoriteMemory: "Film showing" },
-            { id: 19, name: "Aira Pecana Natividad", nickname: "Aira",
-                quote: "Small step everyday leads to big achievements", dreamJob: "IT Specialist", section: "Grade 12",
-                img: "images/student19.jpg", favoriteMemory: "UI design" },
-            { id: 20, name: "Glyzel Ann Talvo Pagaduan", nickname: "Glyzel",
-                quote: "Dream big, work hard, stay humble", dreamJob: "Coffee shop owner", section: "Grade 12",
-                img: "images/student20.jpg", favoriteMemory: "Open mic" },
-            { id: 21, name: "Romea David Permejo", nickname: "Romea",
-                quote: "Be happy for what you have while working for what you want", dreamJob: "Call Center Agent",
-                section: "Grade 12", img: "images/student21.jpg", favoriteMemory: "Career guidance" },
-            { id: 22, name: "Mary Joy Picana Ramos", nickname: "Mary Joy",
-                quote: "Being hardworking and stay humble", dreamJob: "Web Developer", section: "Grade 12",
-                img: "images/student22.jpg", favoriteMemory: "Web dev contest" },
-            { id: 23, name: "Zie Cliza Ballejos Sablada", nickname: "Zie",
-                quote: "Every day is a chance to become better", dreamJob: "Freelancer", section: "Grade 12",
-                img: "images/student23.jpg", favoriteMemory: "Freelancing 101" },
-            { id: 24, name: "Alyka Tarnate", nickname: "Alyka",
-                quote: "Dreams will always stay dreams, unless you act upon them", dreamJob: "Active", section: "Grade 12",
-                img: "images/student24.jpg", favoriteMemory: "Leadership camp" }
-        ];
+        { id: 1, name: "Alquza Almer Dela Cruz", nickname: "Alquza", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student1.jpg" },
+        { id: 2, name: "Edward Bautista Aquino", nickname: "Edward", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student2.jpg" },
+        { id: 3, name: "Prince Del Birut Gayrama", nickname: "Prince", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student3.jpg" },
+        { id: 4, name: "Ron Matthew Belisario Ferreras", nickname: "Ron",
+            quote: "Whatever path you follow, keep moving forward", dreamJob: "Content Creator", section: "Grade 12",
+            img: "images/student4.jpg" },
+        { id: 5, name: "Ryan Gaebriel Belisario Ferreras", nickname: "Ryan", quote: "No quote yet",
+            dreamJob: "Undecided", section: "Grade 12", img: "images/student5.jpg" },
+        { id: 6, name: "Jace Mathew Labicani", nickname: "Jace", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student6.jpg" },
+        { id: 7, name: "Jared Lee Barnuevo Lim", nickname: "Jared", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student7.jpg" },
+        { id: 8, name: "Jhovance Eldrick Pacheco Olan", nickname: "Jhovance", quote: "No quote yet",
+            dreamJob: "Undecided", section: "Grade 12", img: "images/student8.jpg" },
+        { id: 9, name: "Chriswin B. Palmones", nickname: "Chriswin", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student9.jpg" },
+        { id: 10, name: "Phil Cyprian Ogalesco Resuello", nickname: "Phil", quote: "No quote yet",
+            dreamJob: "Undecided", section: "Grade 12", img: "images/student10.jpg" },
+        { id: 11, name: "Gian Lee San Jose", nickname: "Gian", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student11.jpg" },
+        { id: 12, name: "Eziekiel Kyle Rios Sobremonte", nickname: "Eziekiel", quote: "No quote yet",
+            dreamJob: "Undecided", section: "Grade 12", img: "images/student12.jpg" },
+        { id: 13, name: "Ronald Silva Suba", nickname: "Ronald", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student13.jpg" },
+        { id: 14, name: "Calvin Claude Alipan Tala", nickname: "Calvin", quote: "No quote yet",
+            dreamJob: "Undecided", section: "Grade 12", img: "images/student14.jpg" },
+        { id: 15, name: "Yusieff Acas Tanawit", nickname: "Yusieff", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student15.jpg" },
+        { id: 16, name: "John Patrick Sarcilla", nickname: "John Patrick", quote: "No quote yet",
+            dreamJob: "Undecided", section: "Grade 12", img: "images/student16.jpg" },
+        { id: 17, name: "Mikaela Marcia Ababat", nickname: "Mikaela", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student17.jpg" },
+        { id: 18, name: "Richa Mae Cuevas Mejos", nickname: "Richa", quote: "No quote yet", dreamJob: "Undecided",
+            section: "Grade 12", img: "images/student18.jpg" },
+        { id: 19, name: "Aira Pecana Natividad", nickname: "Aira",
+            quote: "Small step everyday leads to big achievements", dreamJob: "IT Specialist", section: "Grade 12",
+            img: "images/student19.jpg" },
+        { id: 20, name: "Glyzel Ann Talvo Pagaduan", nickname: "Glyzel",
+            quote: "Dream big, work hard, stay humble", dreamJob: "Coffee shop owner", section: "Grade 12",
+            img: "images/student20.jpg" },
+        { id: 21, name: "Romea David Permejo", nickname: "Romea",
+            quote: "Be happy for what you have while working for what you want", dreamJob: "Call Center Agent",
+            section: "Grade 12", img: "images/student21.jpg" },
+        { id: 22, name: "Mary Joy Picana Ramos", nickname: "Mary Joy",
+            quote: "Being hardworking and stay humble", dreamJob: "Web Developer", section: "Grade 12",
+            img: "images/student22.jpg" },
+        { id: 23, name: "Zie Cliza Ballejos Sablada", nickname: "Zie",
+            quote: "Every day is a chance to become better", dreamJob: "Freelancer", section: "Grade 12",
+            img: "images/student23.jpg" },
+        { id: 24, name: "Alyka Tarnate", nickname: "Alyka",
+            quote: "Dreams will always stay dreams, unless you act upon them", dreamJob: "Active", section: "Grade 12",
+            img: "images/student24.jpg" }
+    ];
         const officers = [
             { title: "G11 President", name: "Prince Saimon Del Birut" }, { title: "G12 President",
                 name: "Chriswin Palmones" },
@@ -1428,8 +1437,13 @@
         ];
         const galleryImages = ["gallery/photo1.jpg", "gallery/photo2.jpg", "gallery/photo3.jpg", "gallery/photo4.jpg"];
         const hiddenGalleryImages = ["gallery/secret1.jpg", "gallery/secret2.jpg"];
-        const playlist = [{ title: "Theme 1 (Pixel Pop)", src: "audio/theme1.mp3" }, { title: "Pixel Theme (Chiptune)",
-            src: "audio/pixel-theme.mp3" }, { title: "Windows 98 Theme", src: "audio/windows98-theme.mp3" }];
+
+        // ======================= PLAYLIST WITH ROYALTY-FREE URLs =======================
+        const playlist = [
+            { title: "SoundHelix Song 1", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+            { title: "SoundHelix Song 2", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+            { title: "SoundHelix Song 3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+        ];
 
         // ======================= GLOBALS =======================
         let currentAudio = null,
@@ -1485,16 +1499,16 @@
         function playThemeMusic() {
             stopAllMusic();
             const theme = localStorage.getItem('theme') || 'blue';
-            let src = 'audio/pixel-theme.mp3';
-            if (theme === 'win98') src = 'audio/windows98-theme.mp3';
-            const audio = document.querySelector('audio[src="' + src + '"]');
+            // For win98 theme, use win98Music (Song-3), else use pixelMusic (Song-2)
+            let audioId = (theme === 'win98') ? 'win98Music' : 'pixelMusic';
+            const audio = document.getElementById(audioId);
             if (audio) {
                 audio.volume = document.getElementById('volumeSlider').value;
                 audio.play().catch(() => {});
             }
             currentAudio = audio;
-            document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + (theme === 'win98' ?
-                'Windows 98' : 'Pixel Theme');
+            const songTitle = (theme === 'win98') ? 'SoundHelix Song 3' : 'SoundHelix Song 2';
+            document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + songTitle;
         }
 
         function animateValue(id, target) {
@@ -1506,7 +1520,12 @@
         function launchYearbook() {
             if (introFinished) return;
             introFinished = true;
-            document.getElementById('startupSound').play().catch(() => {});
+            // Play startup sound (Song-1)
+            const startup = document.getElementById('startupSound');
+            if (startup) {
+                startup.volume = document.getElementById('volumeSlider').value;
+                startup.play().catch(() => {});
+            }
             const intro = document.getElementById('introScreen');
             intro.classList.add('fade-out');
             setTimeout(() => {
@@ -1611,9 +1630,16 @@
         function playMusicByIndex() {
             stopAllMusic();
             const song = shuffledPlaylist[currentPlaylistIndex];
-            currentAudio = document.querySelector('audio[src="' + song.src + '"]');
-            if (currentAudio) { currentAudio.volume = document.getElementById('volumeSlider').value;
-                currentAudio.play().catch(() => {}); }
+            // Find the audio element that matches the src (or create a new one)
+            let audio = document.querySelector('audio[src="' + song.src + '"]');
+            if (!audio) {
+                // Create a temporary audio element if not found (should not happen)
+                audio = new Audio(song.src);
+                audio.loop = true;
+            }
+            audio.volume = document.getElementById('volumeSlider').value;
+            audio.play().catch(() => {});
+            currentAudio = audio;
             document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + song.title;
         }
 
@@ -1740,7 +1766,7 @@
             localStorage.setItem('dayMode', document.body.classList.contains('day-mode'));
             document.getElementById('themeMenu').style.display = 'none'; };
 
-        function autoDayNight() { const hour = new Date().getHours(); if (hour >= 6 && hour < 18) document.body.classList
+        function autoDayNight() { const hour = new Date().getHours(); if (hour >= 7 && hour < 19) document.body.classList
                 .add('day-mode');
             else document.body.classList.remove('day-mode'); }
         autoDayNight();
@@ -1985,6 +2011,7 @@
         console.log('📱 Mobile-friendly version loaded');
         console.log('💡 Tip: Tap student cards to flip them!');
         console.log('🔍 Press ` key for terminal, ESC to close overlays');
+        console.log('🎵 Audio powered by SoundHelix (CC BY 3.0)');
     </script>
 </body>
 </html>
