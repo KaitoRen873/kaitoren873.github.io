@@ -4,10 +4,9 @@
     ║   TECHPRO B (ICT) DIGITAL YEARBOOK     ║
     ║   Mabayuhan Senior High School (MSHS)  ║
     ║   SY 2025-2027                         ║
-    ║   Complete Interactive Yearbook        ║
-    ║   Single HTML File · Retro Pixel Style ║
-    ║   MOBILE-FRIENDLY · Tap anywhere       ║
-    ║   + Royalty-free audio (SoundHelix)    ║
+    ║   + Fixed AudioContext error           ║
+    ║   + Jukebox with Now Playing           ║
+    ║   + Student cards & all features       ║
     ╚══════════════════════════════════════════╝
 -->
 <html lang="en">
@@ -56,13 +55,13 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            padding-bottom: 70px;
         }
         body.day-mode {
             background: var(--day-bg);
             color: var(--day-text);
         }
 
-        /* Scanlines overlay - subtle on mobile */
         body::after {
             content: "";
             position: fixed;
@@ -438,6 +437,7 @@
             box-shadow: var(--pixel-shadow);
             font-size: 1rem;
             word-break: break-word;
+            cursor: pointer;
         }
         .retro-card:hover {
             transform: translateY(-4px);
@@ -470,6 +470,7 @@
             line-height: 1.6;
             text-align: left;
             transition: 0.3s;
+            cursor: pointer;
         }
         .teacher-list li:hover {
             transform: translateX(5px);
@@ -477,7 +478,7 @@
             border-color: #ffd700;
         }
 
-        /* ========== FLIP CARDS (with touch support) ========== */
+        /* ========== FLIP CARDS ========== */
         .flip-card {
             height: 340px;
             perspective: 1000px;
@@ -525,7 +526,7 @@
             font-style: italic;
         }
 
-        /* ========== PANELS ========== */
+        /* ========== PANELS & OVERLAYS ========== */
         #secretPanel {
             position: fixed;
             top: 0;
@@ -681,6 +682,7 @@
             font-family: 'VT323', monospace;
             font-size: 1rem;
             border-radius: 2px;
+            cursor: pointer;
         }
         #startMenu a:hover,
         #startMenu a:active {
@@ -895,6 +897,108 @@
             transform: scale(0.9);
         }
 
+        /* ========== GLOBAL AUDIO CONTROLS ========== */
+        #audioControls {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5000;
+            background: rgba(19, 32, 64, 0.92);
+            border: 3px solid var(--border);
+            border-radius: 30px;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            box-shadow: var(--pixel-shadow);
+            font-size: 0.75rem;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            max-width: 95vw;
+            flex-wrap: nowrap;
+        }
+        #audioControls.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #audioControls input[type="range"] {
+            width: 80px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        #audioControls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #ffd700;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #audioControls input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            background: #ffd700;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #audioControls .ctrl-btn {
+            background: none;
+            border: 2px solid var(--border);
+            color: var(--text);
+            font-family: 'VT323', monospace;
+            font-size: 0.9rem;
+            padding: 2px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            line-height: 1.4;
+            transition: background 0.15s;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+            touch-action: manipulation;
+            min-width: 28px;
+            text-align: center;
+        }
+        #audioControls .ctrl-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        #audioControls .ctrl-btn:active {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(0.93);
+        }
+        #audioControls .ctrl-btn.stop-btn {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+        #audioControls .ctrl-btn.stop-btn:hover {
+            background: rgba(255, 107, 107, 0.15);
+        }
+        #audioControls .volume-icon {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            flex-shrink: 0;
+        }
+        #audioControls .now-playing-label {
+            font-size: 0.6rem;
+            opacity: 0.6;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex-shrink: 1;
+            min-width: 30px;
+        }
+
         /* ========== MISC ========== */
         .badge {
             display: inline-block;
@@ -955,11 +1059,13 @@
             html {
                 font-size: 17px;
             }
+            body {
+                padding-bottom: 60px;
+            }
             body::after {
                 opacity: 0.25;
                 background: repeating-linear-gradient(transparent 0px, rgba(0, 0, 0, 0.03) 3px, transparent 6px);
             }
-
             .desktop-nav {
                 display: none;
             }
@@ -968,7 +1074,6 @@
                 align-items: center;
                 justify-content: center;
             }
-
             .logo {
                 width: 65px;
             }
@@ -990,7 +1095,6 @@
                 font-size: 1.1rem;
                 padding: 14px 30px;
             }
-
             header {
                 padding: 50px 15px 40px;
                 min-height: 200px;
@@ -1003,7 +1107,6 @@
                 font-size: 0.85rem;
                 padding: 0 10px;
             }
-
             section {
                 padding: 40px 5%;
             }
@@ -1011,7 +1114,6 @@
                 font-size: 1.3rem;
                 margin-bottom: 20px;
             }
-
             .retro-grid {
                 grid-template-columns: 1fr;
                 gap: 14px;
@@ -1025,7 +1127,6 @@
                 width: 80px;
                 height: 80px;
             }
-
             .flip-card {
                 height: 300px;
             }
@@ -1040,15 +1141,13 @@
             .flip-hint {
                 display: block;
             }
-
             .star,
             .pixel,
             .rain {
                 display: none;
             }
-
             #backToTop {
-                bottom: 60px;
+                bottom: 65px;
                 right: 10px;
                 width: 38px;
                 height: 38px;
@@ -1143,11 +1242,36 @@
                 font-size: 0.9rem !important;
                 padding: 8px !important;
             }
+            #audioControls {
+                padding: 4px 12px;
+                gap: 6px;
+                bottom: 8px;
+                border-radius: 20px;
+                font-size: 0.65rem;
+            }
+            #audioControls input[type="range"] {
+                width: 60px;
+            }
+            #audioControls .ctrl-btn {
+                font-size: 0.75rem;
+                padding: 2px 6px;
+                min-width: 22px;
+            }
+            #audioControls .now-playing-label {
+                max-width: 50px;
+                font-size: 0.5rem;
+            }
+            #audioControls .volume-icon {
+                font-size: 0.65rem;
+            }
         }
 
         @media (max-width: 400px) {
             html {
                 font-size: 15px;
+            }
+            body {
+                padding-bottom: 50px;
             }
             .hamburger {
                 width: 38px;
@@ -1184,13 +1308,32 @@
             #backToTop {
                 width: 34px;
                 height: 34px;
-                bottom: 50px;
+                bottom: 55px;
                 right: 8px;
             }
             .mobile-menu {
                 width: 85vw;
                 max-width: 85vw;
                 padding: 15px;
+            }
+            #audioControls input[type="range"] {
+                width: 40px;
+            }
+            #audioControls {
+                gap: 4px;
+                padding: 3px 8px;
+                bottom: 5px;
+            }
+            #audioControls .ctrl-btn {
+                font-size: 0.7rem;
+                padding: 1px 4px;
+                min-width: 18px;
+            }
+            #audioControls .now-playing-label {
+                display: none;
+            }
+            #audioControls .volume-icon {
+                font-size: 0.55rem;
             }
         }
 
@@ -1206,7 +1349,6 @@
             }
         }
 
-        /* Win98 card style */
         .win98-card {
             background: #c0c0c0 !important;
             color: black !important;
@@ -1237,25 +1379,43 @@
         <div id="secretBadge" style="display:none; margin-top:20px;"><span class="badge">🏆 SECRET MASTER</span></div>
         <button onclick="document.getElementById('secretPanel').classList.remove('open')" style="margin-top:15px; padding:8px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">✕ Close Panel</button>
     </div>
+
+    <!-- ========== UPDATED JUKEBOX PANEL ========== -->
     <div id="jukeboxPanel">
-        <h3>📻 Jukebox</h3>
-        <div id="currentSongDisplay">No song playing</div>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" style="width:100%; margin:10px 0; cursor:pointer;">
-        <button onclick="jukeboxPlayPause()" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">⏯ Play/Pause</button>
-        <button onclick="jukeboxNext()" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">⏭ Next</button>
-        <button onclick="jukeboxShuffle()" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">🔀 Shuffle</button>
-        <button onclick="stopMusic()" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">⏹ Stop</button>
-        <button onclick="document.getElementById('jukeboxPanel').classList.remove('open')" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">✕ Close</button>
-        <div style="margin-top:15px;">Playlist:</div>
-        <ul id="playlistContainer" style="list-style:none; padding:0;"></ul>
+        <div class="jukebox-title" style="font-size:1.2rem; margin-bottom:10px;">📻 TechPro Jukebox</div>
+        <div id="nowPlaying" style="font-size:0.9rem; margin-bottom:12px; opacity:0.8; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:8px;">
+            Now Playing: None
+        </div>
+        <button onclick="playMusic(1)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
+            🎮 Minecraft - Moog City
+        </button>
+        <button onclick="playMusic(2)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
+            🟥 Roblox Main Menu
+        </button>
+        <button onclick="playMusic(3)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
+            🎵 Pixel Theme
+        </button>
+        <button onclick="playMusic(4)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
+            💻 Windows 98 Theme
+        </button>
+        <button onclick="stopMusic()" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#8b0000; color:white; border-radius:4px; width:100%; text-align:center; font-size:0.9rem;">
+            ⏹ Stop
+        </button>
+        <button onclick="document.getElementById('jukeboxPanel').classList.remove('open')" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:center; font-size:0.8rem;">
+            ✕ Close Jukebox
+        </button>
     </div>
+
     <div id="themeMenu">
         <button onclick="setTheme('blue')">💙 Classic Blue</button>
         <button onclick="setTheme('green')">💚 Terminal Green</button>
         <button onclick="setTheme('amber')">🧡 Amber CRT</button>
         <button onclick="setTheme('purple')">💜 Pixel Purple</button>
+        <button onclick="setTheme('pink')">🌸 Pink Blush</button>
         <button onclick="setTheme('dark')">🖤 Dark Mode</button>
         <button onclick="setTheme('win98')">🟦 Windows 98</button>
+        <button onclick="setTheme('minecraft')">⛏️ Minecraft</button>
+        <button onclick="setTheme('roblox')">🧱 Roblox</button>
         <button onclick="toggleDayNight()">🌗 Day/Night</button>
         <button onclick="document.getElementById('themeMenu').style.display='none'" style="background:#a00; border-color:#faa;">✕ Close</button>
     </div>
@@ -1277,8 +1437,7 @@
         </div>
     </div>
 
-    <!-- ========== AUDIO SOURCES (Royalty-free from SoundHelix) ========== -->
-    <!-- Attribution: SoundHelix (https://www.soundhelix.com/examples/mp3/) - Creative Commons Attribution 3.0 -->
+    <!-- ========== AUDIO SOURCES ========== -->
     <audio id="startupSound" preload="auto">
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
@@ -1288,8 +1447,13 @@
     <audio id="win98Music" loop preload="auto">
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
     </audio>
-    <audio id="theme1Music" loop preload="auto">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
+
+    <!-- ========== NEW AUDIO TAGS FOR MINECRAFT & ROBLOX ========== -->
+    <audio id="moogCity" preload="auto">
+        <source src="https://archive.org/download/minecraft-volume-alpha/Minecraft%20-%20Volume%20Alpha/06%20-%20Moog%20City.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="robloxTheme" preload="auto">
+        <source src="https://archive.org/download/roblox-2016/Main%20Menu.mp3" type="audio/mpeg">
     </audio>
 
     <div id="website">
@@ -1301,24 +1465,18 @@
             <p class="motto">"We may walk different paths tomorrow, but the memories we built together will always connect us."</p>
         </header>
 
-        <!-- Hamburger Button -->
         <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">☰</button>
-
-        <!-- Mobile Menu Backdrop -->
         <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
-
-        <!-- Mobile Menu -->
         <nav class="mobile-menu" id="mobileMenu">
             <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
-            <div class="nav-group-mobile"><span>📌 MAIN</span><a href="#officers">🏛 Officers</a><a href="#teachers">👩‍🏫 Teachers</a><a href="#students">🎓 Students</a><a href="#halloffame">🏆 Hall of Fame</a><a href="#gallery">📸 Gallery</a><a href="#memories">📖 Memory Book</a><a href="#graduation">🎓 Graduation</a><a href="#stats">📊 Statistics</a><a href="#timeline">⏳ Timeline</a><a href="#search">🔍 Search</a></div>
-            <div class="nav-group-mobile"><span>✨ EXTRAS</span><a href="halloffame.html" data-feature="Hall of Fame (ext)">🏅 Hall of Fame (ext)</a><a href="messages.html" data-feature="Messages">💬 Messages</a><a href="computerroom.html" class="prevent-reload" data-feature="Computer Room">🖥️ Computer Room</a><a href="secretarchive.html" data-feature="Secret Archive">🔒 Secret Archive</a><a href="about.html" data-feature="About">👤 About</a><a href="game.html" data-feature="Game">🎮 Game</a></div>
+            <div class="nav-group-mobile"><span>📌 MAIN</span><a href="#officers">🏛 Officers</a><a href="#teachers">👩‍🏫 Teachers</a><a href="#students">🎓 Students</a><a href="#gallery">📸 Gallery</a><a href="#memories">📖 Memory Book</a><a href="#graduation">🎓 Graduation</a><a href="#stats">📊 Statistics</a><a href="#timeline">⏳ Timeline</a><a href="#search">🔍 Search</a></div>
+            <div class="nav-group-mobile"><span>✨ EXTRAS</span><a href="halloffame.html">🏅 Hall of Fame (ext)</a><a href="messages.html">💬 Messages</a><a href="computerroom.html">🖥️ Computer Room</a><a href="secret-archive.html">🔒 Secret Archive</a><a href="about.html">👤 About</a><a href="game.html">🎮 Game</a></div>
             <div class="nav-group-mobile"><span>⚙️ UTILITIES</span><button class="nav-util-mobile" id="mobileSecretBtn">🔐 Secret Panel</button><button class="nav-util-mobile" id="mobileJukeboxBtn">📻 Jukebox</button><button class="nav-util-mobile" id="mobileThemeBtn">🎨 Themes</button><button class="nav-util-mobile" id="mobileWeatherBtn">☀️ Weather FX</button></div>
         </nav>
 
-        <!-- Desktop Nav -->
         <nav class="desktop-nav">
-            <div class="nav-group"><span class="group-label">📌 MAIN</span><a href="#officers">Officers</a><a href="#teachers">Teachers</a><a href="#students">Students</a><a href="#halloffame">Hall of Fame</a><a href="#gallery">Gallery</a><a href="#memories">Memory Book</a><a href="#graduation">Graduation</a><a href="#stats">Stats</a><a href="#timeline">Timeline</a><a href="#search">Search</a></div>
-            <div class="nav-group"><span class="group-label">✨ EXTRAS</span><a href="#" class="prevent-reload" data-feature="Hall of Fame (ext)">Hall of Fame (ext)</a><a href="#" class="prevent-reload" data-feature="Messages">Messages</a><a href="#" class="prevent-reload" data-feature="Computer Room">Computer Room</a><a href="#" class="prevent-reload" data-feature="Secret Archive">Secret Archive</a><a href="#" class="prevent-reload" data-feature="About">About</a><a href="#" class="prevent-reload" data-feature="Game">Game</a></div>
+            <div class="nav-group"><span class="group-label">📌 MAIN</span><a href="#officers">Officers</a><a href="#teachers">Teachers</a><a href="#students">Students</a><a href="#gallery">Gallery</a><a href="#memories">Memory Book</a><a href="#graduation">Graduation</a><a href="#stats">Stats</a><a href="#timeline">Timeline</a><a href="#search">Search</a></div>
+            <div class="nav-group"><span class="group-label">✨ EXTRAS</span><a href="halloffame.html">Hall of Fame (ext)</a><a href="messages.html">Messages</a><a href="computerroom.html">Computer Room</a><a href="secret-archive.html">Secret Archive</a><a href="about.html">About</a><a href="game.html">Game</a></div>
             <div class="nav-group"><span class="group-label">⚙️ UTILITIES</span><button class="nav-util" id="deskSecretBtn">🔐 Secret</button><button class="nav-util" id="deskJukeboxBtn">📻 Jukebox</button><button class="nav-util" id="deskThemeBtn">🎨 Themes</button><button class="nav-util" id="deskWeatherBtn">☀️ Weather</button></div>
         </nav>
 
@@ -1326,7 +1484,6 @@
         <section id="officers"><h2>🏛 Class Officers (Grade 11 & 12)</h2><div class="retro-grid" id="officersGrid"></div></section>
         <section id="teachers"><h2>Teachers</h2><div class="retro-grid"><div class="retro-card"><img src="images/teacher1.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Veronica'"><h3>Veronica Sta Monica</h3><p><strong>ICT - Technical Drafting</strong></p><p>"Always keep learning and stay curious!"</p></div><div class="retro-card"><img src="images/teacher2.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Paule'"><h3>Paul Jayme</h3><p><strong>ICT - Programming</strong></p><p>"Effortless Action - Align your behavior with the natural flow of the universe, acting without force, ego or resistance. 無爲"</p></div><div class="retro-card"><h3>G11 Teachers</h3><ul class="teacher-list"><li>Rustie Manzano</li><li>Teacher Name 2</li><li>Teacher Name 3</li><li>Teacher Name 4</li><li>Teacher Name 5</li><li>Teacher Name 6</li><li>Teacher Name 7</li><li>Teacher Name 8</li></ul></div></div></section>
         <section id="students"><h2>🎓 Student Profiles</h2><p style="text-align:center; opacity:0.7; margin-bottom:15px;" class="flip-hint">👆 Tap a card to flip it and see more info!</p><div class="retro-grid" id="studentGrid"></div></section>
-        <section id="halloffame"><h2>🏆 Hall of Fame</h2><div class="retro-grid" id="fameGrid"></div></section>
         <section id="gallery"><h2>📸 Photo Gallery</h2><div class="retro-grid" id="galleryGrid"></div><button id="slideshowBtn" style="margin-top:20px; padding:12px 24px; font-family:'VT323', monospace; font-size:1rem; cursor:pointer; border:3px solid white; background:var(--header); color:white; border-radius:4px;">▶ Start Slideshow</button></section>
         <section id="memories"><h2>📖 Memory Book</h2><div class="retro-grid" id="memoryGrid"></div></section>
         <section id="graduation"><h2>🎓 Graduation</h2><div id="countdown" style="font-size:1.5rem; text-align:center; margin-bottom:30px;"></div><h3>Class Achievements</h3><div class="retro-grid" id="achievementGrid"></div><h3 style="margin-top:30px;">Graduation Memories</h3><div class="retro-grid" id="gradMemoriesGrid"></div></section>
@@ -1346,65 +1503,74 @@
         <div id="creatorSecret">💻</div>
     </div>
 
+    <!-- ========== GLOBAL AUDIO CONTROLS ========== -->
+    <div id="audioControls" class="hidden">
+        <span class="volume-icon">🔊</span>
+        <input type="range" id="globalVolumeSlider" min="0" max="1" step="0.01" value="0.5" aria-label="Volume">
+        <span class="now-playing-label" id="globalNowPlaying">No audio</span>
+        <button class="ctrl-btn" id="globalPlayPauseBtn" aria-label="Play/Pause">▶</button>
+        <button class="ctrl-btn stop-btn" id="globalStopBtn" aria-label="Stop music">⏹</button>
+    </div>
+
     <script>
         // ======================= DATA =======================
         const students = [
-        { id: 1, name: "Alquza Almer Dela Cruz", nickname: "Alquza", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student1.jpg" },
-        { id: 2, name: "Edward Bautista Aquino", nickname: "Edward", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student2.jpg" },
-        { id: 3, name: "Prince Del Birut Gayrama", nickname: "Prince", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student3.jpg" },
-        { id: 4, name: "Ron Matthew Belisario Ferreras", nickname: "Ron",
-            quote: "Whatever path you follow, keep moving forward", dreamJob: "Content Creator", section: "Grade 12",
-            img: "images/student4.jpg" },
-        { id: 5, name: "Ryan Gaebriel Belisario Ferreras", nickname: "Ryan", quote: "No quote yet",
-            dreamJob: "Undecided", section: "Grade 12", img: "images/student5.jpg" },
-        { id: 6, name: "Jace Mathew Labicani", nickname: "Jace", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student6.jpg" },
-        { id: 7, name: "Jared Lee Barnuevo Lim", nickname: "Jared", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student7.jpg" },
-        { id: 8, name: "Jhovance Eldrick Pacheco Olan", nickname: "Jhovance", quote: "No quote yet",
-            dreamJob: "Undecided", section: "Grade 12", img: "images/student8.jpg" },
-        { id: 9, name: "Chriswin B. Palmones", nickname: "Chriswin", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student9.jpg" },
-        { id: 10, name: "Phil Cyprian Ogalesco Resuello", nickname: "Phil", quote: "No quote yet",
-            dreamJob: "Undecided", section: "Grade 12", img: "images/student10.jpg" },
-        { id: 11, name: "Gian Lee San Jose", nickname: "Gian", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student11.jpg" },
-        { id: 12, name: "Eziekiel Kyle Rios Sobremonte", nickname: "Eziekiel", quote: "No quote yet",
-            dreamJob: "Undecided", section: "Grade 12", img: "images/student12.jpg" },
-        { id: 13, name: "Ronald Silva Suba", nickname: "Ronald", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student13.jpg" },
-        { id: 14, name: "Calvin Claude Alipan Tala", nickname: "Calvin", quote: "No quote yet",
-            dreamJob: "Undecided", section: "Grade 12", img: "images/student14.jpg" },
-        { id: 15, name: "Yusieff Acas Tanawit", nickname: "Yusieff", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student15.jpg" },
-        { id: 16, name: "John Patrick Sarcilla", nickname: "John Patrick", quote: "No quote yet",
-            dreamJob: "Undecided", section: "Grade 12", img: "images/student16.jpg" },
-        { id: 17, name: "Mikaela Marcia Ababat", nickname: "Mikaela", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student17.jpg" },
-        { id: 18, name: "Richa Mae Cuevas Mejos", nickname: "Richa", quote: "No quote yet", dreamJob: "Undecided",
-            section: "Grade 12", img: "images/student18.jpg" },
-        { id: 19, name: "Aira Pecana Natividad", nickname: "Aira",
-            quote: "Small step everyday leads to big achievements", dreamJob: "IT Specialist", section: "Grade 12",
-            img: "images/student19.jpg" },
-        { id: 20, name: "Glyzel Ann Talvo Pagaduan", nickname: "Glyzel",
-            quote: "Dream big, work hard, stay humble", dreamJob: "Coffee shop owner", section: "Grade 12",
-            img: "images/student20.jpg" },
-        { id: 21, name: "Romea David Permejo", nickname: "Romea",
-            quote: "Be happy for what you have while working for what you want", dreamJob: "Call Center Agent",
-            section: "Grade 12", img: "images/student21.jpg" },
-        { id: 22, name: "Mary Joy Picana Ramos", nickname: "Mary Joy",
-            quote: "Being hardworking and stay humble", dreamJob: "Web Developer", section: "Grade 12",
-            img: "images/student22.jpg" },
-        { id: 23, name: "Zie Cliza Ballejos Sablada", nickname: "Zie",
-            quote: "Every day is a chance to become better", dreamJob: "Freelancer", section: "Grade 12",
-            img: "images/student23.jpg" },
-        { id: 24, name: "Alyka Tarnate", nickname: "Alyka",
-            quote: "Dreams will always stay dreams, unless you act upon them", dreamJob: "Active", section: "Grade 12",
-            img: "images/student24.jpg" }
-    ];
+            { id: 1, name: "Alquza Almer Dela Cruz", nickname: "Alquza", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student1.jpg", favoriteMemory: "First day" },
+            { id: 2, name: "Edward Bautista Aquino", nickname: "Edward", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student2.jpg", favoriteMemory: "Intramurals" },
+            { id: 3, name: "Prince Del Birut Gayrama", nickname: "Prince", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student3.jpg", favoriteMemory: "Field trip" },
+            { id: 4, name: "Ron Matthew Belisario Ferreras", nickname: "Ron",
+                quote: "Whatever path you follow, keep moving forward", dreamJob: "Content Creator", section: "Grade 12",
+                img: "images/student4.jpg", favoriteMemory: "Coding nights" },
+            { id: 5, name: "Ryan Gaebriel Belisario Ferreras", nickname: "Ryan", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student5.jpg", favoriteMemory: "Basketball" },
+            { id: 6, name: "Jace Mathew Labicani", nickname: "Jace", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student6.jpg", favoriteMemory: "Hackathon" },
+            { id: 7, name: "Jared Lee Barnuevo Lim", nickname: "Jared", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student7.jpg", favoriteMemory: "Group projects" },
+            { id: 8, name: "Jhovance Eldrick Pacheco Olan", nickname: "Jhovance", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student8.jpg", favoriteMemory: "Christmas party" },
+            { id: 9, name: "Chriswin B. Palmones", nickname: "Chriswin", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student9.jpg", favoriteMemory: "Graduation prep" },
+            { id: 10, name: "Phil Cyprian Ogalesco Resuello", nickname: "Phil", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student10.jpg", favoriteMemory: "Tech exhibit" },
+            { id: 11, name: "Gian Lee San Jose", nickname: "Gian", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student11.jpg", favoriteMemory: "Robotics" },
+            { id: 12, name: "Eziekiel Kyle Rios Sobremonte", nickname: "Eziekiel", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student12.jpg", favoriteMemory: "Quiz bee" },
+            { id: 13, name: "Ronald Silva Suba", nickname: "Ronald", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student13.jpg", favoriteMemory: "Retreat" },
+            { id: 14, name: "Calvin Claude Alipan Tala", nickname: "Calvin", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student14.jpg", favoriteMemory: "Internship" },
+            { id: 15, name: "Yusieff Acas Tanawit", nickname: "Yusieff", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student15.jpg", favoriteMemory: "Game dev" },
+            { id: 16, name: "John Patrick Sarcilla", nickname: "John Patrick", quote: "No quote yet",
+                dreamJob: "Undecided", section: "Grade 12", img: "images/student16.jpg", favoriteMemory: "Camping" },
+            { id: 17, name: "Mikaela Marcia Ababat", nickname: "Mikaela", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student17.jpg", favoriteMemory: "Dance practice" },
+            { id: 18, name: "Richa Mae Cuevas Mejos", nickname: "Richa", quote: "No quote yet", dreamJob: "Undecided",
+                section: "Grade 12", img: "images/student18.jpg", favoriteMemory: "Film showing" },
+            { id: 19, name: "Aira Pecana Natividad", nickname: "Aira",
+                quote: "Small step everyday leads to big achievements", dreamJob: "IT Specialist", section: "Grade 12",
+                img: "images/student19.jpg", favoriteMemory: "UI design" },
+            { id: 20, name: "Glyzel Ann Talvo Pagaduan", nickname: "Glyzel",
+                quote: "Dream big, work hard, stay humble", dreamJob: "Coffee shop owner", section: "Grade 12",
+                img: "images/student20.jpg", favoriteMemory: "Open mic" },
+            { id: 21, name: "Romea David Permejo", nickname: "Romea",
+                quote: "Be happy for what you have while working for what you want", dreamJob: "Call Center Agent",
+                section: "Grade 12", img: "images/student21.jpg", favoriteMemory: "Career guidance" },
+            { id: 22, name: "Mary Joy Picana Ramos", nickname: "Mary Joy",
+                quote: "Being hardworking and stay humble", dreamJob: "Web Developer", section: "Grade 12",
+                img: "images/student22.jpg", favoriteMemory: "Web dev contest" },
+            { id: 23, name: "Zie Cliza Ballejos Sablada", nickname: "Zie",
+                quote: "Every day is a chance to become better", dreamJob: "Freelancer", section: "Grade 12",
+                img: "images/student23.jpg", favoriteMemory: "Freelancing 101" },
+            { id: 24, name: "Alyka Tarnate", nickname: "Alyka",
+                quote: "Dreams will always stay dreams, unless you act upon them", dreamJob: "Active", section: "Grade 12",
+                img: "images/student24.jpg", favoriteMemory: "Leadership camp" }
+        ];
         const officers = [
             { title: "G11 President", name: "Prince Saimon Del Birut" }, { title: "G12 President",
                 name: "Chriswin Palmones" },
@@ -1416,10 +1582,6 @@
             { title: "G11 P.I.O", name: "Chriswin Palmones" }, { title: "G12 P.I.O", name: "(vacant)" },
             { title: "G11 P.O", name: "(vacant)" }, { title: "G12 P.O", name: "(vacant)" }
         ];
-        const fameAwards = [{ title: "Most Helpful", recipient: "Prince Saimon Del Birut", badge: "🏅" }, { title: "Class Comedian",
-            recipient: "Chriswin Palmones", badge: "😂" }, { title: "Tech Wizard", recipient: "Briane Diaz",
-            badge: "💻" }, { title: "Most Creative", recipient: "Glyzel Pagaduan", badge: "🎨" }, { title: "Best Attendance",
-            recipient: "Mikaella Ababat", badge: "✅" }];
         const memoryEvents = [{ title: "First Day of School", date: "2025-06-15",
             description: "Meeting new classmates and teachers.", type: "event" }, { title: "Intramurals 2025",
             date: "2025-10-10", description: "TechPro B won 2nd place in basketball.", type: "activity" }, { title: "Programming Contest",
@@ -1438,18 +1600,15 @@
         const galleryImages = ["gallery/photo1.jpg", "gallery/photo2.jpg", "gallery/photo3.jpg", "gallery/photo4.jpg"];
         const hiddenGalleryImages = ["gallery/secret1.jpg", "gallery/secret2.jpg"];
 
-        // ======================= PLAYLIST WITH ROYALTY-FREE URLs =======================
-        const playlist = [
-            { title: "SoundHelix Song 1", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-            { title: "SoundHelix Song 2", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-            { title: "SoundHelix Song 3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
-        ];
+        // ======================= AUDIO VARIABLES =======================
+        const pixelMusic = document.getElementById('pixelMusic');
+        const win98Music = document.getElementById('win98Music');
+        const moogCity = document.getElementById('moogCity');
+        const robloxTheme = document.getElementById('robloxTheme');
+        const startupSound = document.getElementById('startupSound');
 
         // ======================= GLOBALS =======================
-        let currentAudio = null,
-            currentPlaylistIndex = 0,
-            shuffledPlaylist = [...playlist],
-            slideshowInterval = null,
+        let slideshowInterval = null,
             weatherState = 0;
         let secretsFound = 0;
         const discoveredSecrets = new Set(JSON.parse(localStorage.getItem('techproSecrets') || '[]'));
@@ -1463,10 +1622,63 @@
         const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft',
             'ArrowRight', 'b', 'a'
         ];
+        let currentAudio = null;
+        let userInteracted = false; // for Web Audio context
 
-        // ======================= MOBILE DETECTION =======================
         const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.matchMedia(
             '(max-width: 768px)').matches;
+
+        // ======================= DOM REFS =======================
+        const audioControls = document.getElementById('audioControls');
+        const globalVolumeSlider = document.getElementById('globalVolumeSlider');
+        const globalPlayPauseBtn = document.getElementById('globalPlayPauseBtn');
+        const globalStopBtn = document.getElementById('globalStopBtn');
+        const globalNowPlaying = document.getElementById('globalNowPlaying');
+        const nowPlayingDisplay = document.getElementById('nowPlaying');
+
+        // ======================= UI SOUND EFFECTS (fixed AudioContext) =======================
+        let uiAudioCtx = null;
+
+        function getUIAudioContext() {
+            if (!uiAudioCtx && userInteracted) {
+                try {
+                    uiAudioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    return null;
+                }
+            }
+            return uiAudioCtx;
+        }
+
+        function playUISound(freq = 900, duration = 0.06, vol = 0.12) {
+            if (!userInteracted) return; // only after user gesture
+            try {
+                const ctx = getUIAudioContext();
+                if (!ctx) return;
+                if (ctx.state === 'suspended') {
+                    ctx.resume().catch(() => {});
+                }
+                const oscillator = ctx.createOscillator();
+                const gain = ctx.createGain();
+                oscillator.connect(gain);
+                gain.connect(ctx.destination);
+                oscillator.type = 'square';
+                oscillator.frequency.value = freq;
+                gain.gain.setValueAtTime(vol, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        // ======================= Mark user interaction =======================
+        function markUserInteraction() {
+            if (!userInteracted) {
+                userInteracted = true;
+                // Pre-warm audio context on first click
+                getUIAudioContext();
+            }
+        }
 
         // ======================= UTILITIES =======================
         function unlockSecret(id, name, listId) {
@@ -1493,22 +1705,117 @@
             localStorage.setItem('techproSecrets', JSON.stringify([...discoveredSecrets]));
         }
 
-        function stopAllMusic() { document.querySelectorAll('audio').forEach(a => { a.pause();
-                a.currentTime = 0; }); }
+        // ======================= UPDATED stopAllMusic =======================
+        function stopAllMusic() {
+            [pixelMusic, win98Music, moogCity, robloxTheme, startupSound].forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+            currentAudio = null;
+            updateGlobalControls();
+            if (nowPlayingDisplay) {
+                nowPlayingDisplay.textContent = 'Now Playing: None';
+            }
+        }
+
+        function updateGlobalControls() {
+            if (currentAudio && !currentAudio.paused) {
+                globalPlayPauseBtn.textContent = '⏸';
+                audioControls.classList.remove('hidden');
+            } else if (currentAudio && currentAudio.paused) {
+                globalPlayPauseBtn.textContent = '▶';
+                audioControls.classList.remove('hidden');
+            } else {
+                globalPlayPauseBtn.textContent = '▶';
+                if (!currentAudio) {
+                    audioControls.classList.add('hidden');
+                }
+            }
+            if (currentAudio) {
+                globalVolumeSlider.value = currentAudio.volume;
+            }
+            if (currentAudio && currentAudio.src) {
+                const name = currentAudio === moogCity ? 'Moog City' :
+                    currentAudio === robloxTheme ? 'Roblox Main Menu' :
+                    currentAudio === pixelMusic ? 'Pixel Theme' :
+                    currentAudio === win98Music ? 'Windows 98 Theme' :
+                    currentAudio === startupSound ? 'Startup' : 'Audio';
+                globalNowPlaying.textContent = name.length > 12 ? name.substring(0, 10) + '…' : name;
+            } else {
+                globalNowPlaying.textContent = 'No audio';
+            }
+        }
+
+        function setCurrentAudio(audio) {
+            currentAudio = audio;
+            if (audio) {
+                audio.volume = parseFloat(globalVolumeSlider.value);
+            }
+            updateGlobalControls();
+            audioControls.classList.remove('hidden');
+        }
+
+        function togglePlayPause() {
+            markUserInteraction();
+            playUISound(700, 0.05);
+            if (currentAudio) {
+                if (currentAudio.paused) {
+                    currentAudio.play().catch(() => {});
+                } else {
+                    currentAudio.pause();
+                }
+                updateGlobalControls();
+            }
+        }
+
+        // ======================= UPDATED playMusic =======================
+        window.playMusic = function(choice) {
+            markUserInteraction();
+            stopAllMusic();
+            if (choice === 1) {
+                moogCity.play().catch(() => {});
+                setCurrentAudio(moogCity);
+                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Minecraft - Moog City';
+                playUISound(800, 0.05);
+            } else if (choice === 2) {
+                robloxTheme.play().catch(() => {});
+                setCurrentAudio(robloxTheme);
+                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Roblox Main Menu';
+                playUISound(800, 0.05);
+            } else if (choice === 3) {
+                pixelMusic.play().catch(() => {});
+                setCurrentAudio(pixelMusic);
+                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Pixel Theme';
+                playUISound(800, 0.05);
+            } else if (choice === 4) {
+                win98Music.play().catch(() => {});
+                setCurrentAudio(win98Music);
+                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Windows 98 Theme';
+                playUISound(800, 0.05);
+            }
+        };
+
+        window.stopMusic = function() {
+            markUserInteraction();
+            playUISound(400, 0.08);
+            stopAllMusic();
+            audioControls.classList.add('hidden');
+            globalNowPlaying.textContent = 'No audio';
+            if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: None';
+        };
 
         function playThemeMusic() {
             stopAllMusic();
             const theme = localStorage.getItem('theme') || 'blue';
-            // For win98 theme, use win98Music (Song-3), else use pixelMusic (Song-2)
-            let audioId = (theme === 'win98') ? 'win98Music' : 'pixelMusic';
-            const audio = document.getElementById(audioId);
-            if (audio) {
-                audio.volume = document.getElementById('volumeSlider').value;
-                audio.play().catch(() => {});
+            if (theme === 'win98') {
+                win98Music.play().catch(() => {});
+                setCurrentAudio(win98Music);
+                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Windows 98 Theme';
+            } else {
+                pixelMusic.play().catch(() => {});
+                setCurrentAudio(pixelMusic);
+                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Pixel Theme';
             }
-            currentAudio = audio;
-            const songTitle = (theme === 'win98') ? 'SoundHelix Song 3' : 'SoundHelix Song 2';
-            document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + songTitle;
         }
 
         function animateValue(id, target) {
@@ -1519,13 +1826,18 @@
 
         function launchYearbook() {
             if (introFinished) return;
+            markUserInteraction();
             introFinished = true;
-            // Play startup sound (Song-1)
-            const startup = document.getElementById('startupSound');
-            if (startup) {
-                startup.volume = document.getElementById('volumeSlider').value;
-                startup.play().catch(() => {});
-            }
+            playUISound(1200, 0.1, 0.2);
+            startupSound.volume = parseFloat(globalVolumeSlider.value);
+            startupSound.play().catch(() => {});
+            setCurrentAudio(startupSound);
+            if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Startup';
+            setTimeout(() => {
+                if (currentAudio === startupSound) {
+                    playThemeMusic();
+                }
+            }, 3000);
             const intro = document.getElementById('introScreen');
             intro.classList.add('fade-out');
             setTimeout(() => {
@@ -1536,25 +1848,14 @@
                 animateValue('studentCount', 24);
                 animateValue('teacherCount', 10);
                 animateValue('yearCount', 2);
-                playThemeMusic();
                 document.body.style.overflow = '';
+                setTimeout(() => {
+                    if (currentAudio) {
+                        audioControls.classList.remove('hidden');
+                        updateGlobalControls();
+                    }
+                }, 500);
             }, 800);
-        }
-
-        function preventExternalReload() {
-            document.querySelectorAll('.prevent-reload').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const feature = link.getAttribute('data-feature') || 'this feature';
-                    alert('✨ "' + feature + '" is coming soon! Stay tuned. ✨');
-                });
-            });
-            document.querySelectorAll('a[href="#"]').forEach(link => {
-                if (!link.hasAttribute('data-handled')) {
-                    link.setAttribute('data-handled', 'true');
-                    link.addEventListener('click', (e) => { e.preventDefault(); });
-                }
-            });
         }
 
         // ======================= RENDER FUNCTIONS =======================
@@ -1566,20 +1867,14 @@
         function renderStudents() {
             document.getElementById('studentGrid').innerHTML = students.map(s =>
                 '<div class="flip-card" data-student-id="' + s.id +
-                '" onclick="toggleFlipCard(this)" role="button" tabindex="0" aria-label="Flip card for ' + s.name +
-                '"><div class="flip-inner"><div class="flip-front"><img src="' + s.img +
+                '" onclick="toggleFlipCard(this)" role="button" tabindex="0"><div class="flip-inner"><div class="flip-front"><img src="' +
+                s.img +
                 '" class="pfp" onerror="this.src=\'https://via.placeholder.com/120?text=' + encodeURIComponent(s
-                    .name) + '\'" alt="' + s.name + '"><h3>' + s.name + '</h3><p>' + (s.nickname ? '"' + s.nickname +
-                    '"' : '') + '</p><p>' + s.section +
+                    .name) + '\'"><h3>' + s.name + '</h3><p>' + (s.nickname ? '"' + s.nickname + '"' : '') +
+                '</p><p>' + s.section +
                 '</p><p class="flip-hint">👆 Tap to flip</p></div><div class="flip-back"><p><strong>Quote:</strong> "' +
                 s.quote + '"</p><p><strong>Dream Job:</strong> ' + s.dreamJob +
                 '</p><p><strong>Favorite Memory:</strong> ' + s.favoriteMemory + '</p></div></div></div>').join('');
-        }
-
-        function renderFame() {
-            document.getElementById('fameGrid').innerHTML = fameAwards.map(a =>
-                '<div class="retro-card"><span class="badge">' + a.badge + '</span><h3>' + a.title + '</h3><p>' + a
-                .recipient + '</p></div>').join('');
         }
 
         function renderGallery() {
@@ -1612,80 +1907,57 @@
             document.getElementById('searchResults').innerHTML = filtered.map(s =>
                 '<div class="retro-card"><img src="' + s.img +
                 '" class="pfp" onerror="this.src=\'https://via.placeholder.com/120?text=' + encodeURIComponent(s.name) +
-                '\'" alt="' + s.name + '"><h3>' + s.name + '</h3><p>' + s.section + '</p><p>' + s.quote + '</p></div>'
-                ).join('');
+                '\'"><h3>' + s.name + '</h3><p>' + s.section + '</p><p>' + s.quote + '</p></div>').join('');
         }
 
-        function updatePlaylistUI() {
-            const container = document.getElementById('playlistContainer');
-            container.innerHTML = shuffledPlaylist.map((song, i) =>
-                '<li style="cursor:pointer; padding:8px 5px; ' + (i === currentPlaylistIndex ? 'font-weight:bold; background:rgba(255,255,255,0.1); border-radius:4px;' :
-                    '') + '" onclick="jukeboxSelect(' + i + ')">' + song.title + '</li>').join('');
-        }
-
-        function jukeboxSelect(index) { currentPlaylistIndex = index;
-            playMusicByIndex();
-            updatePlaylistUI(); }
-
-        function playMusicByIndex() {
-            stopAllMusic();
-            const song = shuffledPlaylist[currentPlaylistIndex];
-            // Find the audio element that matches the src (or create a new one)
-            let audio = document.querySelector('audio[src="' + song.src + '"]');
-            if (!audio) {
-                // Create a temporary audio element if not found (should not happen)
-                audio = new Audio(song.src);
-                audio.loop = true;
-            }
-            audio.volume = document.getElementById('volumeSlider').value;
-            audio.play().catch(() => {});
-            currentAudio = audio;
-            document.getElementById('currentSongDisplay').textContent = 'Now Playing: ' + song.title;
-        }
-
-        // ======================= FLIP CARD TOUCH SUPPORT =======================
+        // ======================= FLIP CARD =======================
         function toggleFlipCard(card) {
+            markUserInteraction();
+            playUISound(750, 0.05);
             card.classList.toggle('flipped');
         }
 
-        // ======================= GLOBAL FUNCTIONS =======================
-        window.jukeboxPlayPause = function() {
-            if (currentAudio) { if (currentAudio.paused) currentAudio.play().catch(() => {});
-                else currentAudio.pause(); } else if (shuffledPlaylist.length) { jukeboxSelect(0); }
-        };
-        window.jukeboxNext = function() { currentPlaylistIndex = (currentPlaylistIndex + 1) % shuffledPlaylist.length;
-            playMusicByIndex();
-            updatePlaylistUI(); };
-        window.jukeboxShuffle = function() {
-            for (let i = shuffledPlaylist.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [
-                    shuffledPlaylist[i], shuffledPlaylist[j]
-                ] = [shuffledPlaylist[j], shuffledPlaylist[i]]; }
-            currentPlaylistIndex = 0;
-            playMusicByIndex();
-            updatePlaylistUI();
-        };
-        window.stopMusic = function() { stopAllMusic();
-            currentAudio = null;
-            document.getElementById('currentSongDisplay').textContent = 'No song playing'; };
-        window.toggleFlipCard = toggleFlipCard;
-        window.jukeboxSelect = jukeboxSelect;
-        window.launchYearbook = launchYearbook;
+        // ======================= VOLUME SYNC =======================
+        globalVolumeSlider.addEventListener('input', (e) => {
+            const vol = parseFloat(e.target.value);
+            if (currentAudio) {
+                currentAudio.volume = vol;
+            }
+        });
 
-        document.getElementById('volumeSlider').addEventListener('input', (e) => { if (currentAudio) currentAudio
-                .volume = e.target.value; });
+        // ======================= GLOBAL PLAY/PAUSE & STOP =======================
+        globalPlayPauseBtn.addEventListener('click', togglePlayPause);
+        globalStopBtn.addEventListener('click', window.stopMusic);
 
+        // ======================= LIGHTBOX =======================
         let lightboxIndex = 0;
-        window.openLightbox = function(index) { lightboxIndex = index;
+        window.openLightbox = function(index) {
+            markUserInteraction();
+            playUISound(600, 0.05);
+            lightboxIndex = index;
             document.getElementById('lightboxImg').src = galleryImages[index];
-            document.getElementById('lightbox').style.display = 'flex'; };
-        document.getElementById('closeLightbox').onclick = () => document.getElementById('lightbox').style.display =
-            'none';
-        document.getElementById('prevImg').onclick = () => { lightboxIndex = (lightboxIndex - 1 + galleryImages.length) %
-                galleryImages.length;
-            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
-        document.getElementById('nextImg').onclick = () => { lightboxIndex = (lightboxIndex + 1) % galleryImages.length;
-            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
+            document.getElementById('lightbox').style.display = 'flex';
+        };
+        document.getElementById('closeLightbox').onclick = () => {
+            markUserInteraction();
+            playUISound(500, 0.05);
+            document.getElementById('lightbox').style.display = 'none';
+        };
+        document.getElementById('prevImg').onclick = () => {
+            markUserInteraction();
+            playUISound(650, 0.04);
+            lightboxIndex = (lightboxIndex - 1 + galleryImages.length) % galleryImages.length;
+            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex];
+        };
+        document.getElementById('nextImg').onclick = () => {
+            markUserInteraction();
+            playUISound(650, 0.04);
+            lightboxIndex = (lightboxIndex + 1) % galleryImages.length;
+            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex];
+        };
         document.getElementById('slideshowBtn').addEventListener('click', function() {
+            markUserInteraction();
+            playUISound(550, 0.06);
             if (slideshowInterval) { clearInterval(slideshowInterval);
                 slideshowInterval = null;
                 this.textContent = '▶ Start Slideshow'; } else {
@@ -1695,9 +1967,19 @@
                 this.textContent = '⏸ Stop Slideshow';
             }
         });
-        window.openRetroDesktop = function() { document.getElementById('retroDesktop').style.display = 'flex'; };
-        window.closeDesktop = function() { document.getElementById('retroDesktop').style.display = 'none'; };
+        window.openRetroDesktop = function() {
+            markUserInteraction();
+            playUISound(700, 0.05);
+            document.getElementById('retroDesktop').style.display = 'flex';
+        };
+        window.closeDesktop = function() {
+            markUserInteraction();
+            playUISound(500, 0.05);
+            document.getElementById('retroDesktop').style.display = 'none';
+        };
         window.openWindow = function(title, content) {
+            markUserInteraction();
+            playUISound(600, 0.05);
             const win = document.createElement('div');
             win.className = 'window';
             win.innerHTML =
@@ -1730,11 +2012,15 @@
                 document.addEventListener('touchend', endTouch, { once: true }); }, { passive: false });
         };
 
+        // ======================= THEMES =======================
         const themeCollection = new Set();
 
-        function registerTheme(theme) { themeCollection.add(theme); if (themeCollection.size === 6) unlockSecret(
+        function registerTheme(theme) { themeCollection.add(theme); if (themeCollection.size === 9) unlockSecret(
                 'allThemes', 'Theme Collector', 's6'); }
+
         window.setTheme = function(theme) {
+            markUserInteraction();
+            playUISound(800, 0.06);
             localStorage.setItem('theme', theme);
             const root = document.documentElement;
             const themes = {
@@ -1746,10 +2032,16 @@
                     '--border': '#ffb000' },
                 purple: { '--bg': '#1d1033', '--text': '#dca6ff', '--card': '#2f174f', '--header': '#472470',
                     '--border': '#dca6ff' },
+                pink: { '--bg': '#2d1b2e', '--text': '#fce4ec', '--card': '#4a2a3a', '--header': '#6a3a4a',
+                    '--border': '#f8bbd0' },
                 dark: { '--bg': '#111111', '--text': '#ffffff', '--card': '#1e1e1e', '--header': '#222222',
                     '--border': '#666666' },
                 win98: { '--bg': '#008080', '--text': '#ffffff', '--card': '#c0c0c0', '--header': '#000080',
-                    '--border': '#808080' }
+                    '--border': '#808080' },
+                minecraft: { '--bg': '#2d5a27', '--text': '#e6d5b8', '--card': '#4a7a3a', '--header': '#3b6e3b',
+                    '--border': '#8b6b3b' },
+                roblox: { '--bg': '#1a1a2e', '--text': '#ffffff', '--card': '#2e3a8b', '--header': '#c43636',
+                    '--border': '#f5c842' }
             };
             const t = themes[theme];
             if (t) for (let prop in t) root.style.setProperty(prop, t[prop]);
@@ -1759,12 +2051,19 @@
             document.getElementById('win98Taskbar').style.display = theme === 'win98' ? 'flex' : 'none';
             document.body.classList.toggle('win98-mode', theme === 'win98');
             registerTheme(theme);
-            playThemeMusic();
+            if (introFinished) {
+                playThemeMusic();
+            }
             document.getElementById('themeMenu').style.display = 'none';
         };
-        window.toggleDayNight = function() { document.body.classList.toggle('day-mode');
+
+        window.toggleDayNight = function() {
+            markUserInteraction();
+            playUISound(700, 0.05);
+            document.body.classList.toggle('day-mode');
             localStorage.setItem('dayMode', document.body.classList.contains('day-mode'));
-            document.getElementById('themeMenu').style.display = 'none'; };
+            document.getElementById('themeMenu').style.display = 'none';
+        };
 
         function autoDayNight() { const hour = new Date().getHours(); if (hour >= 7 && hour < 19) document.body.classList
                 .add('day-mode');
@@ -1773,6 +2072,8 @@
         if (localStorage.getItem('dayMode') === 'true') document.body.classList.add('day-mode');
 
         function cycleWeather() {
+            markUserInteraction();
+            playUISound(500, 0.06);
             weatherState = (weatherState + 1) % 4;
             const weatherOverlay = document.getElementById('weatherOverlay');
             weatherOverlay.className = '';
@@ -1794,14 +2095,18 @@
             if (fallbackClock) fallbackClock.innerHTML = '📅 ' + now.toLocaleDateString() + ' 🕒 ' + time;
         }
 
-        // ======================= MOBILE MENU FUNCTIONS =======================
+        // ======================= MOBILE MENU =======================
         function openMobileMenu() {
+            markUserInteraction();
+            playUISound(600, 0.05);
             document.getElementById('mobileMenu').classList.add('open');
             document.getElementById('mobileMenuBackdrop').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
 
         function closeMobileMenu() {
+            markUserInteraction();
+            playUISound(500, 0.04);
             document.getElementById('mobileMenu').classList.remove('open');
             document.getElementById('mobileMenuBackdrop').classList.remove('open');
             document.body.style.overflow = '';
@@ -1820,20 +2125,38 @@
             const backBtn = document.getElementById('backToTop');
             if (backBtn) backBtn.style.display = window.scrollY > 500 ? 'block' : 'none';
         });
-        document.getElementById('backToTop').addEventListener('click', () => window.scrollTo({ top: 0,
-            behavior: 'smooth' }));
-        document.getElementById('startBtn').onclick = e => { e.stopPropagation(); const menu = document.getElementById(
-                'startMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
-        document.addEventListener('click', e => { if (!e.target.closest('#startMenu') && e.target !== document
-                .getElementById('startBtn')) document.getElementById('startMenu').style.display = 'none'; });
-        document.getElementById('deskSecretBtn').addEventListener('click', () => document.getElementById('secretPanel')
-            .classList.toggle('open'));
-        document.getElementById('deskJukeboxBtn').addEventListener('click', () => document.getElementById('jukeboxPanel')
-            .classList.toggle('open'));
-        document.getElementById('deskThemeBtn').addEventListener('click', () => { const menu = document.getElementById(
-                'themeMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; });
+        document.getElementById('backToTop').addEventListener('click', () => {
+            markUserInteraction();
+            playUISound(600, 0.05);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        document.getElementById('startBtn').onclick = e => {
+            e.stopPropagation();
+            markUserInteraction();
+            playUISound(500, 0.05);
+            const menu = document.getElementById('startMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        };
+        document.addEventListener('click', e => {
+            if (!e.target.closest('#startMenu') && e.target !== document.getElementById('startBtn'))
+                document.getElementById('startMenu').style.display = 'none';
+        });
+        document.getElementById('deskSecretBtn').addEventListener('click', () => {
+            markUserInteraction();
+            playUISound(600, 0.05);
+            document.getElementById('secretPanel').classList.toggle('open');
+        });
+        document.getElementById('deskJukeboxBtn').addEventListener('click', () => {
+            markUserInteraction();
+            playUISound(600, 0.05);
+            document.getElementById('jukeboxPanel').classList.toggle('open');
+        });
+        document.getElementById('deskThemeBtn').addEventListener('click', () => {
+            markUserInteraction();
+            playUISound(500, 0.05);
+            const menu = document.getElementById('themeMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        });
         document.getElementById('deskWeatherBtn').addEventListener('click', cycleWeather);
         document.getElementById('mobileSecretBtn').addEventListener('click', () => { document.getElementById(
                 'secretPanel').classList.toggle('open');
@@ -1865,18 +2188,26 @@
                 document.getElementById('lightbox').style.display = 'none';
                 document.getElementById('terminalOverlay').style.display = 'none';
                 document.getElementById('themeMenu').style.display = 'none';
-                document.getElementById('startMenu').style.display = 'none'; }
+                document.getElementById('startMenu').style.display = 'none';
+            }
         });
         window.addEventListener('scroll', () => { if (!scrolled && window.innerHeight + window.scrollY >= document.body
                 .offsetHeight - 50) { scrolled = true;
                 unlockSecret('bottom', 'Deep Explorer', 's3'); } });
         setTimeout(() => unlockSecret('time', 'Patient Visitor', 's4'), 60000);
         if (new Date().getHours() >= 22 || new Date().getHours() <= 5) unlockSecret('night', 'Night Owl', 's8');
-        document.getElementById('secretPixel').onclick = () => unlockSecret('pixel', 'Hidden Pixel', 's9');
-        document.getElementById('creatorSecret').addEventListener('click', () => unlockSecret('creator',
-            'Developer Access', 's10'));
+        document.getElementById('secretPixel').onclick = () => {
+            markUserInteraction();
+            playUISound(1000, 0.05);
+            unlockSecret('pixel', 'Hidden Pixel', 's9');
+        };
+        document.getElementById('creatorSecret').addEventListener('click', () => {
+            markUserInteraction();
+            playUISound(1100, 0.05);
+            unlockSecret('creator', 'Developer Access', 's10');
+        });
 
-        // Background effects (reduced for mobile)
+        // Background effects
         const starsContainer = document.querySelector('.stars');
         const starCount = isMobile ? 15 : 40;
         for (let i = 0; i < starCount; i++) { const star = document.createElement('div');
@@ -1907,11 +2238,12 @@
         terminalInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') { const cmd = this.value.trim().toLowerCase();
                 this.value = ''; let response = ''; switch (cmd) { case 'help': response =
-                        'Commands: help, students, teachers, gallery, secrets, date, cls'; break; case 'students': response =
+                        'Commands: help, students, teachers, gallery, secrets, date, cls, stop (stop music)'; break; case 'students': response =
                         students.map(s => s.name).join(', '); break; case 'teachers': response =
                         "Veronica Sta Monica, Paul Jayme, plus G11 teachers"; break; case 'gallery': response = galleryImages
                         .join(', '); break; case 'secrets': response = 'Secrets found: ' + secretsFound + '/10'; break; case 'date': response =
-                        new Date().toString(); break; case 'cls': terminalOutput.innerHTML = ''; return; default: response =
+                        new Date().toString(); break; case 'stop': window.stopMusic();
+                    response = '⏹ Music stopped.'; break; case 'cls': terminalOutput.innerHTML = ''; return; default: response =
                         'Unknown command: ' + cmd; }
                 terminalOutput.innerHTML += '<div>> ' + cmd + '</div><div>' + response + '</div>';
                 terminalOutput.scrollTop = terminalOutput.scrollHeight; }
@@ -1947,11 +2279,9 @@
         // Initial renders
         renderOfficers();
         renderStudents();
-        renderFame();
         renderGallery();
         renderMemories();
         renderGraduation();
-        updatePlaylistUI();
         filterStudents();
         window.setTheme(localStorage.getItem('theme') || 'blue');
 
@@ -1991,14 +2321,10 @@
             document.body.classList.add('rainbowMode');
         }
 
-        preventExternalReload();
-
-        // Prevent body scroll when intro is active
         if (!introFinished) {
             document.body.style.overflow = 'hidden';
         }
 
-        // Close panels when tapping outside on mobile
         document.addEventListener('click', function(e) {
             const themeMenu = document.getElementById('themeMenu');
             if (themeMenu.style.display === 'block' && !e.target.closest('#themeMenu') && !e.target.closest(
@@ -2007,11 +2333,44 @@
             }
         });
 
+        // ======================= UI SOUND EFFECTS – EVENT DELEGATION (with user interaction check) =======================
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest(
+                'button, .nav-util, .desktop-nav a, .mobile-menu a, .mobile-menu .nav-util-mobile, .retro-card, .flip-card, .teacher-list li, .hamburger, .mobile-menu-close, .lightbox-controls button, #slideshowBtn, #backToTop, #startBtn, #startMenu a, .desktop-icon, .window .window-title, #secretPixel, #creatorSecret, #themeMenu button, #secretPanel button, #jukeboxPanel button'
+                );
+            if (target) {
+                markUserInteraction(); // mark on any click
+                if (!target.closest('.flip-card')) {
+                    let pitch = 700;
+                    if (target.closest('.retro-card')) pitch = 650;
+                    else if (target.closest('.nav-util') || target.closest('.desktop-nav a') || target.closest(
+                            '.mobile-menu a')) pitch = 800;
+                    else if (target.closest('button')) pitch = 900;
+                    else if (target.closest('.hamburger') || target.closest('.mobile-menu-close')) pitch = 600;
+                    else if (target.closest('#backToTop')) pitch = 550;
+                    else if (target.closest('#startBtn')) pitch = 500;
+                    playUISound(pitch, 0.04);
+                }
+            }
+        });
+
+        // Hover sounds only after user interaction
+        if (!isMobile && !('ontouchstart' in window)) {
+            document.addEventListener('mouseenter', function(e) {
+                if (!userInteracted) return;
+                const target = e.target.closest(
+                    'button, .nav-util, .desktop-nav a, .mobile-menu a, .mobile-menu .nav-util-mobile, .retro-card, .flip-card, .teacher-list li, .hamburger, .mobile-menu-close, .lightbox-controls button, #slideshowBtn, #backToTop, #startBtn, #startMenu a, .desktop-icon, #secretPixel, #creatorSecret, #themeMenu button, #secretPanel button, #jukeboxPanel button'
+                    );
+                if (target) {
+                    playUISound(1200, 0.02, 0.05);
+                }
+            });
+        }
+
         console.log('🚀 TechPro B Digital Yearbook Ready');
-        console.log('📱 Mobile-friendly version loaded');
-        console.log('💡 Tip: Tap student cards to flip them!');
-        console.log('🔍 Press ` key for terminal, ESC to close overlays');
-        console.log('🎵 Audio powered by SoundHelix (CC BY 3.0)');
+        console.log('🎵 Jukebox updated with Minecraft Moog City and Roblox Main Menu');
+        console.log('📻 Now Playing display added');
+        console.log('🔊 AudioContext fixed: sounds only after your first click');
     </script>
 </body>
 </html>
