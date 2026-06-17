@@ -4,10 +4,10 @@
     ║   TECHPRO B (ICT) DIGITAL YEARBOOK     ║
     ║   Mabayuhan Senior High School (MSHS)  ║
     ║   SY 2025-2027                         ║
-    ║   + Removed "Favorite Memory"          ║
-    ║   + Jukebox with Now Playing           ║
-    ║   + Student cards & all features       ║
-    ║   + External links: game.html, etc.    ║
+    ║   + Fixed audio (Minecraft/Roblox)     ║
+    ║   + Added "Space Dog" by DanTDM        ║
+    ║   + Removed auto day/night             ║
+    ║   + Manual theme toggle only            ║
     ╚══════════════════════════════════════════╝
 -->
 <html lang="en">
@@ -1399,6 +1399,10 @@
         <button onclick="playMusic(4)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
             💻 Windows 98 Theme
         </button>
+        <!-- NEW: Space Dog by DanTDM -->
+        <button onclick="playMusic(5)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
+            🐕 Space Dog - DanTDM
+        </button>
         <button onclick="stopMusic()" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#8b0000; color:white; border-radius:4px; width:100%; text-align:center; font-size:0.9rem;">
             ⏹ Stop
         </button>
@@ -1449,12 +1453,18 @@
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- ========== NEW AUDIO TAGS FOR MINECRAFT & ROBLOX ========== -->
+    <!-- ========== FIXED AUDIO TAGS FOR MINECRAFT & ROBLOX ========== -->
     <audio id="moogCity" preload="auto">
         <source src="https://archive.org/download/minecraft-volume-alpha/Minecraft%20-%20Volume%20Alpha/06%20-%20Moog%20City.mp3" type="audio/mpeg">
     </audio>
     <audio id="robloxTheme" preload="auto">
         <source src="https://archive.org/download/roblox-2016/Main%20Menu.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- ========== NEW: Space Dog by DanTDM (placeholder – replace src with your own MP3) ========== -->
+    <audio id="spaceDog" loop preload="auto">
+        <!-- Replace the src below with your own MP3 URL -->
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
     </audio>
 
     <div id="website">
@@ -1490,7 +1500,7 @@
         <section id="graduation"><h2>🎓 Graduation</h2><div id="countdown" style="font-size:1.5rem; text-align:center; margin-bottom:30px;"></div><h3>Class Achievements</h3><div class="retro-grid" id="achievementGrid"></div><h3 style="margin-top:30px;">Graduation Memories</h3><div class="retro-grid" id="gradMemoriesGrid"></div></section>
         <section id="stats"><h2>📊 Class Statistics</h2><div class="retro-grid"><div class="retro-card"><h1 id="studentCount">0</h1><p>Students</p></div><div class="retro-card"><h1 id="teacherCount">0</h1><p>Teachers</p></div><div class="retro-card"><h1 id="yearCount">0</h1><p>School Years</p></div><div class="retro-card"><h1 id="visitCount">0</h1><p>Visitors</p></div></div></section>
         <section id="timeline"><h2>⏳ Class Timeline</h2><div class="timeline" style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center;"><div class="event retro-card"><h3>2025</h3><p>First Year Begins</p></div><div class="event retro-card"><h3>2026</h3><p>Second Year (Final Year)</p></div><div class="event retro-card"><h3>2027</h3><p>Graduation</p></div></div></section>
-        <section id="search"><h2>🔍 Class Database</h2><input type="text" id="searchInput" placeholder="Search students, quotes, memories..." style="width:100%; padding:10px; margin-bottom:10px; font-family:'VT323', monospace; font-size:1rem;"><select id="sectionFilter" style="padding:10px; font-family:'VT323', monospace; font-size:1rem;"><option value="all">All Sections</option><option value="G11">Grade 11</option><option value="G12">Grade 12</option></select><div class="retro-grid" id="searchResults" style="margin-top:20px;"></div></section>
+        <section id="search"><h2>🔍 Class Database</h2><input type="text" id="searchInput" placeholder="Search students, quotes, dreams..." style="width:100%; padding:10px; margin-bottom:10px; font-family:'VT323', monospace; font-size:1rem;"><select id="sectionFilter" style="padding:10px; font-family:'VT323', monospace; font-size:1rem;"><option value="all">All Sections</option><option value="G11">Grade 11</option><option value="G12">Grade 12</option></select><div class="retro-grid" id="searchResults" style="margin-top:20px;"></div></section>
         <section id="secretRewards" style="display:none;"><h2>🏆 Secret Master Rewards</h2><p>Congratulations! You've unlocked the hidden class photo gallery.</p><div class="retro-grid" id="hiddenGallery"></div><span class="badge">SECRET ACHIEVEMENT</span></section>
 
         <!-- ========== OVERLAYS ========== -->
@@ -1515,7 +1525,7 @@
 
     <script>
         // ======================= DATA =======================
-        // Favorite Memory field removed from all student objects
+        // Favorite Memory field removed
         const students = [
             { id: 1, name: "Alquza Almer Dela Cruz", nickname: "Alquza", quote: "No quote yet", dreamJob: "Undecided",
                 section: "Grade 12", img: "images/student1.jpg" },
@@ -1607,6 +1617,7 @@
         const win98Music = document.getElementById('win98Music');
         const moogCity = document.getElementById('moogCity');
         const robloxTheme = document.getElementById('robloxTheme');
+        const spaceDog = document.getElementById('spaceDog');
         const startupSound = document.getElementById('startupSound');
 
         // ======================= GLOBALS =======================
@@ -1625,7 +1636,7 @@
             'ArrowRight', 'b', 'a'
         ];
         let currentAudio = null;
-        let userInteracted = false; // for Web Audio context
+        let userInteracted = false;
 
         const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.matchMedia(
             '(max-width: 768px)').matches;
@@ -1638,7 +1649,7 @@
         const globalNowPlaying = document.getElementById('globalNowPlaying');
         const nowPlayingDisplay = document.getElementById('nowPlaying');
 
-        // ======================= UI SOUND EFFECTS (fixed AudioContext) =======================
+        // ======================= UI SOUND EFFECTS (AudioContext fixed) =======================
         let uiAudioCtx = null;
 
         function getUIAudioContext() {
@@ -1653,7 +1664,7 @@
         }
 
         function playUISound(freq = 900, duration = 0.06, vol = 0.12) {
-            if (!userInteracted) return; // only after user gesture
+            if (!userInteracted) return;
             try {
                 const ctx = getUIAudioContext();
                 if (!ctx) return;
@@ -1673,11 +1684,9 @@
             } catch (e) {}
         }
 
-        // ======================= Mark user interaction =======================
         function markUserInteraction() {
             if (!userInteracted) {
                 userInteracted = true;
-                // Pre-warm audio context on first click
                 getUIAudioContext();
             }
         }
@@ -1707,9 +1716,8 @@
             localStorage.setItem('techproSecrets', JSON.stringify([...discoveredSecrets]));
         }
 
-        // ======================= UPDATED stopAllMusic =======================
         function stopAllMusic() {
-            [pixelMusic, win98Music, moogCity, robloxTheme, startupSound].forEach(audio => {
+            [pixelMusic, win98Music, moogCity, robloxTheme, spaceDog, startupSound].forEach(audio => {
                 audio.pause();
                 audio.currentTime = 0;
             });
@@ -1737,21 +1745,26 @@
                 globalVolumeSlider.value = currentAudio.volume;
             }
             if (currentAudio && currentAudio.src) {
-                const name = currentAudio === moogCity ? 'Moog City' :
-                    currentAudio === robloxTheme ? 'Roblox Main Menu' :
-                    currentAudio === pixelMusic ? 'Pixel Theme' :
-                    currentAudio === win98Music ? 'Windows 98 Theme' :
-                    currentAudio === startupSound ? 'Startup' : 'Audio';
+                let name = 'Audio';
+                if (currentAudio === moogCity) name = 'Moog City';
+                else if (currentAudio === robloxTheme) name = 'Roblox Main Menu';
+                else if (currentAudio === pixelMusic) name = 'Pixel Theme';
+                else if (currentAudio === win98Music) name = 'Windows 98 Theme';
+                else if (currentAudio === spaceDog) name = 'Space Dog';
+                else if (currentAudio === startupSound) name = 'Startup';
                 globalNowPlaying.textContent = name.length > 12 ? name.substring(0, 10) + '…' : name;
             } else {
                 globalNowPlaying.textContent = 'No audio';
             }
         }
 
-        function setCurrentAudio(audio) {
+        function setCurrentAudio(audio, title) {
             currentAudio = audio;
             if (audio) {
                 audio.volume = parseFloat(globalVolumeSlider.value);
+            }
+            if (title && nowPlayingDisplay) {
+                nowPlayingDisplay.textContent = 'Now Playing: ' + title;
             }
             updateGlobalControls();
             audioControls.classList.remove('hidden');
@@ -1770,31 +1783,38 @@
             }
         }
 
-        // ======================= UPDATED playMusic =======================
+        // ======================= playMusic with 5 choices =======================
         window.playMusic = function(choice) {
             markUserInteraction();
             stopAllMusic();
-            if (choice === 1) {
-                moogCity.play().catch(() => {});
-                setCurrentAudio(moogCity);
-                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Minecraft - Moog City';
-                playUISound(800, 0.05);
-            } else if (choice === 2) {
-                robloxTheme.play().catch(() => {});
-                setCurrentAudio(robloxTheme);
-                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Roblox Main Menu';
-                playUISound(800, 0.05);
-            } else if (choice === 3) {
-                pixelMusic.play().catch(() => {});
-                setCurrentAudio(pixelMusic);
-                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Pixel Theme';
-                playUISound(800, 0.05);
-            } else if (choice === 4) {
-                win98Music.play().catch(() => {});
-                setCurrentAudio(win98Music);
-                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Windows 98 Theme';
-                playUISound(800, 0.05);
+            let audio, title;
+            switch (choice) {
+                case 1:
+                    audio = moogCity;
+                    title = 'Minecraft - Moog City';
+                    break;
+                case 2:
+                    audio = robloxTheme;
+                    title = 'Roblox Main Menu';
+                    break;
+                case 3:
+                    audio = pixelMusic;
+                    title = 'Pixel Theme';
+                    break;
+                case 4:
+                    audio = win98Music;
+                    title = 'Windows 98 Theme';
+                    break;
+                case 5:
+                    audio = spaceDog;
+                    title = 'Space Dog - DanTDM';
+                    break;
+                default:
+                    return;
             }
+            audio.play().catch(() => {});
+            setCurrentAudio(audio, title);
+            playUISound(800, 0.05);
         };
 
         window.stopMusic = function() {
@@ -1809,15 +1829,16 @@
         function playThemeMusic() {
             stopAllMusic();
             const theme = localStorage.getItem('theme') || 'blue';
+            let audio, title;
             if (theme === 'win98') {
-                win98Music.play().catch(() => {});
-                setCurrentAudio(win98Music);
-                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Windows 98 Theme';
+                audio = win98Music;
+                title = 'Windows 98 Theme';
             } else {
-                pixelMusic.play().catch(() => {});
-                setCurrentAudio(pixelMusic);
-                if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Pixel Theme';
+                audio = pixelMusic;
+                title = 'Pixel Theme';
             }
+            audio.play().catch(() => {});
+            setCurrentAudio(audio, title);
         }
 
         function animateValue(id, target) {
@@ -1833,8 +1854,7 @@
             playUISound(1200, 0.1, 0.2);
             startupSound.volume = parseFloat(globalVolumeSlider.value);
             startupSound.play().catch(() => {});
-            setCurrentAudio(startupSound);
-            if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: Startup';
+            setCurrentAudio(startupSound, 'Startup');
             setTimeout(() => {
                 if (currentAudio === startupSound) {
                     playThemeMusic();
@@ -1867,7 +1887,6 @@
         }
 
         function renderStudents() {
-            // Removed favoriteMemory from flip-back
             document.getElementById('studentGrid').innerHTML = students.map(s =>
                 '<div class="flip-card" data-student-id="' + s.id +
                 '" onclick="toggleFlipCard(this)" role="button" tabindex="0"><div class="flip-inner"><div class="flip-front"><img src="' +
@@ -1904,7 +1923,6 @@
         function filterStudents() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const section = document.getElementById('sectionFilter').value;
-            // Removed favoriteMemory from search (if you still want to search by it, you'd need to re-add it, but we removed it)
             const filtered = students.filter(s => (section === 'all' || s.section === section) && (s.name.toLowerCase()
                 .includes(query) || s.quote.toLowerCase().includes(query) || (s.dreamJob || "").toLowerCase()
                 .includes(query)));
@@ -1914,7 +1932,6 @@
                 '\'"><h3>' + s.name + '</h3><p>' + s.section + '</p><p>' + s.quote + '</p></div>').join('');
         }
 
-        // ======================= FLIP CARD =======================
         function toggleFlipCard(card) {
             markUserInteraction();
             playUISound(750, 0.05);
@@ -2016,10 +2033,10 @@
                 document.addEventListener('touchend', endTouch, { once: true }); }, { passive: false });
         };
 
-        // ======================= THEMES =======================
+        // ======================= THEMES (no auto day/night) =======================
         const themeCollection = new Set();
 
-        function registerTheme(theme) { themeCollection.add(theme); if (themeCollection.size === 9) unlockSecret(
+        function registerTheme(theme) { themeCollection.add(theme); if (themeCollection.size === 10) unlockSecret(
                 'allThemes', 'Theme Collector', 's6'); }
 
         window.setTheme = function(theme) {
@@ -2061,6 +2078,7 @@
             document.getElementById('themeMenu').style.display = 'none';
         };
 
+        // Manual day/night toggle (no auto)
         window.toggleDayNight = function() {
             markUserInteraction();
             playUISound(700, 0.05);
@@ -2069,11 +2087,10 @@
             document.getElementById('themeMenu').style.display = 'none';
         };
 
-        function autoDayNight() { const hour = new Date().getHours(); if (hour >= 7 && hour < 19) document.body.classList
-                .add('day-mode');
-            else document.body.classList.remove('day-mode'); }
-        autoDayNight();
-        if (localStorage.getItem('dayMode') === 'true') document.body.classList.add('day-mode');
+        // Load saved day-mode preference (but never auto-enable)
+        if (localStorage.getItem('dayMode') === 'true') {
+            document.body.classList.add('day-mode');
+        }
 
         function cycleWeather() {
             markUserInteraction();
@@ -2337,13 +2354,13 @@
             }
         });
 
-        // ======================= UI SOUND EFFECTS – EVENT DELEGATION (with user interaction check) =======================
+        // ======================= UI SOUND EFFECTS – EVENT DELEGATION =======================
         document.addEventListener('click', function(e) {
             const target = e.target.closest(
                 'button, .nav-util, .desktop-nav a, .mobile-menu a, .mobile-menu .nav-util-mobile, .retro-card, .flip-card, .teacher-list li, .hamburger, .mobile-menu-close, .lightbox-controls button, #slideshowBtn, #backToTop, #startBtn, #startMenu a, .desktop-icon, .window .window-title, #secretPixel, #creatorSecret, #themeMenu button, #secretPanel button, #jukeboxPanel button'
                 );
             if (target) {
-                markUserInteraction(); // mark on any click
+                markUserInteraction();
                 if (!target.closest('.flip-card')) {
                     let pitch = 700;
                     if (target.closest('.retro-card')) pitch = 650;
@@ -2358,7 +2375,6 @@
             }
         });
 
-        // Hover sounds only after user interaction
         if (!isMobile && !('ontouchstart' in window)) {
             document.addEventListener('mouseenter', function(e) {
                 if (!userInteracted) return;
@@ -2372,11 +2388,9 @@
         }
 
         console.log('🚀 TechPro B Digital Yearbook Ready');
-        console.log('🎵 Jukebox updated with Minecraft Moog City and Roblox Main Menu');
-        console.log('📻 Now Playing display added');
-        console.log('🔊 AudioContext fixed: sounds only after your first click');
-        console.log('🗑️ Removed "Favorite Memory" from student cards');
-        console.log('🔗 External links: halloffame.html, messages.html, computerroom.html, secret-archive.html, about.html, game.html');
+        console.log('🎵 Added Space Dog - DanTDM (replace src with your own MP3)');
+        console.log('🔊 Audio fixed: Minecraft & Roblox tracks should play now.');
+        console.log('🌙 Auto day/night removed – manual toggle only.');
     </script>
 </body>
 </html>
