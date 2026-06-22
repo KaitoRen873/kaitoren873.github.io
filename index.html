@@ -4,10 +4,13 @@
     ║   TECHPRO B (ICT) DIGITAL YEARBOOK     ║
     ║   Mabayuhan Senior High School (MSHS)  ║
     ║   SY 2025-2027                         ║
-    ║   + Fixed audio (Minecraft/Roblox)     ║
-    ║   + Added "Space Dog" by DanTDM        ║
-    ║   + Removed auto day/night             ║
-    ║   + Manual theme toggle only            ║
+    ║   + Custom card click effects          ║
+    ║   + Boot & Axiom typing sounds        ║
+    ║   + Advanced boot animation            ║
+    ║   + MP3 audio (working autoplay)      ║
+    ║   + HEADER SLIDESHOW (2.5s)           ║
+    ║   + WIN+R CMD PANEL (PC/Laptop)       ║
+    ║   + CLASS SCHEDULE (G11 & G12)        ║
     ╚══════════════════════════════════════════╝
 -->
 <html lang="en">
@@ -36,6 +39,14 @@
             --day-border: #2f3640;
             --day-header: #8395a7;
             --pixel-shadow: 4px 4px 0 rgba(0, 0, 0, .3);
+            --axiom-bg: #0a0e1a;
+            --axiom-user: #2a3a6a;
+            --axiom-bot: #1a2a3a;
+            --axiom-border: #4a6a8a;
+            --axiom-text: #d0e0f0;
+            --glow-color: rgba(100, 200, 255, 0.3);
+            --glow-border: 0 0 15px var(--glow-color), 0 0 30px var(--glow-color);
+            --boot-color: #33ff33;
         }
         * {
             margin: 0;
@@ -57,6 +68,7 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             padding-bottom: 70px;
+            position: relative;
         }
         body.day-mode {
             background: var(--day-bg);
@@ -73,146 +85,340 @@
             opacity: 0.5;
         }
 
-        /* ========== INTRO SCREEN ========== */
+        /* ========== 90s CRT SCREEN EFFECT ========== */
+        #crtOverlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            background:
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px),
+                radial-gradient(ellipse at center, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+            opacity: 0.6;
+            animation: flicker 0.15s infinite alternate;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.6; }
+            100% { opacity: 0.5; }
+        }
+        #crtOverlay::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 65%, rgba(0,0,0,0.3) 100%);
+            pointer-events: none;
+        }
+        #crtOverlay::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ========== INTRO SCREEN - ADVANCED BOOT SEQUENCE ========== */
         #introScreen {
             position: fixed;
             inset: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(circle, #1d2b53, #09142e);
+            background: #050a10;
             z-index: 10000;
             transition: opacity 0.8s ease;
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
-        }
-        .intro-content {
-            text-align: center;
+            cursor: default;
+            font-family: 'VT323', monospace;
             padding: 20px;
-            z-index: 2;
+        }
+        .boot-container {
+            max-width: 720px;
+            width: 100%;
+            background: rgba(0, 10, 20, 0.9);
+            border: 2px solid var(--boot-color);
+            border-radius: 8px;
+            padding: 30px 28px;
+            box-shadow: 0 0 60px rgba(51, 255, 51, 0.15), inset 0 0 60px rgba(51, 255, 51, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .boot-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(transparent 0px, rgba(51, 255, 51, 0.02) 2px, transparent 4px);
             pointer-events: none;
-            max-width: 95vw;
+            z-index: 1;
         }
-        #introTitle {
-            font-size: 2.5rem;
-            opacity: 0;
-            animation: fadeIn 1s forwards;
+        .boot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(51, 255, 51, 0.3);
+            padding-bottom: 8px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 6px;
         }
-        #introSchool {
-            margin-top: 25px;
+        .boot-header .brand {
+            color: var(--boot-color);
             font-size: 1.2rem;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .boot-header .brand .blink-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--boot-color);
+            border-radius: 50%;
+            animation: pulse-dot 1.2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        .boot-header .version {
+            color: rgba(51, 255, 51, 0.5);
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+        .boot-body {
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            color: var(--boot-color);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+        }
+        .boot-log {
             opacity: 0;
-            animation: fadeIn 1s forwards 1s;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            flex-wrap: wrap;
         }
-        #introYear {
-            margin-top: 20px;
-            font-size: 1rem;
+        .boot-log.show {
+            opacity: 1;
+        }
+        .boot-log .log-prefix {
+            color: rgba(51, 255, 51, 0.4);
+            font-size: 0.7rem;
+            min-width: 24px;
+        }
+        .boot-log .log-msg {
+            word-break: break-word;
+        }
+        .boot-log .log-ok {
+            color: #5f5;
+            margin-left: auto;
+        }
+        .boot-log .log-fail {
+            color: #f55;
+        }
+        .boot-log .log-warn {
+            color: #fa5;
+        }
+        .boot-log .log-highlight {
+            color: #ffd700;
+        }
+
+        /* Progress bar */
+        .boot-progress {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
             opacity: 0;
-            animation: fadeIn 1s forwards 2s;
+            transition: opacity 0.6s ease;
         }
-        #introMessage {
-            margin-top: 40px;
-            line-height: 2;
-            font-size: 1rem;
+        .boot-progress.show {
+            opacity: 1;
+        }
+        .boot-progress .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(51, 255, 51, 0.15);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+        }
+        .boot-progress .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--boot-color), #88ff88, var(--boot-color));
+            background-size: 200% 100%;
+            border-radius: 4px;
+            transition: width 0.4s ease;
+            animation: shimmer 1.5s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .boot-progress .progress-label {
+            font-size: 0.7rem;
+            color: rgba(51, 255, 51, 0.6);
+            min-width: 50px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Status line at bottom */
+        .boot-status {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(51, 255, 51, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: rgba(51, 255, 51, 0.4);
             opacity: 0;
-            animation: fadeIn 1s forwards 3s;
+            transition: opacity 0.6s ease;
         }
-        #enterPrompt {
-            display: none;
-            margin-top: 40px;
-            font-size: 1.2rem;
-            animation: blink 1s infinite;
-            pointer-events: auto;
-            cursor: pointer;
+        .boot-status.show {
+            opacity: 1;
         }
+        .boot-status .status-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .boot-status .status-led {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--boot-color);
+            animation: pulse-dot 1.2s infinite;
+        }
+        .boot-status .status-right {
+            display: flex;
+            gap: 14px;
+        }
+
+        /* Enter button */
         #tapButton {
             display: none;
-            margin: 30px auto 0;
-            padding: 16px 36px;
+            margin: 22px auto 0;
+            padding: 16px 42px;
             font-family: 'VT323', monospace;
-            font-size: 1.3rem;
-            background: #ffd700;
-            color: #09142e;
-            border: 4px solid #fff;
+            font-size: 1.2rem;
+            background: transparent;
+            color: var(--boot-color);
+            border: 3px solid var(--boot-color);
             cursor: pointer;
             pointer-events: auto;
-            animation: pulseBtn 2s infinite;
             border-radius: 4px;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+            background: rgba(51, 255, 51, 0.06);
+            box-shadow: 0 0 30px rgba(51, 255, 51, 0.08);
         }
-        @keyframes pulseBtn {
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6);
-            }
-            50% {
-                box-shadow: 0 0 0 18px rgba(255, 215, 0, 0);
-            }
+        #tapButton:hover {
+            background: rgba(51, 255, 51, 0.15);
+            box-shadow: 0 0 50px rgba(51, 255, 51, 0.2);
+            transform: scale(1.02);
         }
+        #tapButton:active {
+            transform: scale(0.96);
+        }
+        #tapButton.show {
+            display: block;
+            animation: pulse-btn 2s infinite;
+        }
+        @keyframes pulse-btn {
+            0%, 100% { box-shadow: 0 0 20px rgba(51, 255, 51, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(51, 255, 51, 0.25); }
+        }
+
         .fade-out {
             animation: fadeOut 0.8s forwards;
         }
-        .fade-in {
-            animation: fadeInPage 0.8s forwards;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
         @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-            }
-        }
-        @keyframes fadeInPage {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        @keyframes blink {
-            0%,
-            50% {
-                opacity: 1;
-            }
-            51%,
-            100% {
-                opacity: 0;
-            }
-        }
-        .logo {
-            width: 120px;
-            image-rendering: pixelated;
-            margin-bottom: 20px;
-            animation: floatLogo 4s ease-in-out infinite;
-        }
-        @keyframes floatLogo {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-4px);
-            }
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
 
+        .boot-scanline {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(transparent 0px, rgba(0,255,0,0.03) 2px, transparent 4px);
+            z-index: 0;
+        }
+
+        /* ========== EFFECT CONTAINER ========== */
+        #effectContainer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            overflow: hidden;
+        }
+        .effect-particle {
+            position: absolute;
+            font-size: 2rem;
+            animation: floatUp 1.5s ease-out forwards;
+            opacity: 0;
+            pointer-events: none;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(0.5) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(-200px) scale(1.5) rotate(720deg); }
+        }
+
+        /* Purple flash for Zie */
+        .purple-flash {
+            position: fixed;
+            inset: 0;
+            background: rgba(128, 0, 255, 0.3);
+            pointer-events: none;
+            z-index: 9997;
+            animation: flashFade 0.8s ease-out forwards;
+        }
+        @keyframes flashFade {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Glitch effect for Ron Matthew */
+        .glitch-active {
+            animation: glitch 0.8s steps(2) forwards;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); filter: hue-rotate(0deg); }
+            10% { transform: translate(-5px, 3px) skewX(2deg); filter: hue-rotate(90deg); }
+            20% { transform: translate(5px, -3px) skewX(-2deg); filter: hue-rotate(180deg); }
+            30% { transform: translate(-3px, 5px); filter: hue-rotate(270deg); }
+            40% { transform: translate(3px, -5px); filter: hue-rotate(360deg); }
+            50% { transform: translate(-7px, 2px) skewX(3deg); filter: hue-rotate(90deg); }
+            60% { transform: translate(7px, -2px) skewX(-3deg); filter: hue-rotate(180deg); }
+            70% { transform: translate(-4px, 4px); filter: hue-rotate(270deg); }
+            80% { transform: translate(4px, -4px); filter: hue-rotate(360deg); }
+            90% { transform: translate(-2px, 2px); filter: hue-rotate(0deg); }
+            100% { transform: translate(0); filter: hue-rotate(0deg); }
+        }
+
+        /* ========== WEBSITE (hidden initially) ========== */
         #website {
             display: none;
             opacity: 1;
         }
 
-        /* ========== HEADER ========== */
+        /* ========== HEADER with SLIDESHOW ========== */
         header {
             text-align: center;
             padding: 60px 20px;
@@ -220,18 +426,26 @@
             color: white;
             background-size: cover;
             background-position: center;
-            transition: background-image 1s ease-in-out;
+            transition: background-image 1.2s ease-in-out;
             min-height: 280px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding-top: 70px;
+            background-color: var(--header);
         }
         header h1 {
             font-size: 1.8rem;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 0 #000;
+            text-shadow: 2px 2px 0 #000, 0 0 30px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 3;
+        }
+        header p {
+            position: relative;
+            z-index: 3;
+            text-shadow: 1px 1px 0 #000, 0 0 20px rgba(0,0,0,0.7);
         }
         .motto {
             margin-top: 20px;
@@ -241,13 +455,60 @@
             content: "";
             position: absolute;
             inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1;
+        }
+        header::after {
+            content: "";
+            position: absolute;
+            inset: 0;
             background: repeating-linear-gradient(transparent 0px, rgba(255, 255, 255, 0.02) 2px, transparent 4px);
             pointer-events: none;
-            z-index: 1;
+            z-index: 2;
         }
         header>* {
             position: relative;
-            z-index: 2;
+            z-index: 3;
+        }
+
+        .slideshow-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .slideshow-dots .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.4s ease;
+            cursor: default;
+        }
+        .slideshow-dots .dot.active {
+            background: #ffd700;
+            border-color: #ffd700;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+            transform: scale(1.2);
+        }
+        .header-slide-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            pointer-events: none;
+        }
+        .header-slide-overlay.show {
+            opacity: 1;
         }
 
         /* ========== NAVIGATION ========== */
@@ -327,7 +588,6 @@
             transform: scale(0.93);
             transition: transform 0.1s;
         }
-
         .mobile-menu-backdrop {
             display: none;
             position: fixed;
@@ -339,7 +599,6 @@
         .mobile-menu-backdrop.open {
             display: block;
         }
-
         .mobile-menu {
             display: none;
             position: fixed;
@@ -525,6 +784,64 @@
             opacity: 0.6;
             margin-top: 8px;
             font-style: italic;
+        }
+
+        /* ========== SCHEDULE STYLES ========== */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .schedule-card {
+            background: var(--card);
+            border: 4px solid var(--border);
+            padding: 20px;
+            box-shadow: var(--pixel-shadow);
+            text-align: left;
+        }
+        .schedule-card h3 {
+            text-align: center;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+        .schedule-card table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .schedule-card th,
+        .schedule-card td {
+            padding: 8px 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            text-align: left;
+        }
+        .schedule-card th {
+            color: #ffd700;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .schedule-card td:first-child {
+            font-weight: bold;
+            color: #aac;
+        }
+        .schedule-card .day-row td:first-child {
+            color: #ffd700;
+        }
+        @media (max-width: 768px) {
+            .schedule-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .schedule-card table {
+                font-size: 0.75rem;
+            }
+            .schedule-card th,
+            .schedule-card td {
+                padding: 6px 4px;
+            }
         }
 
         /* ========== PANELS & OVERLAYS ========== */
@@ -875,6 +1192,196 @@
             font-family: Tahoma, sans-serif;
         }
 
+        /* ========== CMD PANEL (Win+R) ========== */
+        #cmdPanel {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            animation: cmdFadeIn 0.25s ease;
+        }
+        #cmdPanel.open {
+            display: flex;
+        }
+        @keyframes cmdFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .cmd-window {
+            background: #0a0a0a;
+            border: 3px solid #2a2a2a;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            overflow: hidden;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .cmd-titlebar {
+            background: #1a1a1a;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #2a2a2a;
+            flex-shrink: 0;
+            user-select: none;
+        }
+        .cmd-titlebar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cmd-titlebar-left .cmd-icon {
+            font-size: 1rem;
+            color: #ffd700;
+        }
+        .cmd-titlebar-left .cmd-title-text {
+            color: #ccc;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .cmd-titlebar-right {
+            display: flex;
+            gap: 8px;
+        }
+        .cmd-titlebar-right button {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0 6px;
+            border-radius: 4px;
+            transition: all 0.15s;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+        .cmd-titlebar-right button:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        .cmd-titlebar-right .cmd-close-btn:hover {
+            background: #c00;
+            color: #fff;
+        }
+        .cmd-titlebar-right .cmd-min-btn:hover {
+            background: #444;
+            color: #fff;
+        }
+        .cmd-body {
+            padding: 16px 20px 20px;
+            background: #0a0a0a;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 280px;
+            max-height: 55vh;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            color: #0f0;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .cmd-body::-webkit-scrollbar {
+            width: 8px;
+        }
+        .cmd-body::-webkit-scrollbar-track {
+            background: #111;
+        }
+        .cmd-body::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+        .cmd-body::-webkit-scrollbar-thumb:hover {
+            background: #3a3a3a;
+        }
+        .cmd-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            flex-wrap: wrap;
+        }
+        .cmd-prompt {
+            color: #0f0;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .cmd-prompt-path {
+            color: #ffd700;
+            white-space: nowrap;
+        }
+        .cmd-input {
+            background: transparent;
+            border: none;
+            color: #0f0;
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            flex: 1;
+            min-width: 80px;
+            caret-color: #0f0;
+        }
+        .cmd-input::selection {
+            background: rgba(0, 255, 0, 0.25);
+        }
+        .cmd-output {
+            color: #aaa;
+            padding: 2px 0;
+            font-family: inherit;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .cmd-output.error {
+            color: #f55;
+        }
+        .cmd-output.success {
+            color: #5f5;
+        }
+        .cmd-output.info {
+            color: #5af;
+        }
+        .cmd-output.warning {
+            color: #fa5;
+        }
+        .cmd-output .cmd-highlight {
+            color: #ffd700;
+        }
+        .cmd-status {
+            border-top: 1px solid #1a1a1a;
+            padding: 6px 16px;
+            background: #0a0a0a;
+            color: #555;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+            flex-shrink: 0;
+            font-family: inherit;
+        }
+        .cmd-status span:last-child {
+            color: #0f0;
+        }
+        .cmd-welcome {
+            color: #0f0;
+            margin-bottom: 8px;
+            line-height: 1.8;
+        }
+        .cmd-welcome .cmd-ascii {
+            font-size: 0.6rem;
+            color: #2a5a2a;
+            white-space: pre;
+            line-height: 1.2;
+        }
+
         /* ========== BACK TO TOP ========== */
         #backToTop {
             position: fixed;
@@ -1000,6 +1507,169 @@
             min-width: 30px;
         }
 
+        /* ========== VOTING POLL STYLES ========== */
+        .poll-container {
+            background: var(--card);
+            border: 4px solid var(--border);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: var(--pixel-shadow);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .poll-title {
+            font-size: 1.4rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .poll-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            margin: 6px 0;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .poll-option:hover {
+            background: rgba(255,255,255,0.12);
+        }
+        .poll-option.selected {
+            background: rgba(255,215,0,0.15);
+            border-color: #ffd700;
+        }
+        .poll-option input[type="radio"] {
+            accent-color: #ffd700;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .poll-option label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .poll-option .ai-icon {
+            font-size: 1.3rem;
+        }
+        .poll-option .vote-count {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-left: auto;
+        }
+        .poll-submit {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            background: var(--header);
+            color: var(--text);
+            border: 3px solid var(--border);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s, transform 0.1s;
+            text-align: center;
+        }
+        .poll-submit:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .poll-submit:active {
+            transform: scale(0.97);
+        }
+        .poll-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .poll-results {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255,255,255,0.15);
+        }
+        .poll-result-item {
+            margin: 10px 0;
+        }
+        .poll-result-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+        .poll-bar-bg {
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            height: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .poll-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ff8c00);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+            width: 0%;
+        }
+        .poll-bar.neo-bar {
+            background: linear-gradient(90deg, var(--border), var(--border));
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        .poll-vote-count {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+        .poll-total-votes {
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            margin-top: 12px;
+        }
+        .poll-status {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            opacity: 0.7;
+        }
+        .poll-reset {
+            background: none;
+            border: 2px solid rgba(255,255,255,0.2);
+            color: var(--text);
+            padding: 4px 12px;
+            font-family: 'VT323', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            border-radius: 4px;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .poll-reset:hover {
+            opacity: 1;
+        }
+
+        /* ========== AI GAMES NAV LINKS ========== */
+        .ai-game-link {
+            display: inline-block;
+            padding: 4px 10px;
+            margin: 2px 4px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+            background: rgba(255,255,255,0.05);
+        }
+        .ai-game-link:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
         /* ========== MISC ========== */
         .badge {
             display: inline-block;
@@ -1055,6 +1725,247 @@
             -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
         }
 
+        /* ========== AI GREETING ========== */
+        .ai-greeting {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 320px;
+            background: var(--card);
+            border: 4px solid var(--border);
+            box-shadow: var(--pixel-shadow);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'VT323', monospace;
+            color: var(--text);
+            animation: slideUp 0.5s ease;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .ai-greeting.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+        .ai-greeting-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .ai-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        .ai-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        #greetingText {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            flex: 1;
+        }
+        .greeting-close {
+            background: none;
+            border: 2px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .greeting-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== AXIOM CHAT ASSISTANT ========== */
+        #axiomChat {
+            position: fixed;
+            bottom: 220px;
+            right: 16px;
+            z-index: 9997;
+            width: 350px;
+            max-width: calc(100vw - 32px);
+            max-height: 70vh;
+            background: var(--axiom-bg);
+            border: 3px solid var(--axiom-border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            display: none;
+            flex-direction: column;
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #axiomChat.open {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+        .axiom-header {
+            background: var(--axiom-border);
+            padding: 8px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            flex-shrink: 0;
+        }
+        .axiom-header-title {
+            font-size: 1rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .axiom-header-title .axiom-header-icon {
+            width: 24px;
+            height: 24px;
+            display: block;
+        }
+        .axiom-header-title .axiom-header-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .axiom-header-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            padding: 0 6px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .axiom-header-close:hover {
+            opacity: 1;
+        }
+        .axiom-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 200px;
+            max-height: 400px;
+            background: var(--axiom-bg);
+        }
+        .axiom-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        .axiom-messages::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+        .axiom-messages::-webkit-scrollbar-thumb {
+            background: var(--axiom-border);
+            border-radius: 3px;
+        }
+        .axiom-msg {
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 90%;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: fadeInMsg 0.3s ease;
+        }
+        .axiom-msg.user {
+            background: var(--axiom-user);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            color: #e0e8f0;
+        }
+        .axiom-msg.bot {
+            background: var(--axiom-bot);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            color: var(--axiom-text);
+            border-left: 3px solid var(--axiom-border);
+        }
+        .axiom-msg.bot .axiom-typing {
+            display: inline-block;
+            animation: blinkDots 1.4s infinite;
+        }
+        @keyframes blinkDots {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+        @keyframes fadeInMsg {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .axiom-input-area {
+            display: flex;
+            gap: 8px;
+            padding: 10px 14px;
+            border-top: 2px solid var(--axiom-border);
+            flex-shrink: 0;
+            background: var(--axiom-bg);
+        }
+        #axiomInput {
+            flex: 1;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid var(--axiom-border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: 'VT323', monospace;
+            font-size: 0.85rem;
+            color: var(--axiom-text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #axiomInput:focus {
+            border-color: #7a9aba;
+        }
+        #axiomInput::placeholder {
+            color: rgba(255,255,255,0.25);
+        }
+        #axiomSendBtn {
+            background: var(--axiom-border);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-family: 'VT323', monospace;
+            font-size: 0.85rem;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            touch-action: manipulation;
+        }
+        #axiomSendBtn:hover {
+            background: #5a7a9a;
+        }
+        #axiomSendBtn:active {
+            transform: scale(0.93);
+        }
+        .axiom-typing-indicator {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            align-self: flex-start;
+            display: none;
+        }
+        .axiom-typing-indicator.show {
+            display: block;
+        }
+
         /* ========== MOBILE MEDIA QUERIES ========== */
         @media (max-width: 768px) {
             html {
@@ -1077,24 +1988,6 @@
             }
             .logo {
                 width: 65px;
-            }
-            #introTitle {
-                font-size: 1.5rem;
-            }
-            #introSchool {
-                font-size: 1rem;
-            }
-            #introMessage {
-                font-size: 0.9rem;
-                line-height: 1.7;
-            }
-            #enterPrompt {
-                font-size: 1rem;
-            }
-            #tapButton {
-                display: block;
-                font-size: 1.1rem;
-                padding: 14px 30px;
             }
             header {
                 padding: 50px 15px 40px;
@@ -1265,6 +2158,64 @@
             #audioControls .volume-icon {
                 font-size: 0.65rem;
             }
+            .ai-greeting {
+                max-width: 85vw;
+                bottom: 70px;
+                right: 10px;
+                left: 10px;
+            }
+            .ai-greeting-content {
+                gap: 8px;
+            }
+            #greetingText {
+                font-size: 0.8rem;
+            }
+            #axiomChat {
+                bottom: 190px;
+                right: 10px;
+                width: calc(100vw - 20px);
+                max-width: calc(100vw - 20px);
+                max-height: 60vh;
+            }
+            .axiom-messages {
+                max-height: 300px;
+                min-height: 150px;
+            }
+            .axiom-msg {
+                font-size: 0.8rem;
+            }
+            .poll-container {
+                padding: 16px;
+            }
+            .poll-option {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+            .poll-option label {
+                font-size: 0.85rem;
+            }
+            .cmd-window {
+                max-width: 98%;
+                max-height: 90vh;
+                border-radius: 4px;
+            }
+            .cmd-body {
+                min-height: 180px;
+                max-height: 50vh;
+                font-size: 0.75rem;
+                padding: 12px 14px;
+            }
+            .cmd-titlebar .cmd-title-text {
+                font-size: 0.7rem;
+            }
+            .cmd-status {
+                font-size: 0.6rem;
+                padding: 4px 12px;
+            }
+            .slideshow-dots .dot {
+                width: 8px;
+                height: 8px;
+            }
         }
 
         @media (max-width: 400px) {
@@ -1336,6 +2287,33 @@
             #audioControls .volume-icon {
                 font-size: 0.55rem;
             }
+            .ai-greeting {
+                padding: 10px;
+            }
+            #axiomChat {
+                bottom: 170px;
+                right: 8px;
+                max-height: 55vh;
+            }
+            .axiom-messages {
+                max-height: 220px;
+                min-height: 120px;
+            }
+            .poll-container {
+                padding: 12px;
+            }
+            .poll-option {
+                padding: 6px 8px;
+                font-size: 0.8rem;
+            }
+            .poll-option label {
+                font-size: 0.8rem;
+            }
+            .cmd-body {
+                min-height: 140px;
+                font-size: 0.7rem;
+                padding: 10px 12px;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1358,69 +2336,78 @@
             border-color: white gray gray white;
             box-shadow: none;
         }
+
+        .neo-glow {
+            box-shadow: 0 0 20px var(--glow-color), inset 0 0 20px var(--glow-color);
+        }
+        .neo-theme .retro-card,
+        .neo-theme .flip-front,
+        .neo-theme .flip-back,
+        .neo-theme header,
+        .neo-theme .desktop-nav,
+        .neo-theme .ai-greeting,
+        .neo-theme #axiomChat,
+        .neo-theme #secretPanel,
+        .neo-theme #jukeboxPanel,
+        .neo-theme #themeMenu,
+        .neo-theme #audioControls,
+        .neo-theme .poll-container {
+            box-shadow: 0 0 20px var(--glow-color), inset 0 0 20px var(--glow-color);
+        }
+        .neo-theme .poll-bar {
+            background: linear-gradient(90deg, var(--glow-color), var(--border));
+        }
     </style>
 </head>
 <body>
+    <!-- ========== CRT OVERLAY ========== -->
+    <div id="crtOverlay"></div>
+
     <!-- ========== PANELS ========== -->
     <div id="secretPanel">
         <h3>🔐 Secrets Found</h3>
         <div id="secretCountDisplay">0/10</div>
         <ul style="list-style:none; padding:0;">
-            <li id="s1">???</li>
-            <li id="s2">???</li>
-            <li id="s3">???</li>
-            <li id="s4">???</li>
-            <li id="s5">???</li>
-            <li id="s6">???</li>
-            <li id="s7">???</li>
-            <li id="s8">???</li>
-            <li id="s9">???</li>
-            <li id="s10">???</li>
+            <li id="s1">???</li><li id="s2">???</li><li id="s3">???</li><li id="s4">???</li><li id="s5">???</li>
+            <li id="s6">???</li><li id="s7">???</li><li id="s8">???</li><li id="s9">???</li><li id="s10">???</li>
         </ul>
         <div id="secretBadge" style="display:none; margin-top:20px;"><span class="badge">🏆 SECRET MASTER</span></div>
         <button onclick="document.getElementById('secretPanel').classList.remove('open')" style="margin-top:15px; padding:8px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px;">✕ Close Panel</button>
     </div>
 
-    <!-- ========== UPDATED JUKEBOX PANEL ========== -->
+    <!-- ========== JUKEBOX PANEL ========== -->
     <div id="jukeboxPanel">
         <div class="jukebox-title" style="font-size:1.2rem; margin-bottom:10px;">📻 TechPro Jukebox</div>
         <div id="nowPlaying" style="font-size:0.9rem; margin-bottom:12px; opacity:0.8; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:8px;">
             Now Playing: None
         </div>
-        <button onclick="playMusic(1)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
-            🎮 Minecraft - Moog City
-        </button>
-        <button onclick="playMusic(2)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
-            🟥 Roblox Main Menu
-        </button>
-        <button onclick="playMusic(3)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
-            🎵 Pixel Theme
-        </button>
-        <button onclick="playMusic(4)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
-            💻 Windows 98 Theme
-        </button>
-        <!-- NEW: Space Dog by DanTDM -->
-        <button onclick="playMusic(5)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">
-            🐕 Space Dog - DanTDM
-        </button>
-        <button onclick="stopMusic()" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#8b0000; color:white; border-radius:4px; width:100%; text-align:center; font-size:0.9rem;">
-            ⏹ Stop
-        </button>
-        <button onclick="document.getElementById('jukeboxPanel').classList.remove('open')" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:center; font-size:0.8rem;">
-            ✕ Close Jukebox
-        </button>
+        <button onclick="playMusic(1)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">🎵 Track 1</button>
+        <button onclick="playMusic(2)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">🎵 Track 2</button>
+        <button onclick="playMusic(3)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">🎵 Track 3</button>
+        <button onclick="playMusic(4)" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:left; font-size:0.9rem;">🎵 Track 4</button>
+        <button onclick="stopMusic()" style="margin:4px 2px; padding:10px 14px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#8b0000; color:white; border-radius:4px; width:100%; text-align:center; font-size:0.9rem;">⏹ Stop</button>
+        <button onclick="document.getElementById('jukeboxPanel').classList.remove('open')" style="margin:4px 2px; padding:8px 12px; font-family:'VT323',monospace; cursor:pointer; border:2px solid white; background:#243b72; color:white; border-radius:4px; width:100%; text-align:center; font-size:0.8rem;">✕ Close Jukebox</button>
     </div>
 
+    <!-- ========== THEME MENU ========== -->
     <div id="themeMenu">
         <button onclick="setTheme('blue')">💙 Classic Blue</button>
+        <button onclick="setTheme('neo-blue')">💠 NEO Blue</button>
         <button onclick="setTheme('green')">💚 Terminal Green</button>
+        <button onclick="setTheme('neo-green')">💠 NEO Green</button>
         <button onclick="setTheme('amber')">🧡 Amber CRT</button>
+        <button onclick="setTheme('neo-amber')">💠 NEO Amber</button>
         <button onclick="setTheme('purple')">💜 Pixel Purple</button>
+        <button onclick="setTheme('neo-purple')">💠 NEO Purple</button>
         <button onclick="setTheme('pink')">🌸 Pink Blush</button>
+        <button onclick="setTheme('neo-pink')">💠 NEO Pink</button>
         <button onclick="setTheme('dark')">🖤 Dark Mode</button>
+        <button onclick="setTheme('neo-dark')">💠 NEO Dark</button>
         <button onclick="setTheme('win98')">🟦 Windows 98</button>
         <button onclick="setTheme('minecraft')">⛏️ Minecraft</button>
+        <button onclick="setTheme('neo-minecraft')">💠 NEO Minecraft</button>
         <button onclick="setTheme('roblox')">🧱 Roblox</button>
+        <button onclick="setTheme('neo-roblox')">💠 NEO Roblox</button>
         <button onclick="toggleDayNight()">🌗 Day/Night</button>
         <button onclick="document.getElementById('themeMenu').style.display='none'" style="background:#a00; border-color:#faa;">✕ Close</button>
     </div>
@@ -1429,75 +2416,210 @@
     <div class="stars"></div>
     <div id="particles"></div>
 
-    <!-- ========== INTRO SCREEN ========== -->
+    <!-- ========== INTRO SCREEN - ADVANCED BOOT ========== -->
     <div id="introScreen">
-        <div class="intro-content">
-            <img src="images/logo.png" class="logo" alt="TechPro B Logo" onerror="this.style.display='none'">
-            <h1 id="introTitle">TECHPRO B (ICT)</h1>
-            <h2 id="introSchool">Mabayuhan Senior High School (MSHS)</h2>
-            <h3 id="introYear">2025-2027</h3>
-            <div id="introMessage">22 Active Students<br>One Class<br>One Legacy..<br>(The First Pilots Of The New Curriculum)</div>
-            <div id="enterPrompt">▶ PRESS ENTER OR TAP ANYWHERE TO BEGIN</div>
-            <button id="tapButton" onclick="launchYearbook(); event.stopPropagation();">🎓 ENTER YEARBOOK</button>
+        <div class="boot-container">
+            <div class="boot-scanline"></div>
+            <div class="boot-header">
+                <div class="brand">
+                    <span class="blink-dot"></span>
+                    <span>TECHPRO B SYSTEM</span>
+                </div>
+                <div class="version">v2.0 · 2025-2027</div>
+            </div>
+            <div class="boot-body" id="bootBody">
+                <!-- Boot log entries will be injected by JS -->
+            </div>
+            <div class="boot-progress" id="bootProgress">
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-label" id="progressLabel">0%</span>
+            </div>
+            <div class="boot-status" id="bootStatus">
+                <div class="status-left">
+                    <span class="status-led"></span>
+                    <span>SYSTEM INITIALIZING</span>
+                </div>
+                <div class="status-right">
+                    <span id="bootTimer">00:00</span>
+                    <span>|</span>
+                    <span>PID: 2027</span>
+                </div>
+            </div>
+            <button id="tapButton" onclick="launchYearbook(); event.stopPropagation();">[ SYSTEM READY ] ▶ ENTER</button>
         </div>
     </div>
 
-    <!-- ========== AUDIO SOURCES ========== -->
-    <audio id="startupSound" preload="auto">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="pixelMusic" loop preload="auto">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="win98Music" loop preload="auto">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- ========== FIXED AUDIO TAGS FOR MINECRAFT & ROBLOX ========== -->
-    <audio id="moogCity" preload="auto">
-        <source src="https://archive.org/download/minecraft-volume-alpha/Minecraft%20-%20Volume%20Alpha/06%20-%20Moog%20City.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="robloxTheme" preload="auto">
-        <source src="https://archive.org/download/roblox-2016/Main%20Menu.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- ========== NEW: Space Dog by DanTDM (placeholder – replace src with your own MP3) ========== -->
-    <audio id="spaceDog" loop preload="auto">
-        <!-- Replace the src below with your own MP3 URL -->
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
-    </audio>
+    <!-- ========== AUDIO SOURCES (MP3) ========== -->
+    <audio id="startupSound" preload="auto"><source src="MP3 Audios/startup.mp3" type="audio/mpeg"></audio>
+    <audio id="track1" loop preload="auto"><source src="MP3 Audios/track1.mp3" type="audio/mpeg"></audio>
+    <audio id="track2" loop preload="auto"><source src="MP3 Audios/track2.mp3" type="audio/mpeg"></audio>
+    <audio id="track3" loop preload="auto"><source src="MP3 Audios/track3.mp3" type="audio/mpeg"></audio>
+    <audio id="track4" loop preload="auto"><source src="MP3 Audios/track4.mp3" type="audio/mpeg"></audio>
+    <audio id="themeMusic" loop preload="auto"><source src="MP3 Audios/theme.mp3" type="audio/mpeg"></audio>
 
     <div id="website">
+        <!-- ========== HEADER WITH SLIDESHOW ========== -->
         <header id="mainHeader">
+            <div class="header-slide-overlay" id="slide0" style="background-image: url('images/class-photo.jpg');"></div>
+            <div class="header-slide-overlay" id="slide1" style="background-image: url('gallery/photo1.jpg');"></div>
+            <div class="header-slide-overlay" id="slide2" style="background-image: url('gallery/photo2.jpg');"></div>
+            <div class="header-slide-overlay" id="slide3" style="background-image: url('gallery/photo3.jpg');"></div>
+            <div class="header-slide-overlay" id="slide4" style="background-image: url('gallery/photo4.jpg');"></div>
+            <div class="header-slide-overlay" id="slide5" style="background-image: url('images/teacher1.jpg');"></div>
+            <div class="header-slide-overlay" id="slide6" style="background-image: url('images/teacher2.jpg');"></div>
+
             <img src="images/logo.png" class="logo" alt="TechPro B Logo" onerror="this.style.display='none'">
             <h1>TechPro B (ICT)</h1>
             <p>Mabayuhan Senior High School (MSHS)</p>
             <p>School Year 2025-2027</p>
             <p class="motto">"We may walk different paths tomorrow, but the memories we built together will always connect us."</p>
+            <div class="slideshow-dots" id="slideshowDots"></div>
         </header>
 
         <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">☰</button>
         <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
         <nav class="mobile-menu" id="mobileMenu">
             <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
-            <div class="nav-group-mobile"><span>📌 MAIN</span><a href="#officers">🏛 Officers</a><a href="#teachers">👩‍🏫 Teachers</a><a href="#students">🎓 Students</a><a href="#gallery">📸 Gallery</a><a href="#memories">📖 Memory Book</a><a href="#graduation">🎓 Graduation</a><a href="#stats">📊 Statistics</a><a href="#timeline">⏳ Timeline</a><a href="#search">🔍 Search</a></div>
-            <div class="nav-group-mobile"><span>✨ EXTRAS</span><a href="halloffame.html">🏅 Hall of Fame (ext)</a><a href="messages.html">💬 Messages</a><a href="computerroom.html">🖥️ Computer Room</a><a href="secret-archive.html">🔒 Secret Archive</a><a href="about.html">👤 About</a><a href="game.html">🎮 Game</a></div>
-            <div class="nav-group-mobile"><span>⚙️ UTILITIES</span><button class="nav-util-mobile" id="mobileSecretBtn">🔐 Secret Panel</button><button class="nav-util-mobile" id="mobileJukeboxBtn">📻 Jukebox</button><button class="nav-util-mobile" id="mobileThemeBtn">🎨 Themes</button><button class="nav-util-mobile" id="mobileWeatherBtn">☀️ Weather FX</button></div>
+            <div class="nav-group-mobile"><span>📌 MAIN</span>
+                <a href="#officers">🏛 Officers</a>
+                <a href="#teachers">👩‍🏫 Teachers</a>
+                <a href="#schedule">📅 Schedule</a>
+                <a href="#students">🎓 Students</a>
+                <a href="#gallery">📸 Gallery</a>
+                <a href="#memories">📖 Memory Book</a>
+                <a href="#graduation">🎓 Graduation</a>
+                <a href="#stats">📊 Statistics</a>
+                <a href="#timeline">⏳ Timeline</a>
+                <a href="#search">🔍 Search</a>
+            </div>
+            <div class="nav-group-mobile"><span>✨ EXTRAS</span><a href="halloffame.html">🏅 Hall of Fame (ext)</a><a href="messages.html">💬 Messages</a><a href="computerroom.html">🖥️ Computer Room</a><a href="secret-archive.html">🔒 Secret Archive</a><a href="about.html">👤 About</a></div>
+            <div class="nav-group-mobile"><span>🕹️ AI GAMES</span>
+                <a href="games%20made%20by%20ai/deepseek.html" target="_blank" class="ai-game-link">🔷 DeepSeek</a>
+                <a href="games%20made%20by%20ai/chatgpt.html" target="_blank" class="ai-game-link">💬 ChatGPT</a>
+                <a href="games%20made%20by%20ai/claude.html" target="_blank" class="ai-game-link">🧠 Claude</a>
+                <a href="games%20made%20by%20ai/grok.html" target="_blank" class="ai-game-link">🪐 Grok</a>
+                <a href="games%20made%20by%20ai/gemini.html" target="_blank" class="ai-game-link">♊ Gemini</a>
+            </div>
+            <div class="nav-group-mobile"><span>⚙️ UTILITIES</span>
+                <button class="nav-util-mobile" id="mobileSecretBtn">🔐 Secret Panel</button>
+                <button class="nav-util-mobile" id="mobileJukeboxBtn">📻 Jukebox</button>
+                <button class="nav-util-mobile" id="mobileThemeBtn">🎨 Themes</button>
+                <button class="nav-util-mobile" id="mobileWeatherBtn">☀️ Weather FX</button>
+                <button class="nav-util-mobile" id="mobileAxiomBtn">🤖 Axiom Chat</button>
+            </div>
         </nav>
 
         <nav class="desktop-nav">
-            <div class="nav-group"><span class="group-label">📌 MAIN</span><a href="#officers">Officers</a><a href="#teachers">Teachers</a><a href="#students">Students</a><a href="#gallery">Gallery</a><a href="#memories">Memory Book</a><a href="#graduation">Graduation</a><a href="#stats">Stats</a><a href="#timeline">Timeline</a><a href="#search">Search</a></div>
-            <div class="nav-group"><span class="group-label">✨ EXTRAS</span><a href="halloffame.html">Hall of Fame (ext)</a><a href="messages.html">Messages</a><a href="computerroom.html">Computer Room</a><a href="secret-archive.html">Secret Archive</a><a href="about.html">About</a><a href="game.html">Game</a></div>
-            <div class="nav-group"><span class="group-label">⚙️ UTILITIES</span><button class="nav-util" id="deskSecretBtn">🔐 Secret</button><button class="nav-util" id="deskJukeboxBtn">📻 Jukebox</button><button class="nav-util" id="deskThemeBtn">🎨 Themes</button><button class="nav-util" id="deskWeatherBtn">☀️ Weather</button></div>
+            <div class="nav-group"><span class="group-label">📌 MAIN</span>
+                <a href="#officers">Officers</a>
+                <a href="#teachers">Teachers</a>
+                <a href="#schedule">Schedule</a>
+                <a href="#students">Students</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#memories">Memory Book</a>
+                <a href="#graduation">Graduation</a>
+                <a href="#stats">Stats</a>
+                <a href="#timeline">Timeline</a>
+                <a href="#search">Search</a>
+            </div>
+            <div class="nav-group"><span class="group-label">✨ EXTRAS</span><a href="halloffame.html">Hall of Fame (ext)</a><a href="messages.html">Messages</a><a href="computerroom.html">Computer Room</a><a href="secret-archive.html">Secret Archive</a><a href="about.html">About</a></div>
+            <div class="nav-group"><span class="group-label">🕹️ AI GAMES</span>
+                <a href="games%20made%20by%20ai/deepseek.html" target="_blank" class="ai-game-link">🔷 DeepSeek</a>
+                <a href="games%20made%20by%20ai/chatgpt.html" target="_blank" class="ai-game-link">💬 ChatGPT</a>
+                <a href="games%20made%20by%20ai/claude.html" target="_blank" class="ai-game-link">🧠 Claude</a>
+                <a href="games%20made%20by%20ai/grok.html" target="_blank" class="ai-game-link">🪐 Grok</a>
+                <a href="games%20made%20by%20ai/gemini.html" target="_blank" class="ai-game-link">♊ Gemini</a>
+            </div>
+            <div class="nav-group"><span class="group-label">⚙️ UTILITIES</span>
+                <button class="nav-util" id="deskSecretBtn">🔐 Secret</button>
+                <button class="nav-util" id="deskJukeboxBtn">📻 Jukebox</button>
+                <button class="nav-util" id="deskThemeBtn">🎨 Themes</button>
+                <button class="nav-util" id="deskWeatherBtn">☀️ Weather</button>
+                <button class="nav-util" id="deskAxiomBtn">🤖 Axiom</button>
+            </div>
         </nav>
 
         <!-- ========== SECTIONS ========== -->
         <section id="officers"><h2>🏛 Class Officers (Grade 11 & 12)</h2><div class="retro-grid" id="officersGrid"></div></section>
+
         <section id="teachers"><h2>Teachers</h2><div class="retro-grid"><div class="retro-card"><img src="images/teacher1.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Veronica'"><h3>Veronica Sta Monica</h3><p><strong>ICT - Technical Drafting</strong></p><p>"Always keep learning and stay curious!"</p></div><div class="retro-card"><img src="images/teacher2.jpg" class="pfp" onerror="this.src='https://via.placeholder.com/120?text=Paule'"><h3>Paul Jayme</h3><p><strong>ICT - Programming</strong></p><p>"Effortless Action - Align your behavior with the natural flow of the universe, acting without force, ego or resistance. 無爲"</p></div><div class="retro-card"><h3>G11 Teachers</h3><ul class="teacher-list"><li>Rustie Manzano</li><li>Teacher Name 2</li><li>Teacher Name 3</li><li>Teacher Name 4</li><li>Teacher Name 5</li><li>Teacher Name 6</li><li>Teacher Name 7</li><li>Teacher Name 8</li></ul></div></div></section>
+
+        <section id="schedule">
+            <h2>📅 Class Schedule (G11 & G12)</h2>
+            <div class="schedule-grid">
+                <div class="schedule-card">
+                    <h3>Grade 11</h3>
+                    <table>
+                        <thead><tr><th>Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+                        <tbody>
+                            <tr><td>7:30–8:30</td><td>Math</td><td>English</td><td>Science</td><td>Math</td><td>ICT</td></tr>
+                            <tr><td>8:30–9:30</td><td>Science</td><td>Math</td><td>English</td><td>ICT</td><td>Science</td></tr>
+                            <tr><td>9:30–10:30</td><td>English</td><td>ICT</td><td>Math</td><td>English</td><td>Math</td></tr>
+                            <tr><td>10:30–11:30</td><td>ICT</td><td>Science</td><td>PE</td><td>Social Studies</td><td>English</td></tr>
+                            <tr><td>11:30–12:30</td><td colspan="5" style="text-align:center;font-style:italic;color:#ffd700;">🥗 Lunch Break</td></tr>
+                            <tr><td>12:30–1:30</td><td>Social Studies</td><td>PE</td><td>ICT</td><td>Science</td><td>Social Studies</td></tr>
+                            <tr><td>1:30–2:30</td><td>Values Ed</td><td>Social Studies</td><td>Math</td><td>English</td><td>PE</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="schedule-card">
+                    <h3>Grade 12</h3>
+                    <table>
+                        <thead><tr><th>Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+                        <tbody>
+                            <tr><td>7:30–8:30</td><td>Programming</td><td>Networking</td><td>Math</td><td>Programming</td><td>English</td></tr>
+                            <tr><td>8:30–9:30</td><td>Networking</td><td>Math</td><td>Programming</td><td>English</td><td>Networking</td></tr>
+                            <tr><td>9:30–10:30</td><td>English</td><td>Programming</td><td>Networking</td><td>Math</td><td>Programming</td></tr>
+                            <tr><td>10:30–11:30</td><td>Math</td><td>English</td><td>Research</td><td>Networking</td><td>Math</td></tr>
+                            <tr><td>11:30–12:30</td><td colspan="5" style="text-align:center;font-style:italic;color:#ffd700;">🥗 Lunch Break</td></tr>
+                            <tr><td>12:30–1:30</td><td>Research</td><td>Networking</td><td>English</td><td>Programming</td><td>Research</td></tr>
+                            <tr><td>1:30–2:30</td><td>PE</td><td>Research</td><td>PE</td><td>Values Ed</td><td>Networking</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p style="text-align:center;font-size:0.8rem;opacity:0.6;margin-top:20px;">📌 Schedule is subject to change. Please check with your adviser.</p>
+        </section>
+
         <section id="students"><h2>🎓 Student Profiles</h2><p style="text-align:center; opacity:0.7; margin-bottom:15px;" class="flip-hint">👆 Tap a card to flip it and see more info!</p><div class="retro-grid" id="studentGrid"></div></section>
+
+        <section id="aipoll">
+            <h2>🎮 Vote for Your Favorite AI Game!</h2>
+            <div class="poll-container" id="pollContainer">
+                <div class="poll-title">🤖 Which AI game is the best?</div>
+                <div id="pollOptions"></div>
+                <button class="poll-submit" id="pollSubmitBtn" onclick="submitPoll()">🗳️ Submit Your Vote</button>
+                <div class="poll-status" id="pollStatus"></div>
+                <div class="poll-results" id="pollResults"></div>
+                <div class="poll-total-votes" id="pollTotalVotes"></div>
+                <button class="poll-reset" onclick="resetPoll()">🔄 Reset All Votes</button>
+            </div>
+        </section>
+
         <section id="gallery"><h2>📸 Photo Gallery</h2><div class="retro-grid" id="galleryGrid"></div><button id="slideshowBtn" style="margin-top:20px; padding:12px 24px; font-family:'VT323', monospace; font-size:1rem; cursor:pointer; border:3px solid white; background:var(--header); color:white; border-radius:4px;">▶ Start Slideshow</button></section>
         <section id="memories"><h2>📖 Memory Book</h2><div class="retro-grid" id="memoryGrid"></div></section>
-        <section id="graduation"><h2>🎓 Graduation</h2><div id="countdown" style="font-size:1.5rem; text-align:center; margin-bottom:30px;"></div><h3>Class Achievements</h3><div class="retro-grid" id="achievementGrid"></div><h3 style="margin-top:30px;">Graduation Memories</h3><div class="retro-grid" id="gradMemoriesGrid"></div></section>
+
+        <section id="graduation">
+            <h2>🎓 Graduation</h2>
+            <div id="countdown" style="text-align:center;">
+                <div style="font-size:2rem; margin-bottom:10px;">
+                    🎓 School Days Remaining: <span id="schoolDaysLeft" style="background:rgba(255,215,0,0.2); padding:0 12px; border-radius:4px;">...</span>
+                </div>
+                <div style="font-size:1.2rem; opacity:0.7;">
+                    📅 Calendar days until graduation: <span id="calendarDaysLeft">...</span>
+                </div>
+                <div style="font-size:0.8rem; opacity:0.5; margin-top:8px;">
+                    (Total school days: 201 • Started: June 8, 2025)
+                </div>
+            </div>
+            <h3 style="margin-top:30px;">Class Achievements</h3>
+            <div class="retro-grid" id="achievementGrid"></div>
+            <h3 style="margin-top:30px;">Graduation Memories</h3>
+            <div class="retro-grid" id="gradMemoriesGrid"></div>
+        </section>
+
         <section id="stats"><h2>📊 Class Statistics</h2><div class="retro-grid"><div class="retro-card"><h1 id="studentCount">0</h1><p>Students</p></div><div class="retro-card"><h1 id="teacherCount">0</h1><p>Teachers</p></div><div class="retro-card"><h1 id="yearCount">0</h1><p>School Years</p></div><div class="retro-card"><h1 id="visitCount">0</h1><p>Visitors</p></div></div></section>
         <section id="timeline"><h2>⏳ Class Timeline</h2><div class="timeline" style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center;"><div class="event retro-card"><h3>2025</h3><p>First Year Begins</p></div><div class="event retro-card"><h3>2026</h3><p>Second Year (Final Year)</p></div><div class="event retro-card"><h3>2027</h3><p>Graduation</p></div></div></section>
         <section id="search"><h2>🔍 Class Database</h2><input type="text" id="searchInput" placeholder="Search students, quotes, dreams..." style="width:100%; padding:10px; margin-bottom:10px; font-family:'VT323', monospace; font-size:1rem;"><select id="sectionFilter" style="padding:10px; font-family:'VT323', monospace; font-size:1rem;"><option value="all">All Sections</option><option value="G11">Grade 11</option><option value="G12">Grade 12</option></select><div class="retro-grid" id="searchResults" style="margin-top:20px;"></div></section>
@@ -1514,6 +2636,73 @@
         <div id="creatorSecret">💻</div>
     </div>
 
+    <!-- ========== EFFECT CONTAINER ========== -->
+    <div id="effectContainer"></div>
+
+    <!-- ========== AI GREETING ========== -->
+    <div id="aiGreeting" class="ai-greeting hidden">
+        <div class="ai-greeting-content">
+            <span class="ai-icon"><img src="images/Axiom.jpg" alt="Axiom AI"></span>
+            <span id="greetingText"></span>
+            <button class="greeting-close" onclick="closeGreeting()">✕</button>
+        </div>
+    </div>
+
+    <!-- ========== AXIOM CHAT ASSISTANT ========== -->
+    <div id="axiomChat">
+        <div class="axiom-header" onclick="toggleAxiom()">
+            <div class="axiom-header-title">
+                <span class="axiom-header-icon"><img src="images/Axiom.jpg" alt="Axiom AI"></span>
+                Axiom <span style="font-size:0.6rem; opacity:0.6;">v2.0</span>
+            </div>
+            <button class="axiom-header-close" onclick="event.stopPropagation(); toggleAxiom();">✕</button>
+        </div>
+        <div class="axiom-messages" id="axiomMessages">
+            <div class="axiom-msg bot">👋 Hello! I'm Axiom v2.0, your enhanced TechPro B assistant.<br>Ask me about the yearbook, students, teachers, graduation, schedules, or anything about the class!</div>
+        </div>
+        <div class="axiom-typing-indicator" id="axiomTyping">Axiom is thinking<span class="axiom-typing">.</span><span class="axiom-typing">.</span><span class="axiom-typing">.</span></div>
+        <div class="axiom-input-area">
+            <input id="axiomInput" type="text" placeholder="Ask me anything..." autocomplete="off">
+            <button id="axiomSendBtn" onclick="sendAxiomMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- ========== CMD PANEL (Win+R) ========== -->
+    <div id="cmdPanel">
+        <div class="cmd-window">
+            <div class="cmd-titlebar">
+                <div class="cmd-titlebar-left">
+                    <span class="cmd-icon">⌨</span>
+                    <span class="cmd-title-text">Command Prompt</span>
+                </div>
+                <div class="cmd-titlebar-right">
+                    <button class="cmd-min-btn" onclick="minimizeCmd()" title="Minimize">─</button>
+                    <button class="cmd-close-btn" onclick="closeCmd()" title="Close">✕</button>
+                </div>
+            </div>
+            <div class="cmd-body" id="cmdBody">
+                <div class="cmd-welcome">
+                    <div class="cmd-ascii">
+    ╔══════════════════════════════════════════════╗
+    ║   TECHPRO B COMMAND PROMPT  v1.0           ║
+    ║   Type 'help' for available commands       ║
+    ╚══════════════════════════════════════════════╝
+                    </div>
+                    <div style="margin-top:6px; color:#5f5;">✅ System ready. Type a command below.</div>
+                </div>
+                <div id="cmdOutput"></div>
+                <div class="cmd-line">
+                    <span class="cmd-prompt">C:\TechProB&gt;</span>
+                    <input type="text" class="cmd-input" id="cmdInput" autofocus spellcheck="false" autocomplete="off">
+                </div>
+            </div>
+            <div class="cmd-status">
+                <span>🔹 TechPro B CMD | PID: 2027</span>
+                <span id="cmdTime">--:--:--</span>
+            </div>
+        </div>
+    </div>
+
     <!-- ========== GLOBAL AUDIO CONTROLS ========== -->
     <div id="audioControls" class="hidden">
         <span class="volume-icon">🔊</span>
@@ -1525,100 +2714,208 @@
 
     <script>
         // ======================= DATA =======================
-        // Favorite Memory field removed
         const students = [
-            { id: 1, name: "Alquza Almer Dela Cruz", nickname: "Alquza", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student1.jpg" },
-            { id: 2, name: "Edward Bautista Aquino", nickname: "Edward", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student2.jpg" },
-            { id: 3, name: "Prince Del Birut Gayrama", nickname: "Prince", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student3.jpg" },
-            { id: 4, name: "Ron Matthew Belisario Ferreras", nickname: "Ron",
-                quote: "Whatever path you follow, keep moving forward", dreamJob: "Content Creator", section: "Grade 12",
-                img: "images/student4.jpg" },
-            { id: 5, name: "Ryan Gaebriel Belisario Ferreras", nickname: "Ryan", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student5.jpg" },
-            { id: 6, name: "Jace Mathew Labicani", nickname: "Jace", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student6.jpg" },
-            { id: 7, name: "Jared Lee Barnuevo Lim", nickname: "Jared", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student7.jpg" },
-            { id: 8, name: "Jhovance Eldrick Pacheco Olan", nickname: "Jhovance", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student8.jpg" },
-            { id: 9, name: "Chriswin B. Palmones", nickname: "Chriswin", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student9.jpg" },
-            { id: 10, name: "Phil Cyprian Ogalesco Resuello", nickname: "Phil", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student10.jpg" },
-            { id: 11, name: "Gian Lee San Jose", nickname: "Gian", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student11.jpg" },
-            { id: 12, name: "Eziekiel Kyle Rios Sobremonte", nickname: "Eziekiel", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student12.jpg" },
-            { id: 13, name: "Ronald Silva Suba", nickname: "Ronald", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student13.jpg" },
-            { id: 14, name: "Calvin Claude Alipan Tala", nickname: "Calvin", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student14.jpg" },
-            { id: 15, name: "Yusieff Acas Tanawit", nickname: "Yusieff", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student15.jpg" },
-            { id: 16, name: "John Patrick Sarcilla", nickname: "John Patrick", quote: "No quote yet",
-                dreamJob: "Undecided", section: "Grade 12", img: "images/student16.jpg" },
-            { id: 17, name: "Mikaela Marcia Ababat", nickname: "Mikaela", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student17.jpg" },
-            { id: 18, name: "Richa Mae Cuevas Mejos", nickname: "Richa", quote: "No quote yet", dreamJob: "Undecided",
-                section: "Grade 12", img: "images/student18.jpg" },
-            { id: 19, name: "Aira Pecana Natividad", nickname: "Aira",
-                quote: "Small step everyday leads to big achievements", dreamJob: "IT Specialist", section: "Grade 12",
-                img: "images/student19.jpg" },
-            { id: 20, name: "Glyzel Ann Talvo Pagaduan", nickname: "Glyzel",
-                quote: "Dream big, work hard, stay humble", dreamJob: "Coffee shop owner", section: "Grade 12",
-                img: "images/student20.jpg" },
-            { id: 21, name: "Romea David Permejo", nickname: "Romea",
-                quote: "Be happy for what you have while working for what you want", dreamJob: "Call Center Agent",
-                section: "Grade 12", img: "images/student21.jpg" },
-            { id: 22, name: "Mary Joy Picana Ramos", nickname: "Mary Joy",
-                quote: "Being hardworking and stay humble", dreamJob: "Web Developer", section: "Grade 12",
-                img: "images/student22.jpg" },
-            { id: 23, name: "Zie Cliza Ballejos Sablada", nickname: "Zie",
-                quote: "Every day is a chance to become better", dreamJob: "Freelancer", section: "Grade 12",
-                img: "images/student23.jpg" },
-            { id: 24, name: "Alyka Tarnate", nickname: "Alyka",
-                quote: "Dreams will always stay dreams, unless you act upon them", dreamJob: "Active", section: "Grade 12",
-                img: "images/student24.jpg" }
+            { id: 1, name: "Alquza Almer Dela Cruz", nickname: "Alquza", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student1.jpg" },
+            { id: 2, name: "Edward Bautista Aquino", nickname: "Edward", quote: "どこまで頑張れ - Keep doing your best no matter how far.", dreamJob: "Animator", section: "Grade 12", img: "images/student2.jpg" },
+            { id: 3, name: "Prince Del Birut Gayrama", nickname: "Prince", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student3.jpg" },
+            { id: 4, name: "Ron Matthew Belisario Ferreras", nickname: "Ron", quote: "Whatever path you follow, keep moving forward", dreamJob: "Content Creator", section: "Grade 12", img: "images/student4.jpg" },
+            { id: 5, name: "Ryan Gaebriel Belisario Ferreras", nickname: "Ryan", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student5.jpg" },
+            { id: 6, name: "Jace Mathew Labicani", nickname: "Jace", quote: "The only thing we're allowed to do is believe that we won't regret the choice we made", dreamJob: "Web Developer", section: "Grade 12", img: "images/student6.jpg" },
+            { id: 7, name: "Jared Lee Barnuevo Lim", nickname: "Jared", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student7.jpg" },
+            { id: 8, name: "Jhovance Eldrick Pacheco Olan", nickname: "Jhovance", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student8.jpg" },
+            { id: 9, name: "Chriswin B. Palmones", nickname: "Chriswin", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student9.jpg" },
+            { id: 10, name: "Phil Cyprian Ogalesco Resuello", nickname: "Phil", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student10.jpg" },
+            { id: 11, name: "Gian Lee San Jose", nickname: "Gian", quote: "One step at a time", dreamJob: "Entrepeneurship", section: "Grade 12", img: "images/student11.jpg" },
+            { id: 12, name: "Eziekiel Kyle Rios Sobremonte", nickname: "Eziekiel", quote: "Commitment -> Discipline -> Consistency", dreamJob: "Software engineer", section: "Grade 12", img: "images/student12.jpg" },
+            { id: 13, name: "Ronald Silva Suba", nickname: "Ronald", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student13.jpg" },
+            { id: 14, name: "Calvin Claude Alipan Tala", nickname: "Calvin", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student14.jpg" },
+            { id: 15, name: "Yusieff Acas Tanawit", nickname: "Yusieff", quote: "Always do your best and don't give up easily and always trust god", dreamJob: "Web Developer", section: "Grade 12", img: "images/student15.jpg" },
+            { id: 16, name: "John Patrick Sarcilla", nickname: "John Patrick", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student16.jpg" },
+            { id: 17, name: "Mikaela Marcia Ababat", nickname: "Mikaela", quote: "Create with passion, grow with purpose", dreamJob: "Professional Artist", section: "Grade 12", img: "images/student17.jpg" },
+            { id: 18, name: "Richa Mae Cuevas Mejos", nickname: "Richa", quote: "No quote yet", dreamJob: "Undecided", section: "Grade 12", img: "images/student18.jpg" },
+            { id: 19, name: "Aira Pecana Natividad", nickname: "Aira", quote: "Small step everyday leads to big achievements", dreamJob: "IT Specialist", section: "Grade 12", img: "images/student19.jpg" },
+            { id: 20, name: "Glyzel Ann Talvo Pagaduan", nickname: "Glyzel", quote: "Dream big, work hard, stay humble", dreamJob: "Coffee shop owner", section: "Grade 12", img: "images/student20.jpg" },
+            { id: 21, name: "Romea David Permejo", nickname: "Romea", quote: "Be happy for what you have while working for what you want", dreamJob: "Call Center Agent", section: "Grade 12", img: "images/student21.jpg" },
+            { id: 22, name: "Mary Joy Picana Ramos", nickname: "Mary Joy", quote: "Being hardworking and stay humble", dreamJob: "Web Developer", section: "Grade 12", img: "images/student22.jpg" },
+            { id: 23, name: "Zie Cliza Ballejos Sablada", nickname: "Zie", quote: "Every day is a chance to become better", dreamJob: "Freelancer", section: "Grade 12", img: "images/student23.jpg" },
+            { id: 24, name: "Alyka Tarnate", nickname: "Alyka", quote: "Dreams will always stay dreams, unless you act upon them", dreamJob: "Active", section: "Grade 12", img: "images/student24.jpg" }
         ];
         const officers = [
-            { title: "G11 President", name: "Prince Saimon Del Birut" }, { title: "G12 President",
-                name: "Chriswin Palmones" },
-            { title: "G11 Vice President", name: "Romea D. Permejo" }, { title: "G12 Vice President",
-                name: "Romea D. Permejo" },
+            { title: "G11 President", name: "Prince Saimon Del Birut" }, { title: "G12 President", name: "Chriswin Palmones" },
+            { title: "G11 Vice President", name: "Romea D. Permejo" }, { title: "G12 Vice President", name: "Romea D. Permejo" },
             { title: "G11 Secretary", name: "Briane Diaz" }, { title: "G12 Secretary", name: "Glyzel Pagaduan" },
             { title: "G11 Treasurer", name: "Mikaella Ababat" }, { title: "G12 Treasurer", name: "Zie Cliza Sablada" },
             { title: "G11 Auditor", name: "(vacant)" }, { title: "G12 Auditor", name: "(vacant)" },
             { title: "G11 P.I.O", name: "Chriswin Palmones" }, { title: "G12 P.I.O", name: "(vacant)" },
             { title: "G11 P.O", name: "(vacant)" }, { title: "G12 P.O", name: "(vacant)" }
         ];
-        const memoryEvents = [{ title: "First Day of School", date: "2025-06-15",
-            description: "Meeting new classmates and teachers.", type: "event" }, { title: "Intramurals 2025",
-            date: "2025-10-10", description: "TechPro B won 2nd place in basketball.", type: "activity" }, { title: "Programming Contest",
-            date: "2026-02-20", description: "Our team built a mobile app in 24 hours.", type: "competition" }, { title: "Field Trip to Tech Museum",
-            date: "2026-03-15", description: "Explored the latest in robotics and AI.", type: "field trip" }, { title: "Research Defense",
-            date: "2026-08-25", description: "Successfully defended our capstone project.", type: "research" }, { title: "Teachers' Day Surprise",
-            date: "2025-10-05", description: "We organized a surprise party for our teachers.", type: "event" }, { title: "Christmas Party 2025",
-            date: "2025-12-18", description: "Gift exchange and games.", type: "activity" }, { title: "Web Design Challenge",
-            date: "2026-01-12", description: "Inter-class competition on best UI.", type: "competition" }];
-        const achievements = ["Best in Programming 2026", "Most Innovative Project", "100% Passing Rate in NCII",
-            "Community Tech Outreach", "Outstanding Attendance Award"
+        const memoryEvents = [
+            { title: "First Day of School", date: "2025-06-15", description: "Meeting new classmates and teachers.", type: "event" },
+            { title: "Intramurals 2025", date: "2025-10-10", description: "TechPro B won 2nd place in basketball.", type: "activity" },
+            { title: "Programming Contest", date: "2026-02-20", description: "Our team built a mobile app in 24 hours.", type: "competition" },
+            { title: "Field Trip to Tech Museum", date: "2026-03-15", description: "Explored the latest in robotics and AI.", type: "field trip" },
+            { title: "Research Defense", date: "2026-08-25", description: "Successfully defended our capstone project.", type: "research" },
+            { title: "Teachers' Day Surprise", date: "2025-10-05", description: "We organized a surprise party for our teachers.", type: "event" },
+            { title: "Christmas Party 2025", date: "2025-12-18", description: "Gift exchange and games.", type: "activity" },
+            { title: "Web Design Challenge", date: "2026-01-12", description: "Inter-class competition on best UI.", type: "competition" }
         ];
-        const gradMemories = ["Graduation rehearsal fun", "Final class picture", "Last day of school",
-            "Goodbye messages to teachers", "Signing each other's yearbooks"
-        ];
+        const achievements = ["Best in Programming 2026", "Most Innovative Project", "100% Passing Rate in NCII", "Community Tech Outreach", "Outstanding Attendance Award"];
+        const gradMemories = ["Graduation rehearsal fun", "Final class picture", "Last day of school", "Goodbye messages to teachers", "Signing each other's yearbooks"];
         const galleryImages = ["gallery/photo1.jpg", "gallery/photo2.jpg", "gallery/photo3.jpg", "gallery/photo4.jpg"];
         const hiddenGalleryImages = ["gallery/secret1.jpg", "gallery/secret2.jpg"];
+        const headerSlides = [
+            'images/class-photo.jpg',
+            'gallery/photo1.jpg',
+            'gallery/photo2.jpg',
+            'gallery/photo3.jpg',
+            'gallery/photo4.jpg',
+            'images/teacher1.jpg',
+            'images/teacher2.jpg'
+        ];
+
+        // ======================= POLL DATA =======================
+        const aiOptions = [
+            { id: 'deepseek', label: 'DeepSeek', icon: '🔷', color: '#4a6a8a' },
+            { id: 'chatgpt', label: 'ChatGPT', icon: '💬', color: '#10a37f' },
+            { id: 'claude', label: 'Claude', icon: '🧠', color: '#7c3aed' },
+            { id: 'grok', label: 'Grok', icon: '🪐', color: '#ff6b6b' },
+            { id: 'gemini', label: 'Gemini', icon: '♊', color: '#4285f4' }
+        ];
+        let pollVotes = {};
+
+        function loadPollData() {
+            const saved = localStorage.getItem('techproPollVotes');
+            if (saved) {
+                try { pollVotes = JSON.parse(saved); } catch(e) { pollVotes = {}; }
+            }
+            aiOptions.forEach(opt => { if (!pollVotes[opt.id]) pollVotes[opt.id] = 0; });
+            savePollData();
+        }
+
+        function savePollData() {
+            localStorage.setItem('techproPollVotes', JSON.stringify(pollVotes));
+        }
+
+        function getTotalVotes() {
+            let total = 0;
+            for (let key in pollVotes) total += pollVotes[key];
+            return total;
+        }
+
+        function renderPoll() {
+            const container = document.getElementById('pollOptions');
+            const total = getTotalVotes();
+            let html = '';
+            aiOptions.forEach(opt => {
+                const votes = pollVotes[opt.id] || 0;
+                const pct = total > 0 ? Math.round((votes / total) * 100) : 0;
+                html += `
+                    <div class="poll-option" onclick="document.getElementById('poll_${opt.id}').checked = true; updatePollSelection();">
+                        <input type="radio" name="aiVote" id="poll_${opt.id}" value="${opt.id}">
+                        <label for="poll_${opt.id}">
+                            <span class="ai-icon">${opt.icon}</span>
+                            ${opt.label}
+                        </label>
+                        <span class="vote-count">${votes} votes</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            updatePollResults();
+            updatePollStatus();
+        }
+
+        function updatePollSelection() {
+            document.querySelectorAll('.poll-option').forEach(el => el.classList.remove('selected'));
+            const checked = document.querySelector('input[name="aiVote"]:checked');
+            if (checked) {
+                const parent = checked.closest('.poll-option');
+                if (parent) parent.classList.add('selected');
+            }
+        }
+
+        function updatePollResults() {
+            const container = document.getElementById('pollResults');
+            const total = getTotalVotes();
+            let html = '<div class="poll-results-title" style="font-size:1.1rem; margin-bottom:12px;">📊 Results</div>';
+            if (total === 0) {
+                html += '<p style="opacity:0.5; text-align:center; font-size:0.9rem;">No votes yet. Be the first to vote!</p>';
+            } else {
+                aiOptions.forEach(opt => {
+                    const votes = pollVotes[opt.id] || 0;
+                    const pct = total > 0 ? Math.round((votes / total) * 100) : 0;
+                    const isNeo = document.body.classList.contains('neo-theme');
+                    html += `
+                        <div class="poll-result-item">
+                            <div class="poll-result-label">
+                                <span>${opt.icon} ${opt.label}</span>
+                                <span>${pct}% (${votes} votes)</span>
+                            </div>
+                            <div class="poll-bar-bg">
+                                <div class="poll-bar ${isNeo ? 'neo-bar' : ''}" style="width:${pct}%;"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            container.innerHTML = html;
+            document.getElementById('pollTotalVotes').textContent = `Total votes: ${total}`;
+        }
+
+        function updatePollStatus() {
+            const status = document.getElementById('pollStatus');
+            const hasVoted = localStorage.getItem('techproPollVoted') === 'true';
+            if (hasVoted) {
+                status.textContent = '✅ You have already voted. Thank you!';
+                status.style.opacity = '0.8';
+                document.getElementById('pollSubmitBtn').disabled = true;
+            } else {
+                status.textContent = '🗳️ Select your favorite AI game and submit your vote!';
+                status.style.opacity = '0.7';
+                document.getElementById('pollSubmitBtn').disabled = false;
+            }
+        }
+
+        function submitPoll() {
+            const hasVoted = localStorage.getItem('techproPollVoted') === 'true';
+            if (hasVoted) {
+                alert('You have already voted! You can only vote once.');
+                return;
+            }
+            const selected = document.querySelector('input[name="aiVote"]:checked');
+            if (!selected) {
+                alert('Please select an AI game first!');
+                return;
+            }
+            const id = selected.value;
+            pollVotes[id] = (pollVotes[id] || 0) + 1;
+            savePollData();
+            localStorage.setItem('techproPollVoted', 'true');
+            renderPoll();
+            updatePollStatus();
+            playUISound(800, 0.08);
+            alert('✅ Thank you for voting! Your vote has been recorded.');
+        }
+
+        function resetPoll() {
+            if (confirm('⚠️ Are you sure you want to reset ALL votes? This cannot be undone.')) {
+                aiOptions.forEach(opt => { pollVotes[opt.id] = 0; });
+                savePollData();
+                localStorage.removeItem('techproPollVoted');
+                renderPoll();
+                updatePollStatus();
+                playUISound(500, 0.06);
+                alert('🔄 All votes have been reset.');
+            }
+        }
 
         // ======================= AUDIO VARIABLES =======================
-        const pixelMusic = document.getElementById('pixelMusic');
-        const win98Music = document.getElementById('win98Music');
-        const moogCity = document.getElementById('moogCity');
-        const robloxTheme = document.getElementById('robloxTheme');
-        const spaceDog = document.getElementById('spaceDog');
         const startupSound = document.getElementById('startupSound');
+        const track1 = document.getElementById('track1');
+        const track2 = document.getElementById('track2');
+        const track3 = document.getElementById('track3');
+        const track4 = document.getElementById('track4');
+        const themeMusic = document.getElementById('themeMusic');
 
         // ======================= GLOBALS =======================
         let slideshowInterval = null,
@@ -1632,14 +2929,15 @@
             logoClicks = 0,
             konamiPos = 0,
             scrolled = false;
-        const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft',
-            'ArrowRight', 'b', 'a'
+        const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b',
+            'a'
         ];
         let currentAudio = null;
         let userInteracted = false;
+        let axiomOpen = false;
 
-        const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.matchMedia(
-            '(max-width: 768px)').matches;
+        const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.matchMedia('(max-width: 768px)')
+            .matches;
 
         // ======================= DOM REFS =======================
         const audioControls = document.getElementById('audioControls');
@@ -1648,17 +2946,20 @@
         const globalStopBtn = document.getElementById('globalStopBtn');
         const globalNowPlaying = document.getElementById('globalNowPlaying');
         const nowPlayingDisplay = document.getElementById('nowPlaying');
+        const greetingEl = document.getElementById('aiGreeting');
+        const greetingText = document.getElementById('greetingText');
+        const axiomChat = document.getElementById('axiomChat');
+        const axiomMessages = document.getElementById('axiomMessages');
+        const axiomInput = document.getElementById('axiomInput');
+        const axiomTyping = document.getElementById('axiomTyping');
+        const effectContainer = document.getElementById('effectContainer');
 
-        // ======================= UI SOUND EFFECTS (AudioContext fixed) =======================
+        // ======================= UI SOUND EFFECTS =======================
         let uiAudioCtx = null;
 
         function getUIAudioContext() {
             if (!uiAudioCtx && userInteracted) {
-                try {
-                    uiAudioCtx = new(window.AudioContext || window.webkitAudioContext)();
-                } catch (e) {
-                    return null;
-                }
+                try { uiAudioCtx = new(window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
             }
             return uiAudioCtx;
         }
@@ -1668,25 +2969,26 @@
             try {
                 const ctx = getUIAudioContext();
                 if (!ctx) return;
-                if (ctx.state === 'suspended') {
-                    ctx.resume().catch(() => {});
-                }
-                const oscillator = ctx.createOscillator();
+                if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+                const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
-                oscillator.connect(gain);
+                osc.connect(gain);
                 gain.connect(ctx.destination);
-                oscillator.type = 'square';
-                oscillator.frequency.value = freq;
+                osc.type = 'square';
+                osc.frequency.value = freq;
                 gain.gain.setValueAtTime(vol, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-                oscillator.start(ctx.currentTime);
-                oscillator.stop(ctx.currentTime + duration);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + duration);
             } catch (e) {}
         }
 
         function markUserInteraction() {
             if (!userInteracted) {
                 userInteracted = true;
+                if (uiAudioCtx && uiAudioCtx.state === 'suspended') {
+                    uiAudioCtx.resume().catch(() => {});
+                }
                 getUIAudioContext();
             }
         }
@@ -1704,28 +3006,21 @@
             if (secretsFound === 10) {
                 alert('🏆 SECRET MASTER\n\nYou found all 10 Secrets!\nHidden page unlocked!');
                 document.body.classList.add('rainbowMode');
-                const badge = document.getElementById('secretBadge');
-                if (badge) badge.style.display = 'block';
-                const rewards = document.getElementById('secretRewards');
-                if (rewards) rewards.style.display = 'block';
-                const hiddenGallery = document.getElementById('hiddenGallery');
-                if (hiddenGallery) hiddenGallery.innerHTML = hiddenGalleryImages.map(src =>
-                    '<img src="' + src +
-                    '" style="width:100%; border:3px solid white; border-radius:4px;" alt="Secret photo">').join('');
+                document.getElementById('secretBadge').style.display = 'block';
+                document.getElementById('secretRewards').style.display = 'block';
+                document.getElementById('hiddenGallery').innerHTML = hiddenGalleryImages.map(src =>
+                    '<img src="' + src + '" style="width:100%; border:3px solid white; border-radius:4px;" alt="Secret photo">'
+                ).join('');
             }
             localStorage.setItem('techproSecrets', JSON.stringify([...discoveredSecrets]));
         }
 
         function stopAllMusic() {
-            [pixelMusic, win98Music, moogCity, robloxTheme, spaceDog, startupSound].forEach(audio => {
-                audio.pause();
-                audio.currentTime = 0;
-            });
+            [startupSound, track1, track2, track3, track4, themeMusic].forEach(audio => { audio.pause();
+                audio.currentTime = 0; });
             currentAudio = null;
             updateGlobalControls();
-            if (nowPlayingDisplay) {
-                nowPlayingDisplay.textContent = 'Now Playing: None';
-            }
+            if (nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: None';
         }
 
         function updateGlobalControls() {
@@ -1737,20 +3032,16 @@
                 audioControls.classList.remove('hidden');
             } else {
                 globalPlayPauseBtn.textContent = '▶';
-                if (!currentAudio) {
-                    audioControls.classList.add('hidden');
-                }
+                if (!currentAudio) audioControls.classList.add('hidden');
             }
+            if (currentAudio) globalVolumeSlider.value = currentAudio.volume;
             if (currentAudio) {
-                globalVolumeSlider.value = currentAudio.volume;
-            }
-            if (currentAudio && currentAudio.src) {
                 let name = 'Audio';
-                if (currentAudio === moogCity) name = 'Moog City';
-                else if (currentAudio === robloxTheme) name = 'Roblox Main Menu';
-                else if (currentAudio === pixelMusic) name = 'Pixel Theme';
-                else if (currentAudio === win98Music) name = 'Windows 98 Theme';
-                else if (currentAudio === spaceDog) name = 'Space Dog';
+                if (currentAudio === track1) name = 'Track 1';
+                else if (currentAudio === track2) name = 'Track 2';
+                else if (currentAudio === track3) name = 'Track 3';
+                else if (currentAudio === track4) name = 'Track 4';
+                else if (currentAudio === themeMusic) name = 'Theme Music';
                 else if (currentAudio === startupSound) name = 'Startup';
                 globalNowPlaying.textContent = name.length > 12 ? name.substring(0, 10) + '…' : name;
             } else {
@@ -1760,12 +3051,8 @@
 
         function setCurrentAudio(audio, title) {
             currentAudio = audio;
-            if (audio) {
-                audio.volume = parseFloat(globalVolumeSlider.value);
-            }
-            if (title && nowPlayingDisplay) {
-                nowPlayingDisplay.textContent = 'Now Playing: ' + title;
-            }
+            if (audio) audio.volume = parseFloat(globalVolumeSlider.value);
+            if (title && nowPlayingDisplay) nowPlayingDisplay.textContent = 'Now Playing: ' + title;
             updateGlobalControls();
             audioControls.classList.remove('hidden');
         }
@@ -1774,45 +3061,56 @@
             markUserInteraction();
             playUISound(700, 0.05);
             if (currentAudio) {
-                if (currentAudio.paused) {
-                    currentAudio.play().catch(() => {});
-                } else {
-                    currentAudio.pause();
-                }
+                if (currentAudio.paused) currentAudio.play().catch(() => {});
+                else currentAudio.pause();
                 updateGlobalControls();
             }
         }
 
-        // ======================= playMusic with 5 choices =======================
         window.playMusic = function(choice) {
             markUserInteraction();
             stopAllMusic();
-            let audio, title;
+            let audio, title, fileName;
             switch (choice) {
                 case 1:
-                    audio = moogCity;
-                    title = 'Minecraft - Moog City';
+                    audio = track1;
+                    title = 'Track 1';
+                    fileName = 'track1.mp3';
                     break;
                 case 2:
-                    audio = robloxTheme;
-                    title = 'Roblox Main Menu';
+                    audio = track2;
+                    title = 'Track 2';
+                    fileName = 'track2.mp3';
                     break;
                 case 3:
-                    audio = pixelMusic;
-                    title = 'Pixel Theme';
+                    audio = track3;
+                    title = 'Track 3';
+                    fileName = 'track3.mp3';
                     break;
                 case 4:
-                    audio = win98Music;
-                    title = 'Windows 98 Theme';
-                    break;
-                case 5:
-                    audio = spaceDog;
-                    title = 'Space Dog - DanTDM';
+                    audio = track4;
+                    title = 'Track 4';
+                    fileName = 'track4.mp3';
                     break;
                 default:
                     return;
             }
-            audio.play().catch(() => {});
+            if (!audio || !audio.src || audio.src === '' || audio.src === window.location.href) {
+                alert('🎵 Audio element for "' + title + '" is not set up.\n\nPlease ensure the HTML contains:\n<audio id="' +
+                    audio.id + '"><source src="MP3 Audios/' + fileName + '" type="audio/mpeg"></audio>');
+                return;
+            }
+            audio.play().catch((err) => {
+                console.warn('Audio play error:', err);
+                alert('🎵 Could not play "' + title + '".\n\n' +
+                    'The browser could not load the file:\n' +
+                    '   "' + fileName + '"\n\n' +
+                    'Please check that:\n' +
+                    '1. The file exists in the "MP3 Audios" folder (case-sensitive).\n' +
+                    '2. The folder is in the same directory as this HTML file.\n' +
+                    '3. The file name matches exactly (e.g., "track1.mp3").\n\n' +
+                    'If you have the file, try renaming it to match the expected name.');
+            });
             setCurrentAudio(audio, title);
             playUISound(800, 0.05);
         };
@@ -1828,17 +3126,11 @@
 
         function playThemeMusic() {
             stopAllMusic();
-            const theme = localStorage.getItem('theme') || 'blue';
-            let audio, title;
-            if (theme === 'win98') {
-                audio = win98Music;
-                title = 'Windows 98 Theme';
-            } else {
-                audio = pixelMusic;
-                title = 'Pixel Theme';
+            if (!themeMusic || !themeMusic.src || themeMusic.src === '' || themeMusic.src === window.location.href) {
+                return;
             }
-            audio.play().catch(() => {});
-            setCurrentAudio(audio, title);
+            themeMusic.play().catch(() => {});
+            setCurrentAudio(themeMusic, 'Theme Music');
         }
 
         function animateValue(id, target) {
@@ -1847,37 +3139,811 @@
                 document.getElementById(id).innerText = val; if (val >= target) clearInterval(interval); }, 50);
         }
 
-        function launchYearbook() {
-            if (introFinished) return;
+        // ======================= BOOT SEQUENCE WITH SOUND =======================
+        let bootStep = 0;
+        let bootTimerInterval = null;
+        let bootSeconds = 0;
+        const bootLogs = [
+            { msg: 'Initializing kernel... [OK]', status: 'ok' },
+            { msg: 'Loading system modules... [OK]', status: 'ok' },
+            { msg: 'Configuring network interfaces... [OK]', status: 'ok' },
+            { msg: 'Starting AI services... [OK]', status: 'ok' },
+            { msg: 'Loading yearbook database... [OK]', status: 'ok' },
+            { msg: 'Mounting memory volumes... [OK]', status: 'ok' },
+            { msg: 'Establishing secure connection... [OK]', status: 'ok' },
+            { msg: 'Syncing class schedules... [OK]', status: 'ok' },
+            { msg: 'Initializing Axiom v2.0... [OK]', status: 'ok' },
+            { msg: 'System ready. Welcome, Class of 2027!', status: 'success' }
+        ];
+
+        function startBootSequence() {
             markUserInteraction();
-            introFinished = true;
-            playUISound(1200, 0.1, 0.2);
-            startupSound.volume = parseFloat(globalVolumeSlider.value);
-            startupSound.play().catch(() => {});
-            setCurrentAudio(startupSound, 'Startup');
+            const body = document.getElementById('bootBody');
+            const progressFill = document.getElementById('progressFill');
+            const progressLabel = document.getElementById('progressLabel');
+            const progressWrap = document.getElementById('bootProgress');
+            const statusWrap = document.getElementById('bootStatus');
+            const tapBtn = document.getElementById('tapButton');
+
             setTimeout(() => {
-                if (currentAudio === startupSound) {
-                    playThemeMusic();
+                progressWrap.classList.add('show');
+                statusWrap.classList.add('show');
+            }, 300);
+
+            bootTimerInterval = setInterval(() => {
+                bootSeconds++;
+                const mins = String(Math.floor(bootSeconds / 60)).padStart(2, '0');
+                const secs = String(bootSeconds % 60).padStart(2, '0');
+                document.getElementById('bootTimer').textContent = mins + ':' + secs;
+            }, 1000);
+
+            let idx = 0;
+            let totalSteps = bootLogs.length;
+
+            function nextBootLog() {
+                if (idx >= totalSteps) {
+                    tapBtn.classList.add('show');
+                    document.querySelector('.boot-status .status-left span:last-child').textContent = 'SYSTEM READY';
+                    document.querySelector('.status-led').style.background = '#5f5';
+                    playUISound(1000, 0.15, 0.2);
+                    return;
                 }
-            }, 3000);
+
+                const entry = bootLogs[idx];
+                const div = document.createElement('div');
+                div.className = 'boot-log show';
+                const prefix = document.createElement('span');
+                prefix.className = 'log-prefix';
+                prefix.textContent = '[' + String(idx + 1).padStart(2, '0') + ']';
+                const msgSpan = document.createElement('span');
+                msgSpan.className = 'log-msg';
+                msgSpan.innerHTML = entry.msg.replace(/\[OK\]/g, '<span class="log-ok">[OK]</span>');
+                div.appendChild(prefix);
+                div.appendChild(msgSpan);
+                body.appendChild(div);
+
+                const pct = Math.round(((idx + 1) / totalSteps) * 100);
+                progressFill.style.width = pct + '%';
+                progressLabel.textContent = pct + '%';
+
+                const freq = 400 + (idx / totalSteps) * 400;
+                playUISound(freq, 0.08, 0.15);
+
+                idx++;
+                const delay = 400 + Math.random() * 400;
+                setTimeout(nextBootLog, delay);
+            }
+
+            setTimeout(nextBootLog, 500);
+        }
+
+        // ======================= CARD EFFECT SYSTEM =======================
+        function triggerCardEffect(student) {
+            const id = student.id;
+            const dream = student.dreamJob.toLowerCase();
+
+            // Special cases
+            if (id === 23) { // Zie Cliza
+                createCatEffect();
+                return;
+            }
+            if (id === 4) { // Ron Matthew
+                createGlitchEffect();
+                return;
+            }
+
+            // Map dream job to effect type
+            const effectMap = {
+                'animator': 'pencil',
+                'web developer': 'code',
+                'software engineer': 'code',
+                'content creator': 'sparkle',
+                'entrepeneurship': 'coin',
+                'call center agent': 'bubble',
+                'professional artist': 'paint',
+                'it specialist': 'matrix',
+                'coffee shop owner': 'coffee',
+                'freelancer': 'star',
+                'active': 'lightning',
+                'undecided': 'question'
+            };
+
+            let type = effectMap[dream] || 'star';
+            createParticleEffect(type);
+        }
+
+        function createParticleEffect(type) {
+            const emojiMap = {
+                'pencil': ['✏️', '📝', '✒️'],
+                'code': ['</>', '{}', '()', '//'],
+                'sparkle': ['✨', '⭐', '🌟'],
+                'coin': ['🪙', '💰', '💵'],
+                'bubble': ['💬', '🗯️', '💭'],
+                'paint': ['🎨', '🖌️', '🌈'],
+                'matrix': ['0', '1', '//', '&&'],
+                'coffee': ['☕', '🫖', '☕'],
+                'star': ['⭐', '🌟', '✨'],
+                'lightning': ['⚡', '💥', '⚡'],
+                'question': ['❓', '❔', '❓']
+            };
+
+            const emojis = emojiMap[type] || ['⭐'];
+            spawnParticles(emojis, 8);
+        }
+
+        function spawnParticles(emojis, count) {
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'effect-particle';
+                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = (10 + Math.random() * 80) + '%';
+                el.style.top = (10 + Math.random() * 80) + '%';
+                el.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+                el.style.animationDuration = (1.2 + Math.random() * 0.8) + 's';
+                effectContainer.appendChild(el);
+                setTimeout(() => el.remove(), 2000);
+            }
+        }
+
+        function createCatEffect() {
+            // Purple flash
+            const flash = document.createElement('div');
+            flash.className = 'purple-flash';
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 800);
+
+            // Spawn cats
+            const cats = ['🐱', '🐈', '🐈‍⬛', '🐱', '🐈', '🐈‍⬛'];
+            for (let i = 0; i < 12; i++) {
+                const el = document.createElement('div');
+                el.className = 'effect-particle';
+                el.textContent = cats[Math.floor(Math.random() * cats.length)];
+                el.style.left = (5 + Math.random() * 90) + '%';
+                el.style.top = (5 + Math.random() * 90) + '%';
+                el.style.fontSize = (2 + Math.random() * 2.5) + 'rem';
+                el.style.animationDuration = (1.5 + Math.random() * 0.8) + 's';
+                effectContainer.appendChild(el);
+                setTimeout(() => el.remove(), 2500);
+            }
+            // Also spawn purple particles
+            const purpleEmojis = ['💜', '🟣', '💜', '🟣'];
+            for (let i = 0; i < 6; i++) {
+                const el = document.createElement('div');
+                el.className = 'effect-particle';
+                el.textContent = purpleEmojis[Math.floor(Math.random() * purpleEmojis.length)];
+                el.style.left = (5 + Math.random() * 90) + '%';
+                el.style.top = (5 + Math.random() * 90) + '%';
+                el.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+                el.style.animationDuration = (1.5 + Math.random() * 0.8) + 's';
+                effectContainer.appendChild(el);
+                setTimeout(() => el.remove(), 2500);
+            }
+        }
+
+        function createGlitchEffect() {
+            document.body.classList.add('glitch-active');
+            setTimeout(() => {
+                document.body.classList.remove('glitch-active');
+            }, 800);
+            // Also spawn some glitchy characters
+            const glitchChars = ['💻', '📺', '🖥️', '⌨️', '🖱️', '📡'];
+            for (let i = 0; i < 6; i++) {
+                const el = document.createElement('div');
+                el.className = 'effect-particle';
+                el.textContent = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+                el.style.left = (5 + Math.random() * 90) + '%';
+                el.style.top = (5 + Math.random() * 90) + '%';
+                el.style.fontSize = (2 + Math.random() * 2) + 'rem';
+                el.style.animationDuration = (0.8 + Math.random() * 0.5) + 's';
+                effectContainer.appendChild(el);
+                setTimeout(() => el.remove(), 1500);
+            }
+        }
+
+        // ======================= launchYearbook =======================
+        function launchYearbook() {
+            markUserInteraction();
+            if (introFinished) return;
+            introFinished = true;
+            if (bootTimerInterval) {
+                clearInterval(bootTimerInterval);
+                bootTimerInterval = null;
+            }
+            playUISound(1200, 0.1, 0.2);
+            if (startupSound && startupSound.src && startupSound.src !== '' && startupSound.src !== window.location.href) {
+                startupSound.volume = parseFloat(globalVolumeSlider.value);
+                startupSound.play().catch(() => {});
+                setCurrentAudio(startupSound, 'Startup');
+            }
+            setTimeout(() => { if (currentAudio === startupSound) playThemeMusic(); }, 3000);
             const intro = document.getElementById('introScreen');
             intro.classList.add('fade-out');
             setTimeout(() => {
                 intro.style.display = 'none';
-                const website = document.getElementById('website');
-                website.style.display = 'block';
-                website.classList.add('fade-in');
+                document.getElementById('website').style.display = 'block';
+                document.getElementById('website').classList.add('fade-in');
                 animateValue('studentCount', 24);
                 animateValue('teacherCount', 10);
                 animateValue('yearCount', 2);
                 document.body.style.overflow = '';
-                setTimeout(() => {
-                    if (currentAudio) {
-                        audioControls.classList.remove('hidden');
-                        updateGlobalControls();
-                    }
-                }, 500);
+                setTimeout(() => { if (currentAudio) { audioControls.classList.remove('hidden');
+                        updateGlobalControls(); } }, 500);
+                setTimeout(() => { showGreeting(); }, 1500);
+                loadPollData();
+                renderPoll();
+                startHeaderSlideshow();
             }, 800);
+        }
+
+        // ======================= HEADER SLIDESHOW =======================
+        let slideIndex = 0;
+        let slideTimer = null;
+        const slideElements = [];
+        const totalSlides = headerSlides.length;
+
+        function startHeaderSlideshow() {
+            const dotsContainer = document.getElementById('slideshowDots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'dot' + (i === 0 ? ' active' : '');
+                dot.dataset.index = i;
+                dotsContainer.appendChild(dot);
+            }
+            for (let i = 0; i < totalSlides; i++) {
+                const el = document.getElementById('slide' + i);
+                if (el) {
+                    slideElements.push(el);
+                } else {
+                    const newEl = document.createElement('div');
+                    newEl.className = 'header-slide-overlay';
+                    newEl.id = 'slide' + i;
+                    newEl.style.backgroundImage = 'url(\'' + headerSlides[i] + '\')';
+                    document.getElementById('mainHeader').appendChild(newEl);
+                    slideElements.push(newEl);
+                }
+            }
+            if (slideElements.length > 0) {
+                slideElements.forEach((el, idx) => {
+                    el.classList.toggle('show', idx === 0);
+                });
+            }
+            if (slideTimer) clearInterval(slideTimer);
+            slideTimer = setInterval(nextSlide, 2500);
+        }
+
+        function nextSlide() {
+            if (slideElements.length === 0) return;
+            slideIndex = (slideIndex + 1) % slideElements.length;
+            slideElements.forEach((el, idx) => {
+                el.classList.toggle('show', idx === slideIndex);
+            });
+            const dots = document.querySelectorAll('.slideshow-dots .dot');
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === slideIndex);
+            });
+            if (userInteracted) {
+                try { playUISound(450, 0.03, 0.04); } catch (e) {}
+            }
+        }
+
+        // ======================= CMD PANEL =======================
+        let cmdMinimized = false;
+        let cmdHistory = [];
+        let cmdHistoryIndex = -1;
+
+        function openCmd() {
+            if (isMobile) return;
+            markUserInteraction();
+            playUISound(700, 0.06);
+            const panel = document.getElementById('cmdPanel');
+            panel.classList.add('open');
+            const input = document.getElementById('cmdInput');
+            setTimeout(() => { input.focus(); }, 100);
+            if (!window._cmdWelcomed) {
+                window._cmdWelcomed = true;
+                appendCmdOutput('   ╔═══════════════════════════════════════╗', 'info');
+                appendCmdOutput('   ║   TECHPRO B COMMAND PROMPT  v1.0   ║', 'info');
+                appendCmdOutput('   ╚═══════════════════════════════════════╝', 'info');
+                appendCmdOutput('   ✅ Type "help" for available commands.', 'success');
+                appendCmdOutput('');
+            }
+            updateCmdTime();
+        }
+
+        function closeCmd() {
+            const panel = document.getElementById('cmdPanel');
+            panel.classList.remove('open');
+            cmdMinimized = false;
+            playUISound(500, 0.05);
+        }
+
+        function minimizeCmd() {
+            cmdMinimized = !cmdMinimized;
+            const body = document.getElementById('cmdBody');
+            if (cmdMinimized) {
+                body.style.display = 'none';
+                playUISound(400, 0.04);
+            } else {
+                body.style.display = 'flex';
+                setTimeout(() => { document.getElementById('cmdInput').focus(); }, 100);
+                playUISound(600, 0.04);
+            }
+        }
+
+        function appendCmdOutput(text, type = '') {
+            const output = document.getElementById('cmdOutput');
+            const div = document.createElement('div');
+            div.className = 'cmd-output ' + type;
+            div.textContent = text;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearCmdOutput() {
+            document.getElementById('cmdOutput').innerHTML = '';
+        }
+
+        function updateCmdTime() {
+            const now = new Date();
+            document.getElementById('cmdTime').textContent = now.toTimeString().slice(0, 8);
+        }
+
+        function processCmd(cmd) {
+            const input = cmd.trim();
+            if (!input) return;
+            cmdHistory.push(input);
+            cmdHistoryIndex = cmdHistory.length;
+            appendCmdOutput('C:\\TechProB> ' + input, '');
+            const parts = input.split(' ');
+            const command = parts[0].toLowerCase();
+            const args = parts.slice(1);
+
+            switch (command) {
+                case 'help':
+                    appendCmdOutput('   ─── Available Commands ───', 'info');
+                    appendCmdOutput('   help        Show this help message', '');
+                    appendCmdOutput('   cls         Clear the screen', '');
+                    appendCmdOutput('   echo [text] Display a message', '');
+                    appendCmdOutput('   students    List all students', '');
+                    appendCmdOutput('   teachers    List all teachers', '');
+                    appendCmdOutput('   officers    List class officers', '');
+                    appendCmdOutput('   stats       Show class statistics', '');
+                    appendCmdOutput('   poll        Show AI game poll results', '');
+                    appendCmdOutput('   countdown   Show graduation countdown', '');
+                    appendCmdOutput('   theme [name] Switch theme (blue, green, etc.)', '');
+                    appendCmdOutput('   music [1-4] Play a track', '');
+                    appendCmdOutput('   stop        Stop all music', '');
+                    appendCmdOutput('   whoami      Display current user', '');
+                    appendCmdOutput('   date        Show current date & time', '');
+                    appendCmdOutput('   exit        Close Command Prompt', '');
+                    appendCmdOutput('   ────────────────────────────', 'info');
+                    break;
+                case 'cls':
+                    clearCmdOutput();
+                    break;
+                case 'echo':
+                    const msg = args.join(' ') || '...';
+                    appendCmdOutput('   ' + msg, 'success');
+                    break;
+                case 'students':
+                    appendCmdOutput('   📋 All ' + students.length + ' students:', 'info');
+                    const sList = students.map(s => '   • ' + s.name + (s.nickname ? ' ("' + s.nickname + '")' : '')).join('\n');
+                    appendCmdOutput(sList, '');
+                    break;
+                case 'teachers':
+                    appendCmdOutput('   👩‍🏫 Teachers:', 'info');
+                    appendCmdOutput('   • Veronica Sta Monica - ICT (Technical Drafting)', '');
+                    appendCmdOutput('   • Paul Jayme - ICT (Programming)', '');
+                    appendCmdOutput('   • G11 Teachers: Rustie Manzano and others', '');
+                    break;
+                case 'officers':
+                    appendCmdOutput('   🏛️ Class Officers:', 'info');
+                    officers.forEach(o => { appendCmdOutput('   • ' + o.title + ': ' + o.name, ''); });
+                    break;
+                case 'stats':
+                    appendCmdOutput('   📊 Class Statistics:', 'info');
+                    appendCmdOutput('   • Students: ' + students.length, '');
+                    appendCmdOutput('   • Teachers: 10', '');
+                    appendCmdOutput('   • School Years: 2 (2025-2027)', '');
+                    appendCmdOutput('   • Total School Days: 201', '');
+                    appendCmdOutput('   • Achievements: ' + achievements.length, '');
+                    appendCmdOutput('   • Memory Events: ' + memoryEvents.length, '');
+                    break;
+                case 'poll':
+                    const totalVotes = getTotalVotes();
+                    appendCmdOutput('   🎮 AI Games Poll Results:', 'info');
+                    if (totalVotes === 0) {
+                        appendCmdOutput('   No votes yet. Be the first to vote!', 'warning');
+                    } else {
+                        aiOptions.forEach(opt => {
+                            const v = pollVotes[opt.id] || 0;
+                            const pct = Math.round((v / totalVotes) * 100);
+                            appendCmdOutput('   ' + opt.icon + ' ' + opt.label + ': ' + v + ' votes (' + pct + '%)', '');
+                        });
+                        appendCmdOutput('   Total votes: ' + totalVotes, 'info');
+                    }
+                    break;
+                case 'countdown':
+                    const schoolDays = document.getElementById('schoolDaysLeft')?.textContent || '...';
+                    const calendarDays = document.getElementById('calendarDaysLeft')?.textContent || '...';
+                    appendCmdOutput('   🎓 Graduation Countdown:', 'info');
+                    appendCmdOutput('   • School days remaining: ' + schoolDays, '');
+                    appendCmdOutput('   • Calendar days left: ' + calendarDays, '');
+                    appendCmdOutput('   • Graduation date: March 31, 2027', '');
+                    break;
+                case 'theme':
+                    if (args.length === 0) {
+                        appendCmdOutput('   Usage: theme [name]', 'warning');
+                        appendCmdOutput('   Available: blue, green, amber, purple, pink, dark, win98, minecraft, roblox', '');
+                    } else {
+                        const themeName = args[0].toLowerCase();
+                        const validThemes = ['blue', 'green', 'amber', 'purple', 'pink', 'dark', 'win98', 'minecraft',
+                            'roblox', 'neo-blue', 'neo-green', 'neo-amber', 'neo-purple', 'neo-pink', 'neo-dark',
+                            'neo-minecraft', 'neo-roblox'
+                        ];
+                        if (validThemes.includes(themeName)) {
+                            setTheme(themeName);
+                            appendCmdOutput('   ✅ Theme switched to: ' + themeName, 'success');
+                        } else {
+                            appendCmdOutput('   ❌ Unknown theme: ' + themeName, 'error');
+                            appendCmdOutput('   Available: ' + validThemes.join(', '), 'warning');
+                        }
+                    }
+                    break;
+                case 'music':
+                    if (args.length === 0 || !['1', '2', '3', '4'].includes(args[0])) {
+                        appendCmdOutput('   Usage: music [1-4]', 'warning');
+                    } else {
+                        const trackNum = parseInt(args[0]);
+                        window.playMusic(trackNum);
+                        appendCmdOutput('   🎵 Playing Track ' + trackNum + '...', 'success');
+                    }
+                    break;
+                case 'stop':
+                    window.stopMusic();
+                    appendCmdOutput('   ⏹ Music stopped.', 'success');
+                    break;
+                case 'whoami':
+                    appendCmdOutput('   C:\\TechProB\\' + (localStorage.getItem('techproUser') || 'Student'), '');
+                    break;
+                case 'date':
+                    appendCmdOutput('   ' + new Date().toString(), 'info');
+                    break;
+                case 'exit':
+                    appendCmdOutput('   👋 Goodbye!', 'info');
+                    setTimeout(() => { closeCmd(); }, 300);
+                    break;
+                default:
+                    appendCmdOutput('   ❌ Unknown command: ' + command, 'error');
+                    appendCmdOutput('   Type "help" for available commands.', 'warning');
+            }
+        }
+
+        document.getElementById('cmdInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const cmd = this.value;
+                this.value = '';
+                processCmd(cmd);
+                setTimeout(() => { this.focus(); }, 10);
+                e.preventDefault();
+            } else if (e.key === 'ArrowUp') {
+                if (cmdHistoryIndex > 0) {
+                    cmdHistoryIndex--;
+                    this.value = cmdHistory[cmdHistoryIndex] || '';
+                }
+                e.preventDefault();
+            } else if (e.key === 'ArrowDown') {
+                if (cmdHistoryIndex < cmdHistory.length - 1) {
+                    cmdHistoryIndex++;
+                    this.value = cmdHistory[cmdHistoryIndex] || '';
+                } else {
+                    cmdHistoryIndex = cmdHistory.length;
+                    this.value = '';
+                }
+                e.preventDefault();
+            } else if (e.key === 'Escape') {
+                this.value = '';
+                closeCmd();
+                e.preventDefault();
+            }
+        });
+
+        document.getElementById('cmdPanel').addEventListener('click', function(e) {
+            if (e.target === this) closeCmd();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (!isMobile && e.metaKey && e.key === 'r') {
+                e.preventDefault();
+                openCmd();
+            }
+            if (!isMobile && e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                openCmd();
+            }
+        });
+
+        // ======================= AI GREETING =======================
+        function showGreeting() {
+            const messages = [
+                "Hello, Classmate! 👋 Welcome to the TechPro B Digital Yearbook.",
+                "Hey there! 🎉 Ready to explore the memories of TechPro B?",
+                "Greetings, fellow TechPro! 📸 Dive into our yearbook journey.",
+                "Hi! 👾 TechPro B's digital home is now open. Enjoy the nostalgia!"
+            ];
+            const msg = messages[Math.floor(Math.random() * messages.length)];
+            greetingText.textContent = '';
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                if (i < msg.length) {
+                    greetingText.textContent += msg.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typeInterval);
+                }
+            }, 30);
+            playNotificationSound();
+            greetingEl.classList.remove('hidden');
+            setTimeout(() => { closeGreeting(); }, 8000);
+        }
+
+        function closeGreeting() { greetingEl.classList.add('hidden'); }
+
+        function playNotificationSound() {
+            try {
+                const ctx = new(window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = 800;
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.5);
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.frequency.value = 1000;
+                osc2.type = 'sine';
+                gain2.gain.setValueAtTime(0.15, ctx.currentTime + 0.1);
+                gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+                osc2.start(ctx.currentTime + 0.1);
+                osc2.stop(ctx.currentTime + 0.6);
+            } catch (e) {}
+        }
+
+        // ======================= AXIOM CHAT WITH TYPING SOUNDS =======================
+        function toggleAxiom() {
+            markUserInteraction();
+            playUISound(600, 0.05);
+            axiomOpen = !axiomOpen;
+            axiomChat.classList.toggle('open');
+            if (axiomOpen) {
+                axiomInput.focus();
+                axiomMessages.scrollTop = axiomMessages.scrollHeight;
+            }
+        }
+
+        function sendAxiomMessage() {
+            const msg = axiomInput.value.trim();
+            if (!msg) return;
+            markUserInteraction();
+            playUISound(700, 0.04);
+            addMessage('user', msg);
+            axiomInput.value = '';
+            processAxiomQuery(msg);
+        }
+
+        function addMessage(type, text) {
+            const div = document.createElement('div');
+            div.className = 'axiom-msg ' + type;
+            div.textContent = text;
+            axiomMessages.appendChild(div);
+            axiomMessages.scrollTop = axiomMessages.scrollHeight;
+        }
+
+        function processAxiomQuery(query) {
+            const q = query.toLowerCase().trim();
+            axiomTyping.classList.add('show');
+            playUISound(600, 0.04, 0.08);
+            const delay = 400 + Math.random() * 500;
+            setTimeout(() => {
+                axiomTyping.classList.remove('show');
+                playUISound(900, 0.06, 0.10);
+                let response = getAxiomResponse(q);
+                addMessage('bot', response);
+            }, delay);
+        }
+
+        function getAxiomResponse(q) {
+            const greetings = ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening', 'howdy',
+                'sup', 'yo', 'hola'
+            ];
+            if (greetings.some(g => q.includes(g)) && q.length < 10) {
+                const greetReplies = [
+                    "Hello there, classmate! 👋 How can I help you today?",
+                    "Hi! 👋 Welcome to TechPro B. Ask me anything about our class!",
+                    "Hey! 😊 I'm Axiom. What would you like to know about TechPro B?",
+                    "Greetings, fellow TechPro! 🤖 I'm here to assist you with yearbook info.",
+                    "Yo! 👾 What's on your mind? I know all about TechPro B!"
+                ];
+                return greetReplies[Math.floor(Math.random() * greetReplies.length)];
+            }
+            if (q.includes('what is this') || q.includes('what\'s this') || q.includes('about this website') || q.includes(
+                    'about this site') || q.includes('website about') || q.includes('what is the purpose') || q.includes(
+                    'what does this do') || q.includes('tell me about this') || q.includes('what am i looking at')) {
+                return "📖 This is the **TechPro B (ICT) Digital Yearbook** for SY 2025-2027!\n\nIt's a single-page web app built with ❤️ by the students of Mabayuhan Senior High School. It serves as a digital time capsule for our class — a place where we can preserve memories, share our stories, and celebrate our journey together.\n\n✨ **Features include:**\n• Student profiles with flip cards\n• Teacher information\n• Class officers list\n• Photo gallery with slideshow\n• Memory book with class events\n• Graduation countdown (school days & calendar days)\n• Jukebox with background music (now .mp3 format)\n• Interactive themes including NEO versions\n• UI sound effects for clicks and hovers\n• Axiom AI assistant (that's me!) to answer your questions\n• AI Games voting poll\n• **Header slideshow** with images rotating every 2.5s\n• **Command Prompt** (Win+R on PC/laptop)\n• **Class Schedule** for G11 and G12\n• **Custom card click effects** – try tapping a student card!\n\n🎓 This yearbook is a legacy project for the first batch of the new ICT curriculum at MSHS. We hope you enjoy exploring it!";
+            }
+            if (q.includes('poll') || q.includes('vote') || q.includes('ai game') || q.includes('ai games') || q.includes(
+                    'favorite ai')) {
+                const total = getTotalVotes();
+                let results = aiOptions.map(opt => `${opt.icon} ${opt.label}: ${pollVotes[opt.id] || 0} votes`).join('\n');
+                return `🎮 **AI Games Poll**\n\nCurrent results:\n${results}\n\nTotal votes: ${total}\n\nCast your vote in the "Vote for Your Favorite AI Game!" section below the student profiles! 🗳️`;
+            }
+            const studentMatch = q.match(/(?:who is|tell me about|about|find|search|show me|where is)\s+([a-zA-Z\s]+)/i);
+            if (studentMatch) {
+                const nameQuery = studentMatch[1].trim().toLowerCase();
+                const found = students.filter(s => s.name.toLowerCase().includes(nameQuery) || (s.nickname && s.nickname
+                    .toLowerCase().includes(nameQuery)));
+                if (found.length > 0) {
+                    if (found.length === 1) {
+                        const s = found[0];
+                        return `👤 **${s.name}** ${s.nickname ? '(aka "'+s.nickname+'")' : ''}\n📌 Section: ${s.section}\n💭 Quote: "${s.quote}"\n💼 Dream Job: ${s.dreamJob}`;
+                    } else {
+                        return `I found ${found.length} students matching that: ${found.map(s => s.name).join(', ')}. Try a more specific name!`;
+                    }
+                }
+            }
+            if (q.includes('list students') || q.includes('show all students') || q.includes('student list') || q.includes(
+                    'all students')) {
+                return `📋 All ${students.length} students in TechPro B:\n${students.map(s => s.name).join(', ')}`;
+            }
+            if (q.includes('how many students') || q.includes('student count') || q.includes('number of students')) {
+                return `📊 There are ${students.length} active students in TechPro B (ICT). We're a small but mighty class! 💪`;
+            }
+            if (q.includes('teacher') || q.includes('adviser') || q.includes('instructor') || q.includes('faculty')) {
+                return `👩‍🏫 **Our Teachers:**\n• **Veronica Sta Monica** - ICT (Technical Drafting)\n• **Paul Jayme** - ICT (Programming) - Our class adviser\n• **G11 Teachers:** Rustie Manzano and others.\n\nAll our teachers are dedicated to helping us succeed in the ICT field! 🙌`;
+            }
+            if (q.includes('officer') || q.includes('president') || q.includes('vice') || q.includes('secretary') || q
+                .includes('treasurer') || q.includes('p.i.o') || q.includes('class officers') || q.includes(
+                    'class leaders')) {
+                const officerLines = officers.map(o => `• ${o.title}: ${o.name}`).join('\n');
+                return `🏛️ **Class Officers (G11 & G12):**\n${officerLines}\n\nThese are our amazing leaders who help keep the class organized! 🌟`;
+            }
+            if (q.includes('graduation') || q.includes('graduate') || q.includes('grad') || q.includes(
+                    'when do we graduate') || q.includes('graduation date') || q.includes('when is graduation')) {
+                const schoolDays = document.getElementById('schoolDaysLeft')?.textContent || '...';
+                const calendarDays = document.getElementById('calendarDaysLeft')?.textContent || '...';
+                return `🎓 **Graduation Details:**\n• Date: **March 31, 2027**\n• School days remaining: **${schoolDays}**\n• Calendar days left: **${calendarDays}**\n\nKeep pushing, we're almost there! 💪 Every day counts.`;
+            }
+            if (q.includes('schedule') || q.includes('timetable') || q.includes('class schedule') || q.includes('subjects')) {
+                return "📅 **Class Schedules:**\n\n**Grade 11** and **Grade 12** schedules are available in the **Schedule** section (scroll down or click the link).\n\nBoth levels have a full week of subjects including ICT, Math, English, Science, and more.\n\nIf you need specific details, check the section on the page!";
+            }
+            if (q.includes('memory') || q.includes('memories') || q.includes('event') || q.includes('activity') || q
+                .includes('memory book')) {
+                const mems = memoryEvents.map(m => `• ${m.title} (${m.date}) - ${m.description}`).slice(0, 5).join('\n');
+                return `📖 **Memory Book Highlights:**\n${mems}\n...and ${memoryEvents.length - 5} more events!\n\nCheck the Memory Book section to see all our memories together! 📸`;
+            }
+            if (q.includes('achievement') || q.includes('award') || q.includes('win') || q.includes('best in') || q
+                .includes('accomplishment')) {
+                return `🏆 **Class Achievements:**\n${achievements.map(a => '• ' + a).join('\n')}\n\nWe're so proud of what TechPro B has accomplished together! ✨`;
+            }
+            if (q.includes('statistic') || q.includes('stats') || q.includes('how many') || q.includes('count') || q
+                .includes('class stats')) {
+                const studentCount = students.length;
+                const teacherCount = 10;
+                return `📊 **TechPro B Statistics:**\n• Students: **${studentCount}**\n• Teachers: **${teacherCount}**\n• School Years: **2** (2025-2027)\n• Total School Days: **201**\n• Achievements: **${achievements.length}**\n• Memory Events: **${memoryEvents.length}**\n\nWe're a small but accomplished class! 🌟`;
+            }
+            if (q.includes('take me to') || q.includes('go to') || q.includes('show me the') || q.includes('where is the') ||
+                q.includes('navigate')) {
+                const sectionMatch = q.match(/(?:take me to|go to|show me the|where is the)\s+([a-zA-Z\s]+)/i);
+                if (sectionMatch) {
+                    const target = sectionMatch[1].trim().toLowerCase();
+                    const sections = {
+                        'officers': 'officers',
+                        'class officers': 'officers',
+                        'students': 'students',
+                        'student profiles': 'students',
+                        'teachers': 'teachers',
+                        'schedule': 'schedule',
+                        'class schedule': 'schedule',
+                        'timetable': 'schedule',
+                        'gallery': 'gallery',
+                        'photos': 'gallery',
+                        'photo gallery': 'gallery',
+                        'memories': 'memories',
+                        'memory book': 'memories',
+                        'graduation': 'graduation',
+                        'stats': 'stats',
+                        'statistics': 'stats',
+                        'timeline': 'timeline',
+                        'search': 'search',
+                        'poll': 'aipoll',
+                        'vote': 'aipoll',
+                        'ai poll': 'aipoll'
+                    };
+                    const targetId = sections[target];
+                    if (targetId) {
+                        setTimeout(() => {
+                            const el = document.getElementById(targetId);
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }, 300);
+                        return `📍 Taking you to the **${target}** section! Scroll down to see it.`;
+                    }
+                }
+                return "🔍 I can help you find: Officers, Students, Teachers, Schedule, Gallery, Memories, Graduation, Stats, Timeline, Search, or the AI Poll. Just tell me what you want to see!";
+            }
+            if (q.includes('help') || q.includes('what can you do') || q.includes('capabilities') || q.includes('commands') ||
+                q.includes('what do you do')) {
+                return `🤖 **I'm Axiom v2.0!** Here's what I can help you with:\n\n• Greetings and small talk\n• Student info (e.g. "Who is Alquza?")\n• Teachers and officers\n• Graduation countdown\n• Class schedule (G11 & G12)\n• Memory book events\n• Achievements and awards\n• Class statistics\n• Navigation ("Take me to Gallery")\n• About the yearbook\n• AI Games poll info\n• Tap student cards for fun effects!\n\nJust ask me anything about TechPro B! 😊`;
+            }
+            if (q.includes('about this') || q.includes('what is this website') || q.includes('about the yearbook') || q
+                .includes('what is this page')) {
+                return "📖 This is the **TechPro B (ICT) Digital Yearbook** for SY 2025-2027.\n\nIt's a single-page web app built with ❤️ by the students of Mabayuhan Senior High School. Features include student profiles, teacher info, a jukebox, photo gallery, memory book, graduation countdown, an AI games voting poll, and more!\n\nI'm Axiom, your AI assistant for navigating and learning about our class.";
+            }
+            if (q.includes('thanks') || q.includes('thank you') || q.includes('appreciate') || q.includes('ty')) {
+                return "You're welcome! 😊 Always happy to help a TechPro B classmate. Anything else you'd like to know?";
+            }
+            if (q.includes('goodbye') || q.includes('bye') || q.includes('see you') || q.includes('later') || q.includes(
+                    'gtg') || q.includes('cya')) {
+                const byeReplies = [
+                    "Goodbye, classmate! 👋 Come back anytime.",
+                    "See you later! 🤖 Axiom will be here when you need me.",
+                    "Bye! 🎓 Keep making TechPro B proud!",
+                    "Later! 👾 Don't forget to check out the jukebox and gallery!"
+                ];
+                return byeReplies[Math.floor(Math.random() * byeReplies.length)];
+            }
+            const fallbackReplies = [
+                "Hmm, I'm not sure about that. 🤔 Try asking about students, teachers, graduation, or the schedule!\n\nFor example: 'Who is Chriswin?' or 'When is graduation?' or 'Tell me about the yearbook.'",
+                "I don't have an answer for that yet. 😅 But I can tell you about TechPro B students, teachers, events, or the graduation countdown!\n\nJust ask me something like 'What's this website about?' or 'List all students.'",
+                "Not sure what you mean. 🤖 I'm best at answering questions about our class, students, and graduation!\n\nTry: 'Tell me about the yearbook' or 'Who are the class officers?'",
+                "I'm still learning! 📚 But I know a lot about TechPro B. Ask me about students, teachers, officers, or the graduation countdown.\n\nExamples: 'Show me all students' or 'When did school start?'"
+            ];
+            return fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)];
+        }
+
+        axiomInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') sendAxiomMessage();
+        });
+
+        // ======================= COUNTDOWN FUNCTIONS =======================
+        function countWeekdays(startDate, endDate) {
+            let count = 0;
+            const current = new Date(startDate);
+            while (current < endDate) {
+                const day = current.getDay();
+                if (day !== 0 && day !== 6) count++;
+                current.setDate(current.getDate() + 1);
+            }
+            return count;
+        }
+
+        function updateCountdown() {
+            const today = new Date();
+            const start = new Date(2025, 5, 8);
+            const grad = new Date(2027, 2, 31);
+            const totalSchoolDays = 201;
+
+            let elapsed = 0;
+            if (today >= start) {
+                elapsed = countWeekdays(start, today);
+                const day = today.getDay();
+                if (day !== 0 && day !== 6) elapsed += 1;
+            }
+
+            let remaining = Math.max(0, totalSchoolDays - elapsed);
+            let calendarRemaining = 0;
+            if (today < grad) {
+                calendarRemaining = Math.floor((grad - today) / (1000 * 60 * 60 * 24));
+            }
+
+            document.getElementById('schoolDaysLeft').textContent = remaining;
+            document.getElementById('calendarDaysLeft').textContent = calendarRemaining + ' days';
         }
 
         // ======================= RENDER FUNCTIONS =======================
@@ -1887,16 +3953,35 @@
         }
 
         function renderStudents() {
-            document.getElementById('studentGrid').innerHTML = students.map(s =>
-                '<div class="flip-card" data-student-id="' + s.id +
-                '" onclick="toggleFlipCard(this)" role="button" tabindex="0"><div class="flip-inner"><div class="flip-front"><img src="' +
-                s.img +
-                '" class="pfp" onerror="this.src=\'https://via.placeholder.com/120?text=' + encodeURIComponent(s
-                    .name) + '\'"><h3>' + s.name + '</h3><p>' + (s.nickname ? '"' + s.nickname + '"' : '') +
-                '</p><p>' + s.section +
-                '</p><p class="flip-hint">👆 Tap to flip</p></div><div class="flip-back"><p><strong>Quote:</strong> "' +
-                s.quote + '"</p><p><strong>Dream Job:</strong> ' + s.dreamJob +
-                '</p></div></div></div>').join('');
+            const fallbackImg = 'images/pfp.jpg';
+            document.getElementById('studentGrid').innerHTML = students.map(s => {
+                const imgSrc = s.img || fallbackImg;
+                return `<div class="flip-card" data-student-id="${s.id}" data-dream="${s.dreamJob}" onclick="handleCardClick(this, ${s.id})" role="button" tabindex="0">
+                    <div class="flip-inner">
+                        <div class="flip-front">
+                            <img src="${imgSrc}" class="pfp" onerror="this.src='${fallbackImg}'" alt="${s.name}">
+                            <h3>${s.name}</h3>
+                            <p>${s.nickname ? '"'+s.nickname+'"' : ''}</p>
+                            <p>${s.section}</p>
+                            <p class="flip-hint">👆 Tap to flip</p>
+                        </div>
+                        <div class="flip-back">
+                            <p><strong>Quote:</strong> "${s.quote}"</p>
+                            <p><strong>Dream Job:</strong> ${s.dreamJob}</p>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function handleCardClick(card, studentId) {
+            // Flip the card
+            card.classList.toggle('flipped');
+            // Trigger effect
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                triggerCardEffect(student);
+            }
         }
 
         function renderGallery() {
@@ -1924,29 +4009,17 @@
             const query = document.getElementById('searchInput').value.toLowerCase();
             const section = document.getElementById('sectionFilter').value;
             const filtered = students.filter(s => (section === 'all' || s.section === section) && (s.name.toLowerCase()
-                .includes(query) || s.quote.toLowerCase().includes(query) || (s.dreamJob || "").toLowerCase()
-                .includes(query)));
+                .includes(query) || s.quote.toLowerCase().includes(query) || (s.dreamJob || "").toLowerCase().includes(
+                query)));
             document.getElementById('searchResults').innerHTML = filtered.map(s =>
                 '<div class="retro-card"><img src="' + s.img +
-                '" class="pfp" onerror="this.src=\'https://via.placeholder.com/120?text=' + encodeURIComponent(s.name) +
-                '\'"><h3>' + s.name + '</h3><p>' + s.section + '</p><p>' + s.quote + '</p></div>').join('');
-        }
-
-        function toggleFlipCard(card) {
-            markUserInteraction();
-            playUISound(750, 0.05);
-            card.classList.toggle('flipped');
+                '" class="pfp" onerror="this.src=\'images/pfp.jpg\'" alt="' + s.name + '"><h3>' + s.name +
+                '</h3><p>' + s.section + '</p><p>' + s.quote + '</p></div>').join('');
         }
 
         // ======================= VOLUME SYNC =======================
-        globalVolumeSlider.addEventListener('input', (e) => {
-            const vol = parseFloat(e.target.value);
-            if (currentAudio) {
-                currentAudio.volume = vol;
-            }
-        });
-
-        // ======================= GLOBAL PLAY/PAUSE & STOP =======================
+        globalVolumeSlider.addEventListener('input', (e) => { if (currentAudio) currentAudio.volume = parseFloat(e.target
+                .value); });
         globalPlayPauseBtn.addEventListener('click', togglePlayPause);
         globalStopBtn.addEventListener('click', window.stopMusic);
 
@@ -1959,52 +4032,40 @@
             document.getElementById('lightboxImg').src = galleryImages[index];
             document.getElementById('lightbox').style.display = 'flex';
         };
-        document.getElementById('closeLightbox').onclick = () => {
-            markUserInteraction();
+        document.getElementById('closeLightbox').onclick = () => { markUserInteraction();
             playUISound(500, 0.05);
-            document.getElementById('lightbox').style.display = 'none';
-        };
-        document.getElementById('prevImg').onclick = () => {
-            markUserInteraction();
+            document.getElementById('lightbox').style.display = 'none'; };
+        document.getElementById('prevImg').onclick = () => { markUserInteraction();
             playUISound(650, 0.04);
             lightboxIndex = (lightboxIndex - 1 + galleryImages.length) % galleryImages.length;
-            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex];
-        };
-        document.getElementById('nextImg').onclick = () => {
-            markUserInteraction();
+            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
+        document.getElementById('nextImg').onclick = () => { markUserInteraction();
             playUISound(650, 0.04);
             lightboxIndex = (lightboxIndex + 1) % galleryImages.length;
-            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex];
-        };
+            document.getElementById('lightboxImg').src = galleryImages[lightboxIndex]; };
         document.getElementById('slideshowBtn').addEventListener('click', function() {
             markUserInteraction();
             playUISound(550, 0.06);
             if (slideshowInterval) { clearInterval(slideshowInterval);
                 slideshowInterval = null;
-                this.textContent = '▶ Start Slideshow'; } else {
-                slideshowInterval = setInterval(() => { lightboxIndex = (lightboxIndex + 1) % galleryImages.length; if (
-                        document.getElementById('lightbox').style.display === 'flex') { document.getElementById(
-                            'lightboxImg').src = galleryImages[lightboxIndex]; } }, 3000);
-                this.textContent = '⏸ Stop Slideshow';
-            }
+                this.textContent = '▶ Start Slideshow'; } else { slideshowInterval = setInterval(() => { lightboxIndex = (
+                        lightboxIndex + 1) % galleryImages.length; if (document.getElementById('lightbox').style
+                        .display === 'flex') { document.getElementById('lightboxImg').src = galleryImages[
+                        lightboxIndex]; } }, 3000);
+                this.textContent = '⏸ Stop Slideshow'; }
         });
-        window.openRetroDesktop = function() {
-            markUserInteraction();
+        window.openRetroDesktop = function() { markUserInteraction();
             playUISound(700, 0.05);
-            document.getElementById('retroDesktop').style.display = 'flex';
-        };
-        window.closeDesktop = function() {
-            markUserInteraction();
+            document.getElementById('retroDesktop').style.display = 'flex'; };
+        window.closeDesktop = function() { markUserInteraction();
             playUISound(500, 0.05);
-            document.getElementById('retroDesktop').style.display = 'none';
-        };
+            document.getElementById('retroDesktop').style.display = 'none'; };
         window.openWindow = function(title, content) {
             markUserInteraction();
             playUISound(600, 0.05);
             const win = document.createElement('div');
             win.className = 'window';
-            win.innerHTML =
-                '<div class="window-title">' + title +
+            win.innerHTML = '<div class="window-title">' + title +
                 '</div><div>' + content +
                 '</div><button onclick="this.parentElement.remove()" style="margin-top:5px; padding:6px 10px; cursor:pointer; font-family:\'VT323\',monospace;">Close</button>';
             win.style.left = Math.random() * 50 + '%';
@@ -2033,52 +4094,92 @@
                 document.addEventListener('touchend', endTouch, { once: true }); }, { passive: false });
         };
 
-        // ======================= THEMES (no auto day/night) =======================
+        // ======================= THEMES =======================
         const themeCollection = new Set();
 
-        function registerTheme(theme) { themeCollection.add(theme); if (themeCollection.size === 10) unlockSecret(
-                'allThemes', 'Theme Collector', 's6'); }
+        function registerTheme(theme) { themeCollection.add(theme); if (themeCollection.size >= 16) unlockSecret('allThemes',
+                'Theme Collector', 's6'); }
 
         window.setTheme = function(theme) {
             markUserInteraction();
             playUISound(800, 0.06);
             localStorage.setItem('theme', theme);
             const root = document.documentElement;
+
             const themes = {
                 blue: { '--bg': '#09142e', '--text': '#ffffff', '--card': '#132040', '--header': '#243b72',
-                    '--border': '#ffffff' },
+                    '--border': '#ffffff', '--glow-color': 'rgba(100,200,255,0.3)' },
                 green: { '--bg': '#000000', '--text': '#00ff00', '--card': '#001800', '--header': '#002800',
-                    '--border': '#00ff00' },
+                    '--border': '#00ff00', '--glow-color': 'rgba(0,255,0,0.3)' },
                 amber: { '--bg': '#000000', '--text': '#ffb000', '--card': '#221400', '--header': '#332000',
-                    '--border': '#ffb000' },
+                    '--border': '#ffb000', '--glow-color': 'rgba(255,176,0,0.3)' },
                 purple: { '--bg': '#1d1033', '--text': '#dca6ff', '--card': '#2f174f', '--header': '#472470',
-                    '--border': '#dca6ff' },
+                    '--border': '#dca6ff', '--glow-color': 'rgba(180,100,255,0.3)' },
                 pink: { '--bg': '#2d1b2e', '--text': '#fce4ec', '--card': '#4a2a3a', '--header': '#6a3a4a',
-                    '--border': '#f8bbd0' },
+                    '--border': '#f8bbd0', '--glow-color': 'rgba(255,150,200,0.3)' },
                 dark: { '--bg': '#111111', '--text': '#ffffff', '--card': '#1e1e1e', '--header': '#222222',
-                    '--border': '#666666' },
+                    '--border': '#666666', '--glow-color': 'rgba(255,255,255,0.15)' },
                 win98: { '--bg': '#008080', '--text': '#ffffff', '--card': '#c0c0c0', '--header': '#000080',
-                    '--border': '#808080' },
+                    '--border': '#808080', '--glow-color': 'rgba(0,128,128,0.3)' },
                 minecraft: { '--bg': '#2d5a27', '--text': '#e6d5b8', '--card': '#4a7a3a', '--header': '#3b6e3b',
-                    '--border': '#8b6b3b' },
+                    '--border': '#8b6b3b', '--glow-color': 'rgba(139,107,59,0.3)' },
                 roblox: { '--bg': '#1a1a2e', '--text': '#ffffff', '--card': '#2e3a8b', '--header': '#c43636',
-                    '--border': '#f5c842' }
+                    '--border': '#f5c842', '--glow-color': 'rgba(245,200,66,0.3)' },
+                'neo-blue': { '--bg': '#0a0e1a', '--text': '#7df0ff', '--card': '#0d1a2a', '--header': '#003366',
+                    '--border': '#00ccff', '--glow-color': 'rgba(0,204,255,0.5)' },
+                'neo-green': { '--bg': '#0a0e1a', '--text': '#66ff66', '--card': '#0a1a0a', '--header': '#003300',
+                    '--border': '#39ff14', '--glow-color': 'rgba(57,255,20,0.5)' },
+                'neo-amber': { '--bg': '#0a0e1a', '--text': '#ffcc33', '--card': '#1a0e00', '--header': '#3d1f00',
+                    '--border': '#ffaa00', '--glow-color': 'rgba(255,170,0,0.5)' },
+                'neo-purple': { '--bg': '#0a0e1a', '--text': '#d98cff', '--card': '#1a0a2a', '--header': '#3d0080',
+                    '--border': '#b366ff', '--glow-color': 'rgba(179,102,255,0.5)' },
+                'neo-pink': { '--bg': '#0a0e1a', '--text': '#ff80b3', '--card': '#2a0a1a', '--header': '#5c0033',
+                    '--border': '#ff66aa', '--glow-color': 'rgba(255,102,170,0.5)' },
+                'neo-dark': { '--bg': '#0a0a0a', '--text': '#a0a0a0', '--card': '#151515', '--header': '#1a1a1a',
+                    '--border': '#444444', '--glow-color': 'rgba(255,255,255,0.1)' },
+                'neo-minecraft': { '--bg': '#0a0e1a', '--text': '#7df0ff', '--card': '#0d1a2a', '--header': '#003366',
+                    '--border': '#00ccff', '--glow-color': 'rgba(0,204,255,0.5)' },
+                'neo-roblox': { '--bg': '#0a0e1a', '--text': '#ff6b6b', '--card': '#1a0a0a', '--header': '#660000',
+                    '--border': '#ff4444', '--glow-color': 'rgba(255,68,68,0.5)' }
             };
+
             const t = themes[theme];
-            if (t) for (let prop in t) root.style.setProperty(prop, t[prop]);
-            document.querySelectorAll('.retro-card').forEach(card => { if (theme === 'win98') card.classList.add(
-                    'win98-card');
-                else card.classList.remove('win98-card'); });
+            if (t) {
+                for (let prop in t) {
+                    root.style.setProperty(prop, t[prop]);
+                }
+                root.style.setProperty('--glow-border', '0 0 15px ' + t['--glow-color'] + ', 0 0 30px ' + t[
+                '--glow-color']);
+            }
+
+            document.body.classList.remove('neo-theme');
+            if (theme.startsWith('neo-')) {
+                document.body.classList.add('neo-theme');
+                document.querySelectorAll(
+                        '.retro-card, .flip-front, .flip-back, header, .desktop-nav, .ai-greeting, #axiomChat, #secretPanel, #jukeboxPanel, #themeMenu, #audioControls, .poll-container'
+                        ).forEach(el => {
+                    el.classList.add('neo-glow');
+                });
+            } else {
+                document.querySelectorAll(
+                        '.retro-card, .flip-front, .flip-back, header, .desktop-nav, .ai-greeting, #axiomChat, #secretPanel, #jukeboxPanel, #themeMenu, #audioControls, .poll-container'
+                        ).forEach(el => {
+                    el.classList.remove('neo-glow');
+                });
+            }
+
+            document.querySelectorAll('.retro-card').forEach(card => {
+                if (theme === 'win98') card.classList.add('win98-card');
+                else card.classList.remove('win98-card');
+            });
             document.getElementById('win98Taskbar').style.display = theme === 'win98' ? 'flex' : 'none';
             document.body.classList.toggle('win98-mode', theme === 'win98');
             registerTheme(theme);
-            if (introFinished) {
-                playThemeMusic();
-            }
+            if (introFinished) playThemeMusic();
             document.getElementById('themeMenu').style.display = 'none';
+            if (document.getElementById('pollResults')) renderPoll();
         };
 
-        // Manual day/night toggle (no auto)
         window.toggleDayNight = function() {
             markUserInteraction();
             playUISound(700, 0.05);
@@ -2086,52 +4187,41 @@
             localStorage.setItem('dayMode', document.body.classList.contains('day-mode'));
             document.getElementById('themeMenu').style.display = 'none';
         };
-
-        // Load saved day-mode preference (but never auto-enable)
-        if (localStorage.getItem('dayMode') === 'true') {
-            document.body.classList.add('day-mode');
-        }
+        if (localStorage.getItem('dayMode') === 'true') document.body.classList.add('day-mode');
 
         function cycleWeather() {
             markUserInteraction();
             playUISound(500, 0.06);
             weatherState = (weatherState + 1) % 4;
-            const weatherOverlay = document.getElementById('weatherOverlay');
-            weatherOverlay.className = '';
-            weatherOverlay.style.display = 'none';
-            if (weatherState === 1) { weatherOverlay.classList.add('sunny');
-                weatherOverlay.style.display = 'block'; } else if (weatherState === 2) { weatherOverlay.classList.add(
-                    'rainy');
-                weatherOverlay.style.display = 'block'; } else if (weatherState === 3) { weatherOverlay.classList.add(
-                    'starry-night');
-                weatherOverlay.style.display = 'block'; } else weatherOverlay.style.display = 'none';
+            const overlay = document.getElementById('weatherOverlay');
+            overlay.className = '';
+            overlay.style.display = 'none';
+            if (weatherState === 1) { overlay.classList.add('sunny');
+                overlay.style.display = 'block'; } else if (weatherState === 2) { overlay.classList.add('rainy');
+                overlay.style.display = 'block'; } else if (weatherState === 3) { overlay.classList.add('starry-night');
+                overlay.style.display = 'block'; }
         }
 
         function updateClocks() {
             const now = new Date();
             const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const taskbarClock = document.getElementById('taskbarClock');
-            if (taskbarClock) taskbarClock.innerText = time;
-            const fallbackClock = document.getElementById('fallbackClock');
-            if (fallbackClock) fallbackClock.innerHTML = '📅 ' + now.toLocaleDateString() + ' 🕒 ' + time;
+            document.getElementById('taskbarClock').innerText = time;
+            document.getElementById('fallbackClock').innerHTML = '📅 ' + now.toLocaleDateString() + ' 🕒 ' + time;
+            updateCmdTime();
         }
 
         // ======================= MOBILE MENU =======================
-        function openMobileMenu() {
-            markUserInteraction();
+        function openMobileMenu() { markUserInteraction();
             playUISound(600, 0.05);
             document.getElementById('mobileMenu').classList.add('open');
             document.getElementById('mobileMenuBackdrop').classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
+            document.body.style.overflow = 'hidden'; }
 
-        function closeMobileMenu() {
-            markUserInteraction();
+        function closeMobileMenu() { markUserInteraction();
             playUISound(500, 0.04);
             document.getElementById('mobileMenu').classList.remove('open');
             document.getElementById('mobileMenuBackdrop').classList.remove('open');
-            document.body.style.overflow = '';
-        }
+            document.body.style.overflow = ''; }
 
         // ======================= EVENT LISTENERS & INIT =======================
         document.getElementById('searchInput').addEventListener('input', filterStudents);
@@ -2142,48 +4232,37 @@
         document.querySelectorAll('.mobile-menu a').forEach(a => a.addEventListener('click', closeMobileMenu));
         document.querySelectorAll('.mobile-menu .nav-util-mobile').forEach(btn => btn.addEventListener('click',
             closeMobileMenu));
-        window.addEventListener('scroll', () => {
-            const backBtn = document.getElementById('backToTop');
-            if (backBtn) backBtn.style.display = window.scrollY > 500 ? 'block' : 'none';
-        });
-        document.getElementById('backToTop').addEventListener('click', () => {
-            markUserInteraction();
+        window.addEventListener('scroll', () => { document.getElementById('backToTop').style.display = window.scrollY > 500 ?
+                'block' : 'none'; });
+        document.getElementById('backToTop').addEventListener('click', () => { markUserInteraction();
             playUISound(600, 0.05);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-        document.getElementById('startBtn').onclick = e => {
-            e.stopPropagation();
+            window.scrollTo({ top: 0, behavior: 'smooth' }); });
+        document.getElementById('startBtn').onclick = e => { e.stopPropagation();
             markUserInteraction();
             playUISound(500, 0.05);
             const menu = document.getElementById('startMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        };
-        document.addEventListener('click', e => {
-            if (!e.target.closest('#startMenu') && e.target !== document.getElementById('startBtn'))
-                document.getElementById('startMenu').style.display = 'none';
-        });
-        document.getElementById('deskSecretBtn').addEventListener('click', () => {
-            markUserInteraction();
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
+        document.addEventListener('click', e => { if (!e.target.closest('#startMenu') && e.target !== document.getElementById(
+                'startBtn')) document.getElementById('startMenu').style.display = 'none'; });
+        document.getElementById('deskSecretBtn').addEventListener('click', () => { markUserInteraction();
             playUISound(600, 0.05);
-            document.getElementById('secretPanel').classList.toggle('open');
-        });
-        document.getElementById('deskJukeboxBtn').addEventListener('click', () => {
-            markUserInteraction();
+            document.getElementById('secretPanel').classList.toggle('open'); });
+        document.getElementById('deskJukeboxBtn').addEventListener('click', () => { markUserInteraction();
             playUISound(600, 0.05);
-            document.getElementById('jukeboxPanel').classList.toggle('open');
-        });
-        document.getElementById('deskThemeBtn').addEventListener('click', () => {
-            markUserInteraction();
+            document.getElementById('jukeboxPanel').classList.toggle('open'); });
+        document.getElementById('deskThemeBtn').addEventListener('click', () => { markUserInteraction();
             playUISound(500, 0.05);
             const menu = document.getElementById('themeMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        });
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; });
         document.getElementById('deskWeatherBtn').addEventListener('click', cycleWeather);
-        document.getElementById('mobileSecretBtn').addEventListener('click', () => { document.getElementById(
-                'secretPanel').classList.toggle('open');
+        document.getElementById('deskAxiomBtn').addEventListener('click', toggleAxiom);
+        document.getElementById('mobileAxiomBtn').addEventListener('click', () => { toggleAxiom();
             closeMobileMenu(); });
-        document.getElementById('mobileJukeboxBtn').addEventListener('click', () => { document.getElementById(
-                'jukeboxPanel').classList.toggle('open');
+        document.getElementById('mobileSecretBtn').addEventListener('click', () => { document.getElementById('secretPanel')
+                .classList.toggle('open');
+            closeMobileMenu(); });
+        document.getElementById('mobileJukeboxBtn').addEventListener('click', () => { document.getElementById('jukeboxPanel')
+                .classList.toggle('open');
             closeMobileMenu(); });
         document.getElementById('mobileThemeBtn').addEventListener('click', () => { const menu = document.getElementById(
                 'themeMenu');
@@ -2199,36 +4278,36 @@
                 unlockSecret('logo', 'TechPro Logo Secret', 's1'); }));
         document.addEventListener('keydown', e => {
             if (e.key === konami[konamiPos]) { konamiPos++; if (konamiPos === konami.length) { unlockSecret('konami',
-                    'Retro Gamer', 's2');
+                        'Retro Gamer', 's2');
                     konamiPos = 0; } } else konamiPos = 0;
-            if (e.key === '`' && !e.target.matches('input, textarea')) { document.getElementById('terminalOverlay')
-                    .style.display = 'block';
+            if (e.key === '`' && !e.target.matches('input, textarea')) { document.getElementById('terminalOverlay').style
+                    .display = 'block';
                 document.getElementById('terminalInput').focus();
                 e.preventDefault(); }
             if (e.key === 'Escape') { closeMobileMenu();
                 document.getElementById('lightbox').style.display = 'none';
                 document.getElementById('terminalOverlay').style.display = 'none';
                 document.getElementById('themeMenu').style.display = 'none';
-                document.getElementById('startMenu').style.display = 'none';
-            }
+                document.getElementById('startMenu').style.display = 'none'; if (axiomOpen) toggleAxiom(); }
         });
         window.addEventListener('scroll', () => { if (!scrolled && window.innerHeight + window.scrollY >= document.body
                 .offsetHeight - 50) { scrolled = true;
                 unlockSecret('bottom', 'Deep Explorer', 's3'); } });
         setTimeout(() => unlockSecret('time', 'Patient Visitor', 's4'), 60000);
         if (new Date().getHours() >= 22 || new Date().getHours() <= 5) unlockSecret('night', 'Night Owl', 's8');
-        document.getElementById('secretPixel').onclick = () => {
-            markUserInteraction();
+        document.getElementById('secretPixel').onclick = () => { markUserInteraction();
             playUISound(1000, 0.05);
-            unlockSecret('pixel', 'Hidden Pixel', 's9');
-        };
-        document.getElementById('creatorSecret').addEventListener('click', () => {
-            markUserInteraction();
+            unlockSecret('pixel', 'Hidden Pixel', 's9'); };
+        document.getElementById('creatorSecret').addEventListener('click', () => { markUserInteraction();
             playUISound(1100, 0.05);
-            unlockSecret('creator', 'Developer Access', 's10');
+            unlockSecret('creator', 'Developer Access', 's10'); });
+
+        // ======================= START BOOT SEQUENCE =======================
+        window.addEventListener('load', function() {
+            setTimeout(startBootSequence, 300);
         });
 
-        // Background effects
+        // ======================= BACKGROUND EFFECTS =======================
         const starsContainer = document.querySelector('.stars');
         const starCount = isMobile ? 15 : 40;
         for (let i = 0; i < starCount; i++) { const star = document.createElement('div');
@@ -2245,59 +4324,66 @@
             pixel.style.animationDelay = Math.random() * 15 + 's';
             particlesDiv.appendChild(pixel); }
         if (!isMobile && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) { for (let i = 0; i < 8; i++) { const
-                drop = document.createElement('div');
-            drop.className = 'rain';
-            drop.style.left = Math.random() * 100 + '%';
-            drop.style.animationDelay = Math.random() * 2 + 's';
-            document.body.appendChild(drop); } }
+                    drop = document.createElement('div');
+                drop.className = 'rain';
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.animationDelay = Math.random() * 2 + 's';
+                document.body.appendChild(drop); } }
 
-        // Terminal
-        document.getElementById('terminalOverlay').addEventListener('click', function(e) { if (e.target === this) this
-                .style.display = 'none'; });
+        // ======================= TERMINAL =======================
+        document.getElementById('terminalOverlay').addEventListener('click', function(e) { if (e.target === this) this.style
+                .display = 'none'; });
         const terminalOutput = document.getElementById('terminalOutput'),
             terminalInput = document.getElementById('terminalInput');
         terminalInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') { const cmd = this.value.trim().toLowerCase();
-                this.value = ''; let response = ''; switch (cmd) { case 'help': response =
-                        'Commands: help, students, teachers, gallery, secrets, date, cls, stop (stop music)'; break; case 'students': response =
-                        students.map(s => s.name).join(', '); break; case 'teachers': response =
-                        "Veronica Sta Monica, Paul Jayme, plus G11 teachers"; break; case 'gallery': response = galleryImages
-                        .join(', '); break; case 'secrets': response = 'Secrets found: ' + secretsFound + '/10'; break; case 'date': response =
-                        new Date().toString(); break; case 'stop': window.stopMusic();
-                    response = '⏹ Music stopped.'; break; case 'cls': terminalOutput.innerHTML = ''; return; default: response =
-                        'Unknown command: ' + cmd; }
+            if (e.key === 'Enter') {
+                const cmd = this.value.trim().toLowerCase();
+                this.value = '';
+                let response = '';
+                switch (cmd) {
+                    case 'help':
+                        response = 'Commands: help, students, teachers, gallery, secrets, date, cls, stop (stop music)';
+                        break;
+                    case 'students':
+                        response = students.map(s => s.name).join(', ');
+                        break;
+                    case 'teachers':
+                        response = "Veronica Sta Monica, Paul Jayme, plus G11 teachers";
+                        break;
+                    case 'gallery':
+                        response = galleryImages.join(', ');
+                        break;
+                    case 'secrets':
+                        response = 'Secrets found: ' + secretsFound + '/10';
+                        break;
+                    case 'date':
+                        response = new Date().toString();
+                        break;
+                    case 'stop':
+                        window.stopMusic();
+                        response = '⏹ Music stopped.';
+                        break;
+                    case 'cls':
+                        terminalOutput.innerHTML = '';
+                        return;
+                    default:
+                        response = 'Unknown command: ' + cmd;
+                }
                 terminalOutput.innerHTML += '<div>> ' + cmd + '</div><div>' + response + '</div>';
-                terminalOutput.scrollTop = terminalOutput.scrollHeight; }
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
         });
 
-        // Visitor count
+        // ======================= VISITOR COUNT =======================
         let visits = parseInt(localStorage.getItem('visitorCount') || '0');
         visits++;
         localStorage.setItem('visitorCount', visits);
         document.getElementById('visitCount').textContent = visits;
 
-        // Graduation countdown
-        const gradDate = new Date('2027-03-31T00:00:00').getTime();
-        setInterval(() => { const now = Date.now(); const distance = gradDate - now; if (distance < 0) { document
-                    .getElementById('countdown').textContent = '🎓 Graduated!'; return; } const days = Math.floor(distance /
-                    (1000 * 60 * 60 * 24)), hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)), secs = Math.floor((distance % (1000 * 60)) /
-                    1000);
-            document.getElementById('countdown').textContent = '🎓 ' + days + 'd ' + hours + 'h ' + mins + 'm ' + secs +
-                's until Graduation'; }, 1000);
+        // ======================= COUNTDOWN UPDATE =======================
+        setInterval(() => { updateCountdown(); }, 1000);
 
-        // Banner rotation
-        const bannerImages = ['images/class-photo.jpg', 'gallery/photo1.jpg', 'gallery/photo2.jpg'];
-        let bannerIndex = 0;
-        setInterval(() => { bannerIndex = (bannerIndex + 1) % bannerImages.length;
-            document.getElementById('mainHeader').style.backgroundImage =
-                'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(\'' + bannerImages[bannerIndex] + '\')'; }, 5000);
-
-        // Clock updates
-        setInterval(updateClocks, 1000);
-        updateClocks();
-
-        // Initial renders
+        // ======================= INITIAL RENDERS =======================
         renderOfficers();
         renderStudents();
         renderGallery();
@@ -2306,46 +4392,43 @@
         filterStudents();
         window.setTheme(localStorage.getItem('theme') || 'blue');
 
-        // Intro screen setup
-        setTimeout(() => {
-            document.getElementById('enterPrompt').style.display = 'block';
-            if (isMobile) {
-                document.getElementById('tapButton').style.display = 'block';
-            }
-        }, isMobile ? 4000 : 8000);
-
-        // Intro screen event listeners
-        document.getElementById('introScreen').addEventListener('click', () => launchYearbook());
-        document.getElementById('introScreen').addEventListener('touchend', (e) => {
-            if (!introFinished && e.target !== document.getElementById('tapButton')) {
-                launchYearbook();
+        // ======================= INTRO SCREEN EVENTS =======================
+        document.getElementById('introScreen').addEventListener('click', function(e) {
+            if (e.target === this || e.target.closest('.boot-container') && !e.target.closest('#tapButton')) {
+                markUserInteraction();
             }
         });
-        document.getElementById('tapButton').addEventListener('click', (e) => {
+
+        document.getElementById('tapButton').addEventListener('click', function(e) {
             e.stopPropagation();
             launchYearbook();
         });
-        document.addEventListener('keydown', (e) => { if (!introFinished && e.key === 'Enter') { e.preventDefault();
-                launchYearbook(); } });
 
-        // Restore secret state
+        document.addEventListener('keydown', function(e) {
+            if (!introFinished && e.key === 'Enter') {
+                const btn = document.getElementById('tapButton');
+                if (btn.classList.contains('show')) {
+                    e.preventDefault();
+                    launchYearbook();
+                }
+            }
+        });
+
+        // ======================= RESTORE SECRETS =======================
         if (document.getElementById('secretCountDisplay')) document.getElementById('secretCountDisplay').textContent =
             secretsFound + '/10';
         if (secretsFound === 10) {
-            const badge = document.getElementById('secretBadge');
-            if (badge) badge.style.display = 'block';
-            const rewards = document.getElementById('secretRewards');
-            if (rewards) rewards.style.display = 'block';
-            const hiddenGallery = document.getElementById('hiddenGallery');
-            if (hiddenGallery) hiddenGallery.innerHTML = hiddenGalleryImages.map(src => '<img src="' + src +
-                '" style="width:100%; border:3px solid white; border-radius:4px;" alt="Secret photo">').join('');
+            document.getElementById('secretBadge').style.display = 'block';
+            document.getElementById('secretRewards').style.display = 'block';
+            document.getElementById('hiddenGallery').innerHTML = hiddenGalleryImages.map(src =>
+                '<img src="' + src + '" style="width:100%; border:3px solid white; border-radius:4px;" alt="Secret photo">'
+                ).join('');
             document.body.classList.add('rainbowMode');
         }
 
-        if (!introFinished) {
-            document.body.style.overflow = 'hidden';
-        }
+        if (!introFinished) document.body.style.overflow = 'hidden';
 
+        // ======================= CLOSE THEME MENU ON CLICK OUTSIDE =======================
         document.addEventListener('click', function(e) {
             const themeMenu = document.getElementById('themeMenu');
             if (themeMenu.style.display === 'block' && !e.target.closest('#themeMenu') && !e.target.closest(
@@ -2354,7 +4437,7 @@
             }
         });
 
-        // ======================= UI SOUND EFFECTS – EVENT DELEGATION =======================
+        // ======================= UI SOUNDS =======================
         document.addEventListener('click', function(e) {
             const target = e.target.closest(
                 'button, .nav-util, .desktop-nav a, .mobile-menu a, .mobile-menu .nav-util-mobile, .retro-card, .flip-card, .teacher-list li, .hamburger, .mobile-menu-close, .lightbox-controls button, #slideshowBtn, #backToTop, #startBtn, #startMenu a, .desktop-icon, .window .window-title, #secretPixel, #creatorSecret, #themeMenu button, #secretPanel button, #jukeboxPanel button'
@@ -2381,16 +4464,21 @@
                 const target = e.target.closest(
                     'button, .nav-util, .desktop-nav a, .mobile-menu a, .mobile-menu .nav-util-mobile, .retro-card, .flip-card, .teacher-list li, .hamburger, .mobile-menu-close, .lightbox-controls button, #slideshowBtn, #backToTop, #startBtn, #startMenu a, .desktop-icon, #secretPixel, #creatorSecret, #themeMenu button, #secretPanel button, #jukeboxPanel button'
                     );
-                if (target) {
-                    playUISound(1200, 0.02, 0.05);
-                }
+                if (target) playUISound(1200, 0.02, 0.05);
             });
         }
 
+        // ======================= INITIAL COUNTDOWN UPDATE =======================
+        updateCountdown();
+
         console.log('🚀 TechPro B Digital Yearbook Ready');
-        console.log('🎵 Added Space Dog - DanTDM (replace src with your own MP3)');
-        console.log('🔊 Audio fixed: Minecraft & Roblox tracks should play now.');
-        console.log('🌙 Auto day/night removed – manual toggle only.');
+        console.log('🎵 Audio uses .mp3 files – place them in "MP3 Audios/"');
+        console.log('📸 Header slideshow active – 2.5s per slide');
+        console.log('⌨️ Win+R opens Command Panel (PC/Laptop only)');
+        console.log('💻 CMD Panel: type "help" for commands');
+        console.log('📅 Class Schedule added for G11 & G12');
+        console.log('🔊 Boot sounds and Axiom typing sounds enabled!');
+        console.log('🐱 Custom card effects: Zie → cats+purple, Ron → glitch, others → dream job effects');
     </script>
 </body>
 </html>
