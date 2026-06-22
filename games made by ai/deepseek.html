@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Nebula Drift – Mobile</title>
+    <title>Nebula Drift – Mobile (Fixed)</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             background:#000; overflow:hidden; font-family:'Courier New', monospace;
             user-select:none; -webkit-tap-highlight-color:transparent;
-            touch-action: none; /* prevent pinch zoom */
+            touch-action: none;
         }
         canvas { display:block; }
-        /* Mobile-friendly UI overlay */
         #ui {
             position:absolute; top:12px; left:16px; color:#0ff; pointer-events:none;
             display:flex; flex-direction:column; gap:8px; z-index:10;
-            font-size: 3.5vw; /* responsive font size */
+            font-size: 3.5vw;
         }
         @media (min-width: 768px) {
             #ui { font-size: 18px; left:20px; }
@@ -35,7 +34,6 @@
             height:100%; width:100%; background:linear-gradient(90deg,#f0f,#0ff);
             transition:width 0.2s; box-shadow:0 0 12px #0ff;
         }
-        /* Game over overlay */
         #gameover {
             position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
             color:#f44; text-align:center; display:none; pointer-events:auto;
@@ -60,7 +58,6 @@
             #restart-btn { font-size:22px; padding:12px 30px; }
         }
         @keyframes pulse { 0%{opacity:0.8;} 50%{opacity:1;} 100%{opacity:0.8;} }
-        /* Fullscreen button */
         #fs-btn {
             position:absolute; top:12px; right:16px; z-index:30;
             background:rgba(255,255,255,0.1); border:1px solid #0ff;
@@ -87,10 +84,7 @@
     <div id="fs-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</div>
     <canvas id="gameCanvas"></canvas>
     <script>
-        // Expose restart function globally for button onclick
         window.gameRestart = function() {
-            // The restartGame function will be defined inside the IIFE,
-            // so we'll attach it to window there.
             if (window._restartFunc) window._restartFunc();
         };
 
@@ -104,7 +98,6 @@
         }
 
         (function() {
-            // ============ CANVAS SETUP ============
             const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
             let W, H;
@@ -116,7 +109,6 @@
             window.addEventListener('resize', resize);
             resize();
 
-            // ============ AUDIO CONTEXT (procedural sound) ============
             let audioCtx = null;
             function initAudio() {
                 if (audioCtx) return;
@@ -161,7 +153,6 @@
                 src.start();
             }
 
-            // ============ INPUT HANDLING ============
             const keys = {};
             let mouseX = W/2, mouseY = H/2;
             let useMouseControl = false;
@@ -178,7 +169,6 @@
             canvas.addEventListener('mousedown', () => { useMouseControl = true; });
             canvas.addEventListener('mouseleave', () => { useMouseControl = false; });
 
-            // Touch controls: move to finger, auto-fire while touching
             canvas.addEventListener('touchstart', e => {
                 e.preventDefault();
                 initAudio();
@@ -203,18 +193,15 @@
                 useMouseControl = false;
             }, {passive: false});
 
-            // ============ UI ELEMENTS ============
             const scoreDiv = document.getElementById('score');
             const waveDiv = document.getElementById('wave');
             const healthBar = document.getElementById('health-bar');
             const gameOverDiv = document.getElementById('gameover');
             const scoreSub = document.getElementById('score-sub');
 
-            // ============ GAME STATE ============
             let score = 0, wave = 1, gameOver = false;
             let shakeMagnitude = 0, shakeDuration = 0;
 
-            // ============ SPATIAL GRID ============
             const CELL_SIZE = 120;
             class SpatialGrid {
                 constructor() { this.cells = new Map(); }
@@ -243,7 +230,6 @@
                 }
             }
 
-            // ============ PARTICLE SYSTEM (object pool) ============
             const MAX_PARTICLES = 400;
             const particles = [];
             function spawnParticle(x, y, vx, vy, color, life = 0.5, size = 2) {
@@ -269,7 +255,19 @@
                 }
             }
 
-            // ============ PLAYER ============
+            function spawnMuzzleFlash() {
+                const x = player.x;
+                const y = player.y - player.radius;
+                const count = 5;
+                for (let i = 0; i < count; i++) {
+                    const angle = -Math.PI/2 + (Math.random() - 0.5) * 0.8;
+                    const speed = 40 + Math.random() * 100;
+                    const vx = Math.cos(angle) * speed;
+                    const vy = Math.sin(angle) * speed;
+                    spawnParticle(x, y, vx, vy, '#ff0', 0.15, 1.5);
+                }
+            }
+
             const player = {
                 x: W/2, y: H/2, radius: 12, speed: 300,
                 health: 100, maxHealth: 100, invincibleTimer: 0,
@@ -279,7 +277,6 @@
                 powerupTimers: { rapidFire: 0, spreadShot: 0, shield: 0 }
             };
 
-            // ============ BULLETS & ENEMY BULLETS ============
             const playerBullets = [];
             const enemyBullets = [];
 
@@ -292,7 +289,6 @@
                 });
             }
 
-            // ============ ENEMIES ============
             const enemies = [];
             const enemyTypes = {
                 basic: { radius: 14, health: 40, speed: 120, color: '#f66', score: 100 },
@@ -323,7 +319,6 @@
                 });
             }
 
-            // ============ POWER-UPS ============
             const powerUps = [];
             function spawnPowerUp(x, y) {
                 const types = ['rapidFire', 'spreadShot', 'shield', 'health'];
@@ -331,7 +326,6 @@
                 powerUps.push({ x, y, vy: 80, radius: 12, type, life: 8 });
             }
 
-            // ============ STARS (parallax) ============
             const starsLayers = [[], [], []];
             for (let layer = 0; layer < 3; layer++) {
                 for (let i = 0; i < 80; i++) {
@@ -345,7 +339,6 @@
                 }
             }
 
-            // ============ HIGH SCORE ============
             function loadHighScore() {
                 try { return parseInt(localStorage.getItem('nebulaDriftHighScore')) || 0; }
                 catch(e) { return 0; }
@@ -355,11 +348,9 @@
             }
             let highScore = loadHighScore();
 
-            // ============ HELPERS ============
             function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
             function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
 
-            // ============ GAME LOGIC ============
             let enemySpawnQueue = 0;
             let spawnTimer = 0;
             let bossSpawned = false;
@@ -410,7 +401,6 @@
                 if (gameOver) return;
                 dt = Math.min(dt, 0.1);
 
-                // --- PLAYER MOVEMENT (mouse/touch or keyboard) ---
                 let moveX = 0, moveY = 0;
                 if (useMouseControl) {
                     const dx = mouseX - player.x;
@@ -437,7 +427,6 @@
 
                 if (player.invincibleTimer > 0) player.invincibleTimer -= dt;
 
-                // powerup timers
                 for (let key in player.powerupTimers) {
                     if (player.powerupTimers[key] > 0) {
                         player.powerupTimers[key] -= dt;
@@ -449,10 +438,10 @@
                     }
                 }
 
-                // --- SHOOTING ---
+                // ─── AUTO‑FIRE + MUZZLE FLASH ───
                 player.shootTimer -= dt;
                 const shootInterval = player.rapidFire ? 0.08 : player.shootCooldown;
-                if (player.shootTimer <= 0 && (keys[' '] || keys['Space'] || useMouseControl)) {
+                if (player.shootTimer <= 0) {
                     player.shootTimer = shootInterval;
                     if (player.spreadShot) {
                         for (let a = -0.3; a <= 0.3; a += 0.15) {
@@ -462,9 +451,10 @@
                         firePlayerBullet(-Math.PI/2);
                     }
                     playTone(800 + (player.rapidFire ? 300 : 0), 'square', 0.06, 0.04);
+                    spawnMuzzleFlash();
                 }
 
-                // --- UPDATE BULLETS ---
+                // Update bullets
                 for (let i = playerBullets.length-1; i >= 0; i--) {
                     const b = playerBullets[i];
                     b.x += b.vx * dt;
@@ -484,7 +474,7 @@
                     }
                 }
 
-                // --- UPDATE ENEMIES ---
+                // Update enemies
                 for (let i = enemies.length-1; i >= 0; i--) {
                     const e = enemies[i];
                     const dx = player.x - e.x;
@@ -515,7 +505,7 @@
                     if (e.x < -100 || e.x > W+100 || e.y < -100 || e.y > H+100) enemies.splice(i,1);
                 }
 
-                // --- UPDATE POWERUPS ---
+                // Update power-ups
                 for (let i = powerUps.length-1; i >= 0; i--) {
                     const p = powerUps[i];
                     p.y += p.vy * dt;
@@ -523,13 +513,12 @@
                     if (p.life <= 0 || p.y > H+30) powerUps.splice(i,1);
                 }
 
-                // --- COLLISIONS (spatial grid) ---
+                // ─── FIXED COLLISION: grid only stores enemies ───
                 const grid = new SpatialGrid();
-                for (const b of playerBullets) grid.insert(b);
                 for (const e of enemies) grid.insert(e);
 
                 for (const b of playerBullets) {
-                    const nearby = grid.getNearby(b.x, b.y);
+                    const nearby = grid.getNearby(b.x, b.y);   // only enemies now
                     for (const e of nearby) {
                         if (dist(b, e) < b.radius + e.radius) {
                             b.life = 0;
@@ -551,11 +540,12 @@
                             } else {
                                 playTone(200, 'sawtooth', 0.05, 0.02);
                             }
-                            break;
+                            break;   // one hit per bullet
                         }
                     }
                 }
 
+                // Enemy bullets vs player
                 for (let i = enemyBullets.length-1; i >= 0; i--) {
                     const b = enemyBullets[i];
                     if (player.invincibleTimer > 0) continue;
@@ -583,6 +573,7 @@
                     }
                 }
 
+                // Player ramming enemies
                 if (player.invincibleTimer <= 0) {
                     for (const e of enemies) {
                         if (dist(player, e) < player.radius + e.radius) {
@@ -601,6 +592,7 @@
                     }
                 }
 
+                // Power-up collection
                 for (let i = powerUps.length-1; i >= 0; i--) {
                     const p = powerUps[i];
                     if (dist(player, p) < player.radius + p.radius) {
@@ -649,7 +641,6 @@
                     if (p.life <= 0) particles.splice(i,1);
                 }
 
-                // Shake
                 if (shakeDuration > 0) {
                     shakeDuration -= dt;
                     shakeMagnitude *= 0.9;
@@ -658,7 +649,6 @@
                 updateUI();
             }
 
-            // ============ RENDER ============
             function drawStarfield() {
                 for (let layer = 0; layer < 3; layer++) {
                     const stars = starsLayers[layer];
@@ -795,13 +785,11 @@
                 drawPlayer();
                 drawParticles();
                 ctx.restore();
-                // High score on canvas
                 ctx.fillStyle = 'rgba(255,255,255,0.5)';
                 ctx.font = '14px monospace'; ctx.textAlign = 'right';
                 ctx.fillText(`High Score: ${highScore}`, W-20, 30);
             }
 
-            // ============ GAME LOOP ============
             let lastTime = performance.now();
             function gameLoop(now) {
                 const dt = (now - lastTime) / 1000;
@@ -811,24 +799,20 @@
                 requestAnimationFrame(gameLoop);
             }
 
-            // Keyboard restart (also works on desktop)
             window.addEventListener('keydown', function restartHandler(e) {
                 if (e.key === 'r' || e.key === 'R') {
                     if (gameOver) restartGame();
                 }
             });
 
-            // Expose restart function to global scope (for button)
             window._restartFunc = restartGame;
 
-            // Init
             initAudio();
             startWave();
             updateUI();
             lastTime = performance.now();
             requestAnimationFrame(gameLoop);
 
-            // Reposition player on resize
             window.addEventListener('resize', () => {
                 player.x = clamp(player.x, player.radius, W - player.radius);
                 player.y = clamp(player.y, player.radius, H - player.radius);

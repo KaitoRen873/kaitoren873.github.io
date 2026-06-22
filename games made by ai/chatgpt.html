@@ -1,303 +1,2401 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Mobile RPG</title>
-
-<style>
-body{
-    margin:0;
-    overflow:hidden;
-    background:#111;
-    color:white;
-    font-family:Arial,sans-serif;
-    touch-action:none;
-}
-
-canvas{
-    display:block;
-}
-
-#hud{
-    position:absolute;
-    top:10px;
-    left:10px;
-    background:rgba(0,0,0,.7);
-    padding:10px;
-    border-radius:10px;
-    z-index:100;
-}
-
-#controls{
-    position:absolute;
-    bottom:20px;
-    left:20px;
-    z-index:100;
-}
-
-.ctrl{
-    width:60px;
-    height:60px;
-    font-size:24px;
-    margin:2px;
-    border:none;
-    border-radius:12px;
-}
-
-#attack{
-    position:absolute;
-    right:20px;
-    bottom:40px;
-    width:90px;
-    height:90px;
-    font-size:30px;
-    border:none;
-    border-radius:50%;
-    z-index:100;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎮 TechPro B: School Adventure</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
+        
+        :root {
+            --pixel: #22d3ee;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: #0f172a;
+            color: #e0e7ff;
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            overflow: hidden;
+            touch-action: none;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(#1e2937, #0f172a);
+        }
+        
+        #game-canvas {
+            border: 6px solid #334155;
+            box-shadow: 0 0 0 8px #1e2937,
+                        0 25px 50px -12px rgb(0 0 0 / 0.5);
+            image-rendering: pixelated;
+            background: #166534;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .ui-panel {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.95);
+            border: 3px solid #64748b;
+            color: #e0e7ff;
+            font-size: 10px;
+            padding: 8px;
+            z-index: 100;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+        }
+        
+        .retro-text {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .pixel-button {
+            background: #334155;
+            border: 3px solid #64748b;
+            color: #e0e7ff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 11px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-transform: uppercase;
+            box-shadow: 0 4px 0 #1e2937;
+        }
+        
+        .pixel-button:active, .pixel-button:hover {
+            background: #475569;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1e2937;
+        }
+        
+        .pixel-button.primary {
+            background: #0ea5e9;
+            border-color: #38bdf8;
+            color: white;
+        }
+        
+        #title-screen, #pause-menu, #game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.92);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            text-align: center;
+        }
+        
+        .game-title {
+            font-size: 28px;
+            color: #22d3ee;
+            text-shadow: 4px 4px 0 #164e63;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        
+        .subtitle {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+        
+        #dialogue-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 520px;
+            background: rgba(15, 23, 42, 0.98);
+            border: 4px solid #64748b;
+            padding: 16px;
+            z-index: 300;
+            display: none;
+        }
+        
+        #dialogue-name {
+            color: #22d3ee;
+            font-size: 13px;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 0 #000;
+        }
+        
+        #dialogue-text {
+            font-size: 11px;
+            line-height: 1.5;
+            min-height: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .dialogue-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        #hud {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .hud-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid #475569;
+            padding: 4px 8px;
+            font-size: 9px;
+        }
+        
+        .bar-container {
+            width: 140px;
+            height: 14px;
+            background: #1e2937;
+            border: 2px solid #475569;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            transition: width 0.2s ease;
+        }
+        
+        .health-fill { background: linear-gradient(#ef4444, #b91c1c); }
+        .xp-fill { background: linear-gradient(#a3e635, #4ade80); }
+        
+        #minimap {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            border: 3px solid #64748b;
+            background: #0f172a;
+            z-index: 50;
+        }
+        
+        #fps-counter {
+            position: absolute;
+            top: 12px;
+            right: 170px;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 2px 8px;
+            font-size: 9px;
+            border: 1px solid #475569;
+            z-index: 50;
+        }
+        
+        #quest-tracker {
+            position: absolute;
+            top: 140px;
+            left: 12px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid #64748b;
+            padding: 8px;
+            max-width: 200px;
+            font-size: 9px;
+            z-index: 50;
+            display: none;
+        }
+        
+        #quest-tracker h4 {
+            color: #22d3ee;
+            margin-bottom: 6px;
+            font-size: 10px;
+        }
+        
+        .quest-item {
+            margin-bottom: 4px;
+            padding-left: 12px;
+            position: relative;
+        }
+        
+        .quest-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #a3e635;
+        }
+        
+        .quest-completed {
+            text-decoration: line-through;
+            color: #64748b;
+        }
+        
+        #mobile-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 160px;
+            display: none;
+            z-index: 150;
+            pointer-events: none;
+        }
+        
+        .joystick-container {
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            width: 110px;
+            height: 110px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 3px solid #64748b;
+            border-radius: 50%;
+            pointer-events: auto;
+        }
+        
+        .joystick-knob {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            background: #22d3ee;
+            border: 3px solid #0ea5e9;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 0 #164e63;
+            transition: transform 0.05s;
+        }
+        
+        .action-buttons {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            display: grid;
+            grid-template-columns: repeat(3, 52px);
+            gap: 8px;
+            pointer-events: auto;
+        }
+        
+        .action-btn {
+            width: 52px;
+            height: 52px;
+            background: rgba(30, 41, 59, 0.85);
+            border: 3px solid #64748b;
+            border-radius: 8px;
+            color: #e0e7ff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 0 #1e2937;
+            pointer-events: auto;
+        }
+        
+        .action-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #1e2937;
+        }
+        
+        #toast {
+            position: absolute;
+            bottom: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #166534;
+            border: 3px solid #4ade80;
+            padding: 10px 20px;
+            font-size: 11px;
+            z-index: 400;
+            display: none;
+            white-space: nowrap;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+        }
+        
+        .stats {
+            font-size: 10px;
+            color: #94a3b8;
+        }
+        
+        .building-label {
+            position: absolute;
+            font-size: 8px;
+            color: #64748b;
+            text-shadow: 1px 1px 0 #000;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
 </head>
 <body>
-
-<div id="hud">
-    ❤️ HP: <span id="hp">100</span><br>
-    ⭐ XP: <span id="xp">0</span><br>
-    🏆 Level: <span id="level">1</span><br><br>
-
-    <button onclick="saveGame()">Save</button>
-    <button onclick="loadGame()">Load</button>
-</div>
-
-<canvas id="game"></canvas>
-
-<div id="controls">
-    <div style="text-align:center;">
-        <button class="ctrl" id="up">↑</button>
+    <div id="game-container">
+        <!-- Title Screen -->
+        <div id="title-screen">
+            <div>
+                <h1 class="game-title retro-text">TECHPRO B</h1>
+                <h2 class="game-title retro-text" style="font-size: 22px; color: #a3e635; margin-top: -10px;">SCHOOL ADVENTURE</h2>
+                <p class="subtitle retro-text">PIXEL RPG • CLASS OF 2026</p>
+                
+                <div style="margin: 30px 0;">
+                    <button onclick="startGame()" class="pixel-button primary" style="font-size: 14px; padding: 14px 32px;">START NEW GAME</button>
+                    <br><br>
+                    <button onclick="loadGameFromTitle()" class="pixel-button" style="font-size: 12px; padding: 10px 24px;">LOAD SAVED GAME</button>
+                </div>
+                
+                <div style="font-size: 9px; color: #64748b; max-width: 300px; margin: 0 auto; line-height: 1.6;">
+                    WASD / ARROWS • E = INTERACT<br>
+                    SPACE = ATTACK • I = INVENTORY • Q = QUESTS<br>
+                    ESC = PAUSE • MOBILE: JOYSTICK + BUTTONS
+                </div>
+            </div>
+        </div>
+        
+        <!-- Game Canvas -->
+        <canvas id="game-canvas" width="720" height="540"></canvas>
+        
+        <!-- HUD -->
+        <div id="hud">
+            <div class="hud-bar retro-text">
+                <span>HP</span>
+                <div class="bar-container">
+                    <div id="health-bar" class="bar-fill health-fill" style="width: 100%"></div>
+                </div>
+                <span id="health-text">100/100</span>
+            </div>
+            
+            <div class="hud-bar retro-text">
+                <span>XP</span>
+                <div class="bar-container">
+                    <div id="xp-bar" class="bar-fill xp-fill" style="width: 0%"></div>
+                </div>
+                <span id="xp-text">0/100</span>
+            </div>
+            
+            <div class="hud-bar retro-text" style="gap: 4px; padding: 4px 10px;">
+                <span>LVL <span id="level-text">1</span></span>
+                <span style="margin-left: 12px;">🪙 <span id="coins-text">0</span></span>
+                <span style="margin-left: 12px;">⭐ <span id="rep-text">50</span></span>
+            </div>
+        </div>
+        
+        <!-- Minimap -->
+        <canvas id="minimap" width="130" height="130"></canvas>
+        
+        <!-- FPS -->
+        <div id="fps-counter" class="retro-text">FPS: 60</div>
+        
+        <!-- Quest Tracker -->
+        <div id="quest-tracker" class="retro-text">
+            <h4>📋 ACTIVE QUESTS</h4>
+            <div id="quest-list"></div>
+        </div>
+        
+        <!-- Dialogue Box -->
+        <div id="dialogue-box" class="ui-panel retro-text">
+            <div id="dialogue-name"></div>
+            <div id="dialogue-text"></div>
+            <div class="dialogue-buttons">
+                <button id="dialogue-next" class="pixel-button" onclick="nextDialogue()">NEXT ▶</button>
+                <button id="dialogue-accept" class="pixel-button primary" style="display:none" onclick="acceptQuest()">ACCEPT QUEST</button>
+                <button id="dialogue-complete" class="pixel-button" style="display:none; background:#a3e635; color:#0f172a; border-color:#4ade80" onclick="completeQuestFromDialogue()">COMPLETE</button>
+                <button id="dialogue-close" class="pixel-button" style="background:#475569" onclick="closeDialogue()">CLOSE</button>
+            </div>
+        </div>
+        
+        <!-- Toast for achievements -->
+        <div id="toast" class="retro-text"></div>
+        
+        <!-- Mobile Controls -->
+        <div id="mobile-controls">
+            <!-- Virtual Joystick -->
+            <div id="joystick-container" class="joystick-container">
+                <div id="joystick-knob" class="joystick-knob"></div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <div class="action-btn" onclick="interact()" style="grid-column: 2; font-size: 20px;">💬</div>
+                <div class="action-btn" onclick="attack()" style="grid-column: 3; font-size: 22px;">⚔️</div>
+                <div class="action-btn" onclick="toggleInventory()" style="grid-column: 1; font-size: 18px;">🎒</div>
+                <div class="action-btn" onclick="toggleQuestLog()" style="grid-column: 2; font-size: 18px;">📋</div>
+                <div class="action-btn" onclick="pauseGame()" style="grid-column: 3; font-size: 20px;">⏸️</div>
+            </div>
+        </div>
+        
+        <!-- Pause Menu -->
+        <div id="pause-menu" style="display: none;">
+            <div style="text-align: center;">
+                <h2 class="game-title retro-text" style="font-size: 24px; margin-bottom: 10px;">PAUSED</h2>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                    <button onclick="resumeGame()" class="pixel-button primary" style="width: 200px;">RESUME</button>
+                    <button onclick="saveGame()" class="pixel-button" style="width: 200px;">💾 SAVE GAME</button>
+                    <button onclick="showSettings()" class="pixel-button" style="width: 200px;">⚙️ SETTINGS</button>
+                    <button onclick="backToTitle()" class="pixel-button" style="width: 200px; background:#475569">🏠 TITLE SCREEN</button>
+                </div>
+                
+                <div style="margin-top: 30px; font-size: 9px; color: #64748b;">
+                    AUTO-SAVE ENABLED • LOCALSTORAGE
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings -->
+        <div id="settings-menu" class="ui-panel retro-text" style="display: none; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 280px; text-align: center;">
+            <h3 style="margin-bottom: 16px; color: #22d3ee;">SETTINGS</h3>
+            
+            <div style="text-align: left; margin: 16px 0; line-height: 2;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="sound-toggle" checked onchange="toggleSound()"> 
+                    <span>SOUND EFFECTS</span>
+                </label>
+                
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 8px;">
+                    <input type="checkbox" id="rain-toggle" onchange="toggleRain()"> 
+                    <span>RAIN (WEATHER)</span>
+                </label>
+            </div>
+            
+            <button onclick="closeSettings()" class="pixel-button" style="margin-top: 10px; width: 100%;">CLOSE</button>
+        </div>
+        
+        <!-- Game Over -->
+        <div id="game-over-screen" style="display: none;">
+            <div>
+                <h2 class="game-title retro-text" style="color: #ef4444; font-size: 26px;">GAME OVER</h2>
+                <p style="margin: 20px 0; color: #94a3b8;">You were defeated by the Deadline...</p>
+                <button onclick="restartGame()" class="pixel-button primary" style="font-size: 13px; padding: 12px 28px;">TRY AGAIN</button>
+                <br><br>
+                <button onclick="backToTitle()" class="pixel-button">BACK TO TITLE</button>
+            </div>
+        </div>
+        
+        <!-- Inventory Panel -->
+        <div id="inventory-panel" class="ui-panel retro-text" style="display: none; top: 80px; right: 12px; width: 240px; max-height: 320px; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="color: #22d3ee;">🎒 INVENTORY</h3>
+                <button onclick="toggleInventory()" class="pixel-button" style="padding: 2px 8px; font-size: 10px;">CLOSE ✕</button>
+            </div>
+            <div id="inventory-content" style="font-size: 10px; line-height: 1.7;"></div>
+            <div style="margin-top: 12px; font-size: 9px; color: #64748b; text-align: center;">
+                Click items to USE • Tech Coins: <span id="inv-coins">0</span>
+            </div>
+        </div>
     </div>
-
-    <div>
-        <button class="ctrl" id="left">←</button>
-        <button class="ctrl" id="down">↓</button>
-        <button class="ctrl" id="right">→</button>
-    </div>
-</div>
-
-<button id="attack">⚔️</button>
-
-<script>
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
-
-function resize(){
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-}
-resize();
-window.addEventListener("resize",resize);
-
-const move={
-    up:false,
-    down:false,
-    left:false,
-    right:false,
-    attack:false
-};
-
-function bindButton(id,key){
-    const btn=document.getElementById(id);
-
-    btn.addEventListener("touchstart",e=>{
-        e.preventDefault();
-        move[key]=true;
-    });
-
-    btn.addEventListener("touchend",e=>{
-        e.preventDefault();
-        move[key]=false;
-    });
-
-    btn.addEventListener("mousedown",()=>move[key]=true);
-    btn.addEventListener("mouseup",()=>move[key]=false);
-}
-
-bindButton("up","up");
-bindButton("down","down");
-bindButton("left","left");
-bindButton("right","right");
-bindButton("attack","attack");
-
-const player={
-    x:200,
-    y:200,
-    size:30,
-    hp:100,
-    xp:0,
-    level:1,
-    speed:4
-};
-
-let enemies=[];
-
-function spawnEnemy(){
-    return{
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        size:25,
-        hp:20
-    };
-}
-
-for(let i=0;i<10;i++){
-    enemies.push(spawnEnemy());
-}
-
-function updatePlayer(){
-
-    if(move.up) player.y-=player.speed;
-    if(move.down) player.y+=player.speed;
-    if(move.left) player.x-=player.speed;
-    if(move.right) player.x+=player.speed;
-
-    player.x=Math.max(0,
-        Math.min(canvas.width-player.size,player.x));
-
-    player.y=Math.max(0,
-        Math.min(canvas.height-player.size,player.y));
-}
-
-function updateEnemies(){
-
-    enemies.forEach(enemy=>{
-
-        const dx=player.x-enemy.x;
-        const dy=player.y-enemy.y;
-
-        const dist=Math.hypot(dx,dy);
-
-        if(dist>0){
-            enemy.x+=(dx/dist)*1.3;
-            enemy.y+=(dy/dist)*1.3;
-        }
-
-        if(dist<40){
-
-            player.hp-=0.05;
-
-            if(move.attack){
-
-                enemy.hp--;
-
-                if(enemy.hp<=0){
-
-                    player.xp+=10;
-
-                    if(player.xp>=player.level*100){
-                        player.level++;
-                        player.hp=100;
+    
+    <script>
+        // ==================== GAME VARIABLES ====================
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d', { alpha: true });
+        const minimapCanvas = document.getElementById('minimap');
+        const minimapCtx = minimapCanvas.getContext('2d', { alpha: true });
+        
+        const TILE_SIZE = 20;
+        const MAP_COLS = 36;
+        const MAP_ROWS = 27;
+        const CANVAS_WIDTH = 720;
+        const CANVAS_HEIGHT = 540;
+        
+        let map = [];
+        let player = {};
+        let camera = { x: 0, y: 0 };
+        let keys = {};
+        let npcs = [];
+        let enemies = [];
+        let items = [];
+        let particles = [];
+        let questData = {};
+        let achievements = {};
+        let techCoins = 0;
+        let reputation = 50;
+        
+        let gameState = 'title';
+        let isPaused = false;
+        let soundEnabled = true;
+        let isRaining = false;
+        let timeOfDay = 9.5; // hours
+        let lastTime = performance.now();
+        let fps = 60;
+        let frameCount = 0;
+        let fpsTime = 0;
+        
+        let shake = 0;
+        let attacking = false;
+        let attackTimer = 0;
+        let attackCooldown = 0;
+        
+        let currentDialogueNpc = null;
+        let inputX = 0;
+        let inputY = 0;
+        let isMobile = false;
+        
+        let autoSaveTimer = 0;
+        let rainParticles = [];
+        
+        // ==================== INITIALIZE MAP ====================
+        function initMap() {
+            map = [];
+            for (let y = 0; y < MAP_ROWS; y++) {
+                map[y] = new Array(MAP_COLS).fill(0); // 0 = grass
+            }
+            
+            // Main paths (horizontal + vertical)
+            for (let x = 0; x < MAP_COLS; x++) {
+                map[13][x] = 1; // horizontal main path
+                map[8][x] = 1;  // upper path
+            }
+            for (let y = 0; y < MAP_ROWS; y++) {
+                map[y][18] = 1; // vertical main path
+                map[y][7] = 1;  // left path
+            }
+            
+            // Add buildings with walls + interiors + doors
+            const buildings = [
+                { name: "TECHPRO B CLASSROOM", x: 3, y: 2, w: 7, h: 5, doorX: 6, doorY: 6, floor: 4 },
+                { name: "COMPUTER LAB", x: 24, y: 2, w: 8, h: 5, doorX: 27, doorY: 6, floor: 4 },
+                { name: "LIBRARY", x: 3, y: 17, w: 9, h: 6, doorX: 7, doorY: 17, floor: 4 },
+                { name: "CANTEEN", x: 20, y: 17, w: 6, h: 5, doorX: 22, doorY: 21, floor: 4 },
+                { name: "GYM", x: 28, y: 17, w: 7, h: 6, doorX: 31, doorY: 17, floor: 4 },
+                { name: "PRINCIPAL'S OFFICE", x: 13, y: 2, w: 6, h: 5, doorX: 15, doorY: 6, floor: 4 },
+            ];
+            
+            buildings.forEach(b => {
+                for (let by = b.y; by < b.y + b.h; by++) {
+                    for (let bx = b.x; bx < b.x + b.w; bx++) {
+                        if (bx === b.doorX && by === b.doorY) {
+                            map[by][bx] = 1; // door = path
+                        } else if (
+                            bx === b.x || bx === b.x + b.w - 1 ||
+                            by === b.y || by === b.y + b.h - 1
+                        ) {
+                            map[by][bx] = 2; // wall
+                        } else {
+                            map[by][bx] = b.floor; // indoor floor
+                        }
                     }
-
-                    Object.assign(enemy,spawnEnemy());
+                }
+            });
+            
+            // Secret Developer Room (hidden area - small building)
+            const secret = { x: 32, y: 9, w: 4, h: 4, doorX: 33, doorY: 12 };
+            for (let by = secret.y; by < secret.y + secret.h; by++) {
+                for (let bx = secret.x; bx < secret.x + secret.w; bx++) {
+                    if (bx === secret.doorX && by === secret.doorY) {
+                        map[by][bx] = 1;
+                    } else if (bx === secret.x || bx === secret.x + secret.w - 1 || by === secret.y || by === secret.y + secret.h - 1) {
+                        map[by][bx] = 2;
+                    } else {
+                        map[by][bx] = 5; // special floor
+                    }
+                }
+            }
+            
+            // Some decorative path details
+            map[10][10] = 1;
+            map[15][25] = 1;
+        }
+        
+        function isWalkable(tileX, tileY) {
+            if (tileX < 0 || tileX >= MAP_COLS || tileY < 0 || tileY >= MAP_ROWS) return false;
+            return map[tileY][tileX] !== 2; // walls block
+        }
+        
+        // ==================== PLAYER ====================
+        function initPlayer() {
+            player = {
+                x: 180,
+                y: 280,
+                vx: 0,
+                vy: 0,
+                speed: 135,
+                health: 100,
+                maxHealth: 100,
+                xp: 0,
+                level: 1,
+                direction: 'down',
+                frame: 0,
+                frameTimer: 0,
+                inventory: {
+                    'energy_drink': 1,
+                    'usb_drive': 0,
+                    'study_book': 0,
+                    'notes': 0
+                }
+            };
+        }
+        
+        function updatePlayer(dt) {
+            if (gameState !== 'playing' || isPaused) return;
+            
+            let moveX = 0;
+            let moveY = 0;
+            
+            // Keyboard
+            if (keys['w'] || keys['arrowup']) moveY -= 1;
+            if (keys['s'] || keys['arrowdown']) moveY += 1;
+            if (keys['a'] || keys['arrowleft']) moveX -= 1;
+            if (keys['d'] || keys['arrowright']) moveX += 1;
+            
+            // Joystick / mobile input
+            if (inputX !== 0 || inputY !== 0) {
+                moveX = inputX;
+                moveY = inputY;
+            }
+            
+            // Normalize diagonal movement
+            if (moveX !== 0 && moveY !== 0) {
+                const len = Math.sqrt(moveX * moveX + moveY * moveY);
+                moveX /= len;
+                moveY /= len;
+            }
+            
+            const targetVx = moveX * player.speed;
+            const targetVy = moveY * player.speed;
+            
+            player.vx = targetVx;
+            player.vy = targetVy;
+            
+            // Update direction for animation
+            if (Math.abs(moveX) > Math.abs(moveY)) {
+                player.direction = moveX > 0 ? 'right' : 'left';
+            } else if (moveY !== 0) {
+                player.direction = moveY > 0 ? 'down' : 'up';
+            }
+            
+            // Move with collision (separate axis)
+            let newX = player.x + player.vx * dt;
+            let newY = player.y + player.vy * dt;
+            
+            // X collision
+            const tileX = Math.floor(newX / TILE_SIZE);
+            const tileY = Math.floor(player.y / TILE_SIZE);
+            if (isWalkable(tileX, tileY) && isWalkable(Math.floor((newX + 12) / TILE_SIZE), tileY)) {
+                player.x = newX;
+            }
+            
+            // Y collision
+            const tileX2 = Math.floor(player.x / TILE_SIZE);
+            const tileY2 = Math.floor(newY / TILE_SIZE);
+            if (isWalkable(tileX2, tileY2) && isWalkable(tileX2, Math.floor((newY + 14) / TILE_SIZE))) {
+                player.y = newY;
+            }
+            
+            // Animation
+            player.frameTimer += dt;
+            if (player.frameTimer > 0.12) {
+                player.frameTimer = 0;
+                if (moveX !== 0 || moveY !== 0) {
+                    player.frame = (player.frame + 1) % 2;
+                }
+            }
+            
+            // Clamp to map
+            player.x = Math.max(16, Math.min(player.x, MAP_COLS * TILE_SIZE - 20));
+            player.y = Math.max(16, Math.min(player.y, MAP_ROWS * TILE_SIZE - 20));
+            
+            // Update camera
+            camera.x = player.x - CANVAS_WIDTH / 2;
+            camera.y = player.y - CANVAS_HEIGHT / 2;
+            camera.x = Math.max(0, Math.min(camera.x, MAP_COLS * TILE_SIZE - CANVAS_WIDTH));
+            camera.y = Math.max(0, Math.min(camera.y, MAP_ROWS * TILE_SIZE - CANVAS_HEIGHT));
+        }
+        
+        function drawPlayer(sx, sy) {
+            const px = sx;
+            const py = sy;
+            const dir = player.direction;
+            const f = player.frame;
+            
+            ctx.save();
+            
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fillRect(px + 3, py + 15, 10, 4);
+            
+            // Legs
+            ctx.fillStyle = '#1e40af';
+            if (dir === 'down' || dir === 'up') {
+                ctx.fillRect(px + 4, py + 10, 3, 6 + (f * 2));
+                ctx.fillRect(px + 9, py + 10, 3, 6 + ((1 - f) * 2));
+            } else {
+                ctx.fillRect(px + 4, py + 10, 3, 6);
+                ctx.fillRect(px + 9, py + 10, 3, 6);
+            }
+            
+            // Body (blue hoodie)
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(px + 3, py + 5, 10, 8);
+            
+            // Head
+            ctx.fillStyle = '#fed7aa';
+            ctx.fillRect(px + 4, py + 1, 8, 6);
+            
+            // Eyes
+            ctx.fillStyle = '#1e2937';
+            if (dir === 'left') {
+                ctx.fillRect(px + 4, py + 3, 2, 2);
+            } else if (dir === 'right') {
+                ctx.fillRect(px + 10, py + 3, 2, 2);
+            } else {
+                ctx.fillRect(px + 5, py + 3, 2, 2);
+                ctx.fillRect(px + 9, py + 3, 2, 2);
+            }
+            
+            // Backpack
+            ctx.fillStyle = '#166534';
+            ctx.fillRect(px + 11, py + 6, 4, 6);
+            
+            // Sword on back (pixel style)
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(px + 13, py + 4, 2, 10);
+            ctx.fillStyle = '#a3e635';
+            ctx.fillRect(px + 12, py + 3, 4, 2);
+            
+            // Attack animation
+            if (attacking && attackTimer > 0.1) {
+                ctx.strokeStyle = '#fef08c';
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                
+                if (dir === 'right') {
+                    ctx.beginPath();
+                    ctx.moveTo(px + 14, py + 8);
+                    ctx.lineTo(px + 26, py + 8 - (f * 3));
+                    ctx.stroke();
+                } else if (dir === 'left') {
+                    ctx.beginPath();
+                    ctx.moveTo(px + 2, py + 8);
+                    ctx.lineTo(px - 10, py + 8 - (f * 3));
+                    ctx.stroke();
+                } else if (dir === 'down') {
+                    ctx.beginPath();
+                    ctx.moveTo(px + 8, py + 14);
+                    ctx.lineTo(px + 8 + (f * 2), py + 24);
+                    ctx.stroke();
+                } else {
+                    ctx.beginPath();
+                    ctx.moveTo(px + 8, py + 2);
+                    ctx.lineTo(px + 8 - (f * 2), py - 8);
+                    ctx.stroke();
+                }
+            }
+            
+            ctx.restore();
+        }
+        
+        // ==================== NPCs ====================
+        function initNPCs() {
+            npcs = [
+                {
+                    id: 1,
+                    x: 120, y: 220,
+                    name: "Alex (Student)",
+                    color: "#22c55e",
+                    type: "student",
+                    questId: "find_lost_usb",
+                    dialogue: [
+                        "Hey! I lost my USB drive somewhere near the library...",
+                        "Can you help me find it? It's super important for my coding project!",
+                        "Please bring it back to me when you find it."
+                    ],
+                    currentLine: 0,
+                    questMarker: true
+                },
+                {
+                    id: 2,
+                    x: 90, y: 90,
+                    name: "Ms. Rivera (Teacher)",
+                    color: "#c026d3",
+                    type: "teacher",
+                    questId: "deliver_notes",
+                    dialogue: [
+                        "Hello there! Could you deliver these notes to the Computer Lab assistant?",
+                        "It would really help the class. Thank you!",
+                        "The assistant is usually in the Computer Lab."
+                    ],
+                    currentLine: 0,
+                    questMarker: true
+                },
+                {
+                    id: 3,
+                    x: 520, y: 85,
+                    name: "Mr. Chen (Lab Assistant)",
+                    color: "#eab308",
+                    type: "teacher",
+                    questId: "coding_challenge",
+                    dialogue: [
+                        "Welcome to the Computer Lab! Ready for a challenge?",
+                        "Debug this code snippet and prove you're a real TechPro student.",
+                        "Complete the challenge for big XP and Tech Coins!"
+                    ],
+                    currentLine: 0,
+                    questMarker: true
+                },
+                {
+                    id: 4,
+                    x: 420, y: 380,
+                    name: "Deadline Monster",
+                    color: "#ef4444",
+                    type: "boss",
+                    questId: "defeat_deadline",
+                    dialogue: [
+                        "GROOOAARRR!!!",
+                        "You dare challenge the Deadline?!",
+                        "Prepare to be crushed by endless tasks!"
+                    ],
+                    currentLine: 0,
+                    questMarker: false,
+                    isBoss: true
+                },
+                {
+                    id: 5,
+                    x: 640, y: 200,
+                    name: "Dev (Secret Room)",
+                    color: "#67e8f9",
+                    type: "secret",
+                    questId: null,
+                    dialogue: [
+                        "Psst... you found the Secret Developer Room!",
+                        "Only true TechPro legends reach here.",
+                        "Here's a reward for your exploration skills. Keep coding! 🚀"
+                    ],
+                    currentLine: 0,
+                    questMarker: false
+                }
+            ];
+        }
+        
+        function drawNPC(npc, sx, sy) {
+            ctx.save();
+            
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+            ctx.fillRect(sx + 3, sy + 14, 10, 4);
+            
+            // Body
+            ctx.fillStyle = npc.color;
+            ctx.fillRect(sx + 3, sy + 6, 10, 8);
+            
+            // Head
+            ctx.fillStyle = '#fed7aa';
+            ctx.fillRect(sx + 4, sy + 1, 8, 6);
+            
+            // Eyes / expression
+            ctx.fillStyle = '#1e2937';
+            ctx.fillRect(sx + 5, sy + 3, 2, 2);
+            ctx.fillRect(sx + 9, sy + 3, 2, 2);
+            
+            // Special for boss
+            if (npc.isBoss) {
+                ctx.fillStyle = '#7f1d1d';
+                ctx.fillRect(sx + 2, sy + 5, 12, 10); // bigger body
+                ctx.fillStyle = '#fed7aa';
+                ctx.fillRect(sx + 3, sy, 10, 7);
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(sx + 5, sy + 2, 2, 2);
+                ctx.fillRect(sx + 9, sy + 2, 2, 2);
+            }
+            
+            // Quest marker (! or ?)
+            if (npc.questMarker && questData[npc.questId] && questData[npc.questId].status === 'active') {
+                ctx.fillStyle = '#eab308';
+                ctx.fillRect(sx + 6, sy - 8, 4, 6);
+                ctx.fillStyle = '#1e2937';
+                ctx.fillRect(sx + 7, sy - 6, 2, 2);
+            } else if (npc.questMarker && questData[npc.questId] && questData[npc.questId].status === 'inactive') {
+                ctx.fillStyle = '#22d3ee';
+                ctx.fillRect(sx + 6, sy - 8, 4, 6);
+                ctx.fillStyle = '#0f172a';
+                ctx.fillText('!', sx + 6.5, sy - 3);
+            }
+            
+            // Name
+            ctx.fillStyle = '#e0e7ff';
+            ctx.font = '8px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(npc.name, sx + 8, sy - 12);
+            
+            ctx.restore();
+        }
+        
+        // ==================== ENEMIES ====================
+        function initEnemies() {
+            enemies = [
+                { id: 1, x: 280, y: 340, health: 35, maxHealth: 35, damage: 8, speed: 45, alive: true, type: 'imp' },
+                { id: 2, x: 480, y: 160, health: 40, maxHealth: 40, damage: 10, speed: 38, alive: true, type: 'imp' },
+                { id: 3, x: 580, y: 320, health: 30, maxHealth: 30, damage: 7, speed: 50, alive: true, type: 'imp' },
+                { id: 4, x: 300, y: 95, health: 180, maxHealth: 180, damage: 18, speed: 28, alive: true, type: 'boss', name: 'Deadline Monster' }
+            ];
+        }
+        
+        function updateEnemies(dt) {
+            if (gameState !== 'playing' || isPaused) return;
+            
+            enemies.forEach(enemy => {
+                if (!enemy.alive) return;
+                
+                const dx = player.x - enemy.x;
+                const dy = player.y - enemy.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < 220 && dist > 8) {
+                    const moveSpeed = enemy.speed * dt;
+                    enemy.x += (dx / dist) * moveSpeed;
+                    enemy.y += (dy / dist) * moveSpeed;
+                    
+                    // Simple separation from walls
+                    const tx = Math.floor(enemy.x / TILE_SIZE);
+                    const ty = Math.floor(enemy.y / TILE_SIZE);
+                    if (!isWalkable(tx, ty)) {
+                        enemy.x -= (dx / dist) * moveSpeed * 1.5;
+                        enemy.y -= (dy / dist) * moveSpeed * 1.5;
+                    }
+                }
+                
+                // Damage player on contact
+                if (dist < 18) {
+                    player.health -= enemy.damage * dt * 0.8;
+                    if (player.health < 0) player.health = 0;
+                    createParticles(enemy.x, enemy.y, 3, '#ef4444');
+                    
+                    if (player.health <= 0) {
+                        gameOver();
+                    }
+                }
+            });
+        }
+        
+        function drawEnemy(enemy, sx, sy) {
+            if (!enemy.alive) return;
+            
+            ctx.save();
+            
+            const isBoss = enemy.type === 'boss';
+            const size = isBoss ? 18 : 12;
+            
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fillRect(sx + 2, sy + size + 2, size - 2, 4);
+            
+            // Body
+            ctx.fillStyle = isBoss ? '#7f1d1d' : '#b91c1c';
+            ctx.fillRect(sx + 1, sy + 4, size, size);
+            
+            // Head / horns for boss
+            if (isBoss) {
+                ctx.fillStyle = '#450a0a';
+                ctx.fillRect(sx + 3, sy - 2, size - 4, 8);
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(sx + 5, sy + 1, 3, 3);
+                ctx.fillRect(sx + size - 6, sy + 1, 3, 3);
+            } else {
+                ctx.fillStyle = '#fed7aa';
+                ctx.fillRect(sx + 2, sy + 2, size - 2, 5);
+                ctx.fillStyle = '#1e2937';
+                ctx.fillRect(sx + 4, sy + 3, 2, 2);
+                ctx.fillRect(sx + size - 5, sy + 3, 2, 2);
+            }
+            
+            // Health bar for boss
+            if (isBoss) {
+                const barWidth = 30;
+                const healthPct = enemy.health / enemy.maxHealth;
+                ctx.fillStyle = '#1e2937';
+                ctx.fillRect(sx - 3, sy - 10, barWidth, 5);
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(sx - 3, sy - 10, barWidth * healthPct, 5);
+                ctx.strokeStyle = '#64748b';
+                ctx.strokeRect(sx - 3, sy - 10, barWidth, 5);
+            }
+            
+            ctx.restore();
+        }
+        
+        function checkAttackHit() {
+            if (!attacking) return;
+            
+            const attackRange = 32;
+            const attackAngle = getDirectionAngle(player.direction);
+            
+            enemies.forEach(enemy => {
+                if (!enemy.alive) return;
+                
+                const dx = enemy.x - player.x;
+                const dy = enemy.y - player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < attackRange && dist > 4) {
+                    const enemyAngle = Math.atan2(dy, dx);
+                    const angleDiff = Math.abs(((enemyAngle - attackAngle + Math.PI) % (Math.PI * 2)) - Math.PI);
+                    
+                    if (angleDiff < 1.2) { // cone hit
+                        enemy.health -= (player.level * 6) + 12;
+                        createParticles(enemy.x, enemy.y, 6, '#fef08c');
+                        screenShake(4);
+                        playSound(680, 0.08, 'sawtooth');
+                        
+                        if (enemy.health <= 0) {
+                            enemy.alive = false;
+                            createParticles(enemy.x, enemy.y, 18, '#ef4444');
+                            screenShake(8);
+                            playSound(220, 0.4, 'sawtooth');
+                            
+                            // XP and rewards
+                            const xpGain = enemy.type === 'boss' ? 120 : 25;
+                            gainXP(xpGain);
+                            techCoins += enemy.type === 'boss' ? 45 : 8;
+                            
+                            if (enemy.type === 'boss') {
+                                checkQuestCompletion('defeat_deadline');
+                                unlockAchievement('school_hero');
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function getDirectionAngle(dir) {
+            if (dir === 'right') return 0;
+            if (dir === 'down') return Math.PI / 2;
+            if (dir === 'left') return Math.PI;
+            return -Math.PI / 2;
+        }
+        
+        // ==================== ITEMS ====================
+        function initItems() {
+            items = [
+                { id: 1, x: 340, y: 390, type: 'usb_drive', taken: false, name: 'Lost USB Drive' },
+                { id: 2, x: 95, y: 310, type: 'study_book', taken: false, name: 'Study Materials' },
+                { id: 3, x: 510, y: 255, type: 'energy_drink', taken: false, name: 'Energy Drink' },
+                { id: 4, x: 180, y: 95, type: 'notes', taken: false, name: 'Class Notes' },
+                { id: 5, x: 660, y: 185, type: 'tech_coin', taken: false, name: 'Tech Coin', value: 15 }
+            ];
+        }
+        
+        function drawItem(item, sx, sy) {
+            if (item.taken) return;
+            
+            ctx.save();
+            
+            if (item.type === 'usb_drive') {
+                ctx.fillStyle = '#eab308';
+                ctx.fillRect(sx + 3, sy + 5, 10, 7);
+                ctx.fillStyle = '#1e2937';
+                ctx.fillRect(sx + 4, sy + 6, 8, 2);
+            } else if (item.type === 'energy_drink') {
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(sx + 5, sy + 3, 6, 11);
+                ctx.fillStyle = '#166534';
+                ctx.fillRect(sx + 5, sy + 3, 6, 3);
+            } else if (item.type === 'study_book') {
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(sx + 3, sy + 4, 10, 9);
+                ctx.fillStyle = '#1e40af';
+                ctx.fillRect(sx + 4, sy + 5, 8, 7);
+            } else if (item.type === 'notes') {
+                ctx.fillStyle = '#fef08c';
+                ctx.fillRect(sx + 3, sy + 4, 10, 9);
+                ctx.fillStyle = '#854d0e';
+                for (let i = 0; i < 3; i++) {
+                    ctx.fillRect(sx + 5, sy + 6 + i * 2, 6, 1);
+                }
+            } else if (item.type === 'tech_coin') {
+                ctx.fillStyle = '#eab308';
+                ctx.beginPath();
+                ctx.arc(sx + 8, sy + 8, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#854d0e';
+                ctx.beginPath();
+                ctx.arc(sx + 8, sy + 8, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+        
+        function checkItemPickup() {
+            items.forEach(item => {
+                if (item.taken) return;
+                
+                const dx = item.x - player.x;
+                const dy = item.y - player.y;
+                if (Math.sqrt(dx * dx + dy * dy) < 18) {
+                    item.taken = true;
+                    
+                    if (item.type === 'tech_coin') {
+                        techCoins += item.value || 10;
+                        createParticles(item.x, item.y, 5, '#eab308');
+                        playSound(920, 0.1);
+                    } else {
+                        if (!player.inventory[item.type]) player.inventory[item.type] = 0;
+                        player.inventory[item.type]++;
+                        createParticles(item.x, item.y, 6, '#22d3ee');
+                        playSound(750, 0.12);
+                    }
+                    
+                    // Quest progress
+                    if (item.type === 'usb_drive' && questData.find_lost_usb.status === 'active') {
+                        questData.find_lost_usb.progress = 1;
+                    }
+                    if (item.type === 'notes' && questData.deliver_notes.status === 'active') {
+                        questData.deliver_notes.progress = 1;
+                    }
+                    if (item.type === 'study_book' && questData.collect_materials) {
+                        // optional quest
+                    }
+                }
+            });
+        }
+        
+        // ==================== QUEST SYSTEM ====================
+        function initQuests() {
+            questData = {
+                find_lost_usb: {
+                    title: "Find Lost USB",
+                    description: "Find Alex's USB drive near the library and return it to him.",
+                    status: 'inactive', // inactive, active, completed
+                    progress: 0,
+                    maxProgress: 1,
+                    rewardXP: 60,
+                    rewardCoins: 25
+                },
+                deliver_notes: {
+                    title: "Deliver Class Notes",
+                    description: "Take the notes from Ms. Rivera and deliver them to Mr. Chen in the Computer Lab.",
+                    status: 'inactive',
+                    progress: 0,
+                    maxProgress: 1,
+                    rewardXP: 45,
+                    rewardCoins: 15
+                },
+                coding_challenge: {
+                    title: "Finish Coding Challenge",
+                    description: "Complete the coding challenge in the Computer Lab to prove your skills!",
+                    status: 'inactive',
+                    progress: 0,
+                    maxProgress: 1,
+                    rewardXP: 90,
+                    rewardCoins: 40
+                },
+                defeat_deadline: {
+                    title: "Defeat the Deadline Monster",
+                    description: "Face and defeat the Deadline Monster in the Principal's Office area!",
+                    status: 'inactive',
+                    progress: 0,
+                    maxProgress: 1,
+                    rewardXP: 150,
+                    rewardCoins: 60
+                }
+            };
+        }
+        
+        function acceptQuest() {
+            if (!currentDialogueNpc || !currentDialogueNpc.questId) return;
+            
+            const qid = currentDialogueNpc.questId;
+            if (questData[qid].status === 'inactive') {
+                questData[qid].status = 'active';
+                playSound(620, 0.15);
+                createParticles(currentDialogueNpc.x, currentDialogueNpc.y, 8, '#22d3ee');
+                
+                // Give starting item if needed
+                if (qid === 'deliver_notes') {
+                    player.inventory.notes = (player.inventory.notes || 0) + 1;
+                }
+                
+                closeDialogue();
+                showToast("Quest Accepted: " + questData[qid].title);
+                updateQuestTracker();
+            }
+        }
+        
+        function completeQuestFromDialogue() {
+            if (!currentDialogueNpc) return;
+            const qid = currentDialogueNpc.questId;
+            checkQuestCompletion(qid, true);
+            closeDialogue();
+        }
+        
+        function checkQuestCompletion(qid, fromDialogue = false) {
+            const quest = questData[qid];
+            if (!quest || quest.status !== 'active') return false;
+            
+            let canComplete = false;
+            
+            if (qid === 'find_lost_usb') {
+                canComplete = player.inventory.usb_drive > 0 || quest.progress >= 1;
+                if (canComplete) {
+                    player.inventory.usb_drive = Math.max(0, (player.inventory.usb_drive || 0) - 1);
+                }
+            } else if (qid === 'deliver_notes') {
+                canComplete = player.inventory.notes > 0 || quest.progress >= 1;
+                if (canComplete) {
+                    player.inventory.notes = Math.max(0, (player.inventory.notes || 0) - 1);
+                }
+            } else if (qid === 'coding_challenge') {
+                canComplete = quest.progress >= 1;
+            } else if (qid === 'defeat_deadline') {
+                const boss = enemies.find(e => e.type === 'boss');
+                canComplete = boss && !boss.alive;
+            }
+            
+            if (canComplete) {
+                quest.status = 'completed';
+                quest.progress = quest.maxProgress;
+                
+                gainXP(quest.rewardXP);
+                techCoins += quest.rewardCoins;
+                reputation += 12;
+                
+                createParticles(player.x, player.y, 12, '#a3e635');
+                screenShake(3);
+                playSound(880, 0.2);
+                
+                showToast(`Quest Complete! +${quest.rewardXP} XP`);
+                unlockAchievement('first_quest');
+                
+                if (qid === 'coding_challenge') unlockAchievement('coding_master');
+                if (qid === 'defeat_deadline') unlockAchievement('school_hero');
+                
+                updateQuestTracker();
+                return true;
+            }
+            return false;
+        }
+        
+        function checkQuestProgress() {
+            // Auto check for some quests
+            Object.keys(questData).forEach(qid => {
+                if (questData[qid].status === 'active') {
+                    checkQuestCompletion(qid);
+                }
+            });
+        }
+        
+        function updateQuestTracker() {
+            const container = document.getElementById('quest-list');
+            container.innerHTML = '';
+            
+            let hasActive = false;
+            
+            Object.keys(questData).forEach(key => {
+                const q = questData[key];
+                if (q.status === 'active' || q.status === 'completed') {
+                    hasActive = true;
+                    const div = document.createElement('div');
+                    div.className = 'quest-item' + (q.status === 'completed' ? ' quest-completed' : '');
+                    div.innerHTML = `${q.title} <span style="font-size:8px">(${q.progress}/${q.maxProgress})</span>`;
+                    container.appendChild(div);
+                }
+            });
+            
+            document.getElementById('quest-tracker').style.display = hasActive ? 'block' : 'none';
+        }
+        
+        // ==================== ACHIEVEMENTS ====================
+        function initAchievements() {
+            achievements = {
+                first_quest: false,
+                coding_master: false,
+                school_hero: false,
+                tech_coin_collector: false,
+                techpro_legend: false
+            };
+        }
+        
+        function unlockAchievement(id) {
+            if (achievements[id]) return;
+            
+            achievements[id] = true;
+            
+            const names = {
+                first_quest: "First Quest Complete!",
+                coding_master: "Coding Master",
+                school_hero: "School Hero",
+                tech_coin_collector: "Tech Coin Collector",
+                techpro_legend: "TechPro Legend"
+            };
+            
+            showToast("🏆 " + names[id]);
+            playSound(1050, 0.25, 'sine');
+            screenShake(2);
+            
+            // Legend if many unlocked
+            const unlockedCount = Object.values(achievements).filter(v => v).length;
+            if (unlockedCount >= 4 && !achievements.techpro_legend) {
+                setTimeout(() => unlockAchievement('techpro_legend'), 1200);
+            }
+            
+            // Save immediately
+            saveGame(true);
+        }
+        
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            toast.textContent = text;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.transition = 'all 0.4s';
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    toast.style.opacity = '1';
+                    toast.style.transition = '';
+                }, 300);
+            }, 2400);
+        }
+        
+        // ==================== PARTICLES & EFFECTS ====================
+        function createParticles(x, y, count, color) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 80,
+                    vy: (Math.random() - 0.5) * 80 - (color === '#22d3ee' ? 20 : 0),
+                    life: 0.6 + Math.random() * 0.6,
+                    color: color,
+                    size: 2 + Math.random() * 2
+                });
+            }
+        }
+        
+        function updateParticles(dt) {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.life -= dt;
+                p.vy += 80 * dt; // gravity
+                
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+            
+            // Rain particles
+            if (isRaining) {
+                if (rainParticles.length < 45) {
+                    rainParticles.push({
+                        x: Math.random() * (MAP_COLS * TILE_SIZE),
+                        y: camera.y - 20,
+                        vy: 280 + Math.random() * 120,
+                        life: 1
+                    });
+                }
+                
+                for (let i = rainParticles.length - 1; i >= 0; i--) {
+                    const r = rainParticles[i];
+                    r.y += r.vy * dt;
+                    if (r.y > camera.y + CANVAS_HEIGHT + 30) {
+                        rainParticles.splice(i, 1);
+                    }
                 }
             }
         }
-    });
-}
-
-function drawGrid(){
-
-    ctx.strokeStyle="#222";
-
-    for(let x=0;x<canvas.width;x+=50){
-        ctx.beginPath();
-        ctx.moveTo(x,0);
-        ctx.lineTo(x,canvas.height);
-        ctx.stroke();
-    }
-
-    for(let y=0;y<canvas.height;y+=50){
-        ctx.beginPath();
-        ctx.moveTo(0,y);
-        ctx.lineTo(canvas.width,y);
-        ctx.stroke();
-    }
-}
-
-function draw(){
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    drawGrid();
-
-    ctx.fillStyle="cyan";
-    ctx.fillRect(
-        player.x,
-        player.y,
-        player.size,
-        player.size
-    );
-
-    enemies.forEach(enemy=>{
-
-        ctx.fillStyle="red";
-        ctx.fillRect(
-            enemy.x,
-            enemy.y,
-            enemy.size,
-            enemy.size
-        );
-
-        ctx.fillStyle="lime";
-
-        ctx.fillRect(
-            enemy.x,
-            enemy.y-6,
-            enemy.hp,
-            4
-        );
-    });
-
-    document.getElementById("hp").textContent=
-        Math.floor(player.hp);
-
-    document.getElementById("xp").textContent=
-        player.xp;
-
-    document.getElementById("level").textContent=
-        player.level;
-}
-
-function saveGame(){
-    localStorage.setItem(
-        "mobileRPG",
-        JSON.stringify(player)
-    );
-}
-
-function loadGame(){
-
-    const save=
-        JSON.parse(localStorage.getItem("mobileRPG"));
-
-    if(save){
-        Object.assign(player,save);
-    }
-}
-
-function loop(){
-
-    if(player.hp>0){
-        updatePlayer();
-        updateEnemies();
-    }
-
-    draw();
-
-    requestAnimationFrame(loop);
-}
-
-loop();
-</script>
-
+        
+        function drawParticles() {
+            ctx.save();
+            particles.forEach(p => {
+                ctx.globalAlpha = Math.max(0.2, p.life / 0.8);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x - camera.x, p.y - camera.y, p.size, p.size);
+            });
+            ctx.globalAlpha = 1;
+            ctx.restore();
+        }
+        
+        function drawRain() {
+            if (!isRaining) return;
+            ctx.save();
+            ctx.strokeStyle = 'rgba(103, 232, 249, 0.55)';
+            ctx.lineWidth = 1.5;
+            
+            rainParticles.forEach(r => {
+                const sx = r.x - camera.x;
+                const sy = r.y - camera.y;
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(sx - 1, sy + 14);
+                ctx.stroke();
+            });
+            ctx.restore();
+        }
+        
+        function updateTime(dt) {
+            timeOfDay += dt * 0.8; // fast cycle for demo
+            if (timeOfDay > 24) timeOfDay = 0;
+            
+            // Random rain chance
+            if (Math.random() < 0.0008 && !isRaining) {
+                isRaining = true;
+                setTimeout(() => { if (isRaining) isRaining = false; }, 18000);
+            }
+        }
+        
+        function drawNightOverlay() {
+            const hour = timeOfDay;
+            let alpha = 0;
+            
+            if (hour < 6 || hour > 20) {
+                alpha = 0.45;
+            } else if (hour < 7) {
+                alpha = 0.25 * (7 - hour);
+            } else if (hour > 19) {
+                alpha = 0.25 * (hour - 19);
+            }
+            
+            if (alpha > 0) {
+                ctx.fillStyle = `rgba(15, 23, 82, ${alpha})`;
+                ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            }
+        }
+        
+        // ==================== RENDER ====================
+        function render() {
+            ctx.save();
+            
+            // Screen shake
+            if (shake > 0.5) {
+                const sx = (Math.random() - 0.5) * shake;
+                const sy = (Math.random() - 0.5) * shake;
+                ctx.translate(sx, sy);
+                shake *= 0.82;
+            } else {
+                shake = 0;
+            }
+            
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            
+            // Draw tiles (visible area only)
+            const startCol = Math.max(0, Math.floor(camera.x / TILE_SIZE) - 1);
+            const endCol = Math.min(MAP_COLS, Math.floor((camera.x + CANVAS_WIDTH) / TILE_SIZE) + 2);
+            const startRow = Math.max(0, Math.floor(camera.y / TILE_SIZE) - 1);
+            const endRow = Math.min(MAP_ROWS, Math.floor((camera.y + CANVAS_HEIGHT) / TILE_SIZE) + 2);
+            
+            for (let y = startRow; y < endRow; y++) {
+                for (let x = startCol; x < endCol; x++) {
+                    const tile = map[y][x];
+                    const sx = x * TILE_SIZE - camera.x;
+                    const sy = y * TILE_SIZE - camera.y;
+                    
+                    if (tile === 0) ctx.fillStyle = '#4ade80';      // grass
+                    else if (tile === 1) ctx.fillStyle = '#a3a3a3'; // path
+                    else if (tile === 2) ctx.fillStyle = '#57534e'; // wall
+                    else if (tile === 4) ctx.fillStyle = '#fde047'; // indoor
+                    else if (tile === 5) ctx.fillStyle = '#67e8f9'; // secret room
+                    
+                    ctx.fillRect(sx, sy, TILE_SIZE, TILE_SIZE);
+                    
+                    // Wall details
+                    if (tile === 2) {
+                        ctx.fillStyle = '#3f3a36';
+                        ctx.fillRect(sx, sy, TILE_SIZE, 3);
+                        ctx.fillRect(sx, sy + TILE_SIZE - 3, TILE_SIZE, 3);
+                    }
+                    
+                    // Path highlights
+                    if (tile === 1) {
+                        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+                        ctx.fillRect(sx, sy, TILE_SIZE, 2);
+                    }
+                }
+            }
+            
+            // Draw items
+            items.forEach(item => {
+                if (!item.taken) {
+                    const sx = item.x - camera.x;
+                    const sy = item.y - camera.y;
+                    if (sx > -20 && sx < CANVAS_WIDTH + 20 && sy > -20 && sy < CANVAS_HEIGHT + 20) {
+                        drawItem(item, sx, sy);
+                    }
+                }
+            });
+            
+            // Draw enemies
+            enemies.forEach(enemy => {
+                const sx = enemy.x - camera.x;
+                const sy = enemy.y - camera.y;
+                if (sx > -30 && sx < CANVAS_WIDTH + 30 && sy > -30 && sy < CANVAS_HEIGHT + 30) {
+                    drawEnemy(enemy, sx, sy);
+                }
+            });
+            
+            // Draw NPCs
+            npcs.forEach(npc => {
+                const sx = npc.x - camera.x;
+                const sy = npc.y - camera.y;
+                if (sx > -30 && sx < CANVAS_WIDTH + 30 && sy > -30 && sy < CANVAS_HEIGHT + 30) {
+                    drawNPC(npc, sx, sy);
+                }
+            });
+            
+            // Draw player
+            const playerScreenX = player.x - camera.x;
+            const playerScreenY = player.y - camera.y;
+            drawPlayer(playerScreenX, playerScreenY);
+            
+            // Particles
+            drawParticles();
+            
+            // Rain
+            drawRain();
+            
+            // Night / time overlay
+            drawNightOverlay();
+            
+            // Building labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '7px monospace';
+            ctx.textAlign = 'center';
+            
+            const labels = [
+                { text: "MAIN GATE", x: 140, y: 260 },
+                { text: "TECHPRO B", x: 95, y: 55 },
+                { text: "COMPUTER LAB", x: 560, y: 55 },
+                { text: "LIBRARY", x: 110, y: 355 },
+                { text: "CANTEEN", x: 440, y: 355 },
+                { text: "GYM", x: 580, y: 355 },
+                { text: "PRINCIPAL", x: 320, y: 55 },
+                { text: "SECRET DEV ROOM", x: 650, y: 185 }
+            ];
+            
+            labels.forEach(l => {
+                const lx = l.x - camera.x;
+                const ly = l.y - camera.y;
+                if (lx > 0 && lx < CANVAS_WIDTH && ly > 0 && ly < CANVAS_HEIGHT) {
+                    ctx.fillText(l.text, lx, ly);
+                }
+            });
+            
+            ctx.restore();
+            
+            // Draw minimap
+            drawMinimap();
+            
+            // Update HUD
+            updateHUD();
+        }
+        
+        function drawMinimap() {
+            minimapCtx.fillStyle = '#0f172a';
+            minimapCtx.fillRect(0, 0, 130, 130);
+            
+            const scale = 130 / (MAP_COLS * TILE_SIZE);
+            
+            // Draw simplified tiles
+            for (let y = 0; y < MAP_ROWS; y += 2) {
+                for (let x = 0; x < MAP_COLS; x += 2) {
+                    const tile = map[y][x];
+                    let color = '#4ade80';
+                    if (tile === 1) color = '#a3a3a3';
+                    if (tile === 2) color = '#57534e';
+                    if (tile === 4) color = '#fde047';
+                    if (tile === 5) color = '#67e8f9';
+                    
+                    minimapCtx.fillStyle = color;
+                    minimapCtx.fillRect(
+                        x * TILE_SIZE * scale,
+                        y * TILE_SIZE * scale,
+                        2 * TILE_SIZE * scale,
+                        2 * TILE_SIZE * scale
+                    );
+                }
+            }
+            
+            // Player dot
+            const px = player.x * scale;
+            const py = player.y * scale;
+            minimapCtx.fillStyle = '#22d3ee';
+            minimapCtx.fillRect(px - 2, py - 2, 5, 5);
+            
+            // NPCs
+            npcs.forEach(npc => {
+                const nx = npc.x * scale;
+                const ny = npc.y * scale;
+                minimapCtx.fillStyle = npc.color;
+                minimapCtx.fillRect(nx - 1, ny - 1, 3, 3);
+            });
+            
+            // Enemies
+            enemies.forEach(e => {
+                if (!e.alive) return;
+                const ex = e.x * scale;
+                const ey = e.y * scale;
+                minimapCtx.fillStyle = '#ef4444';
+                minimapCtx.fillRect(ex - 1, ey - 1, 3, 3);
+            });
+            
+            // Camera view rectangle
+            minimapCtx.strokeStyle = '#e0e7ff';
+            minimapCtx.lineWidth = 1;
+            const viewW = (CANVAS_WIDTH / (MAP_COLS * TILE_SIZE)) * 130;
+            const viewH = (CANVAS_HEIGHT / (MAP_ROWS * TILE_SIZE)) * 130;
+            minimapCtx.strokeRect(
+                (camera.x / (MAP_COLS * TILE_SIZE)) * 130,
+                (camera.y / (MAP_ROWS * TILE_SIZE)) * 130,
+                viewW,
+                viewH
+            );
+        }
+        
+        function updateHUD() {
+            // Health
+            const healthPct = Math.max(0, player.health / player.maxHealth * 100);
+            document.getElementById('health-bar').style.width = healthPct + '%';
+            document.getElementById('health-text').textContent = Math.floor(player.health) + '/' + player.maxHealth;
+            
+            // XP
+            const xpNeeded = player.level * 100;
+            const xpPct = Math.min(100, player.xp / xpNeeded * 100);
+            document.getElementById('xp-bar').style.width = xpPct + '%';
+            document.getElementById('xp-text').textContent = player.xp + '/' + xpNeeded;
+            
+            // Level & coins
+            document.getElementById('level-text').textContent = player.level;
+            document.getElementById('coins-text').textContent = techCoins;
+            document.getElementById('rep-text').textContent = reputation;
+            
+            // FPS
+            document.getElementById('fps-counter').textContent = 'FPS: ' + fps;
+        }
+        
+        function gainXP(amount) {
+            player.xp += amount;
+            const needed = player.level * 100;
+            
+            if (player.xp >= needed) {
+                player.level++;
+                player.xp -= needed;
+                player.maxHealth += 15;
+                player.health = player.maxHealth;
+                
+                createParticles(player.x, player.y, 20, '#fef08c');
+                screenShake(5);
+                playSound(750, 0.3, 'sine');
+                showToast("LEVEL UP! +15 MAX HP");
+                
+                if (player.level >= 5 && !achievements.techpro_legend) {
+                    unlockAchievement('techpro_legend');
+                }
+            }
+        }
+        
+        function screenShake(amount) {
+            shake = Math.max(shake, amount);
+        }
+        
+        // ==================== DIALOGUE ====================
+        function openDialogue(npc) {
+            currentDialogueNpc = npc;
+            const box = document.getElementById('dialogue-box');
+            const nameEl = document.getElementById('dialogue-name');
+            const textEl = document.getElementById('dialogue-text');
+            const acceptBtn = document.getElementById('dialogue-accept');
+            const completeBtn = document.getElementById('dialogue-complete');
+            const nextBtn = document.getElementById('dialogue-next');
+            
+            nameEl.textContent = npc.name;
+            
+            const line = npc.dialogue[Math.min(npc.currentLine, npc.dialogue.length - 1)];
+            textEl.textContent = line;
+            
+            acceptBtn.style.display = 'none';
+            completeBtn.style.display = 'none';
+            nextBtn.style.display = 'inline-block';
+            
+            // Show accept if quest available
+            if (npc.questId && questData[npc.questId].status === 'inactive') {
+                acceptBtn.style.display = 'inline-block';
+                nextBtn.style.display = 'none';
+            }
+            
+            // Show complete if ready
+            if (npc.questId && questData[npc.questId].status === 'active') {
+                if (checkQuestCompletion(npc.questId, true)) {
+                    completeBtn.style.display = 'inline-block';
+                    nextBtn.style.display = 'none';
+                }
+            }
+            
+            box.style.display = 'block';
+            playSound(440, 0.1);
+        }
+        
+        function nextDialogue() {
+            if (!currentDialogueNpc) return;
+            
+            currentDialogueNpc.currentLine++;
+            
+            if (currentDialogueNpc.currentLine >= currentDialogueNpc.dialogue.length) {
+                closeDialogue();
+            } else {
+                const textEl = document.getElementById('dialogue-text');
+                textEl.textContent = currentDialogueNpc.dialogue[currentDialogueNpc.currentLine];
+            }
+        }
+        
+        function closeDialogue() {
+            document.getElementById('dialogue-box').style.display = 'none';
+            if (currentDialogueNpc) {
+                currentDialogueNpc.currentLine = 0;
+            }
+            currentDialogueNpc = null;
+        }
+        
+        // ==================== COMBAT & ACTIONS ====================
+        function attack() {
+            if (attackCooldown > 0 || gameState !== 'playing' || isPaused) return;
+            
+            attacking = true;
+            attackTimer = 0.35;
+            attackCooldown = 0.55;
+            
+            createParticles(player.x + (player.direction === 'right' ? 18 : player.direction === 'left' ? -18 : 0), 
+                           player.y + (player.direction === 'down' ? 18 : player.direction === 'up' ? -12 : 0), 
+                           5, '#fef08c');
+            
+            playSound(580, 0.08, 'sawtooth');
+            screenShake(2);
+            
+            // Check hit immediately
+            setTimeout(checkAttackHit, 80);
+        }
+        
+        function interact() {
+            if (gameState !== 'playing' || isPaused) return;
+            
+            let closestNpc = null;
+            let closestDist = 42;
+            
+            npcs.forEach(npc => {
+                const dx = npc.x - player.x;
+                const dy = npc.y - player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closestNpc = npc;
+                }
+            });
+            
+            if (closestNpc) {
+                openDialogue(closestNpc);
+                return;
+            }
+            
+            // Check for computer (coding challenge)
+            const computerX = 540;
+            const computerY = 75;
+            const distToComputer = Math.hypot(player.x - computerX, player.y - computerY);
+            
+            if (distToComputer < 35 && questData.coding_challenge.status === 'active') {
+                openCodingChallenge();
+                return;
+            }
+            
+            // Check secret room entry
+            if (player.x > 620 && player.x < 700 && player.y > 160 && player.y < 240 && reputation >= 70) {
+                showToast("You entered the Secret Developer Room!");
+                createParticles(660, 200, 15, '#67e8f9');
+                playSound(920, 0.2);
+                // Trigger secret NPC dialogue
+                const secretNpc = npcs.find(n => n.type === 'secret');
+                if (secretNpc) {
+                    setTimeout(() => openDialogue(secretNpc), 400);
+                    techCoins += 30;
+                    gainXP(40);
+                }
+            } else if (player.x > 620 && player.x < 700 && player.y > 160 && player.y < 240) {
+                showToast("Reputation too low. Come back stronger!");
+            }
+        }
+        
+        function openCodingChallenge() {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(15,23,42,0.98); border:4px solid #64748b; padding:20px; z-index:500; width:340px; text-align:center; font-family:monospace';
+            
+            modal.innerHTML = `
+                <h3 style="color:#22d3ee; margin-bottom:12px">💻 CODING CHALLENGE</h3>
+                <p style="font-size:10px; margin-bottom:16px; line-height:1.5">Which line correctly declares a variable in modern JavaScript?</p>
+                
+                <div style="display:flex; flex-direction:column; gap:8px; text-align:left; margin-bottom:16px">
+                    <button class="pixel-button" style="text-align:left; padding:8px 12px; font-size:10px" onclick="checkCodingAnswer(this, false)">A) var x = 5;</button>
+                    <button class="pixel-button" style="text-align:left; padding:8px 12px; font-size:10px" onclick="checkCodingAnswer(this, true)">B) let x = 5;</button>
+                    <button class="pixel-button" style="text-align:left; padding:8px 12px; font-size:10px" onclick="checkCodingAnswer(this, false)">C) const x = 5</button>
+                    <button class="pixel-button" style="text-align:left; padding:8px 12px; font-size:10px" onclick="checkCodingAnswer(this, false)">D) x := 5</button>
+                </div>
+                
+                <button onclick="this.parentElement.remove()" class="pixel-button" style="background:#475569; width:100%">CANCEL</button>
+            `;
+            
+            document.getElementById('game-container').appendChild(modal);
+        }
+        
+        window.checkCodingAnswer = function(btn, isCorrect) {
+            const modal = btn.parentElement;
+            
+            if (isCorrect) {
+                btn.style.background = '#166534';
+                btn.style.borderColor = '#4ade80';
+                
+                setTimeout(() => {
+                    modal.remove();
+                    questData.coding_challenge.progress = 1;
+                    checkQuestCompletion('coding_challenge');
+                    showToast("Challenge Complete! Great job, coder!");
+                    createParticles(player.x, player.y, 10, '#a3e635');
+                }, 600);
+            } else {
+                btn.style.background = '#7f1d1d';
+                setTimeout(() => {
+                    btn.style.background = '#334155';
+                    btn.style.borderColor = '#64748b';
+                }, 400);
+                playSound(220, 0.1);
+            }
+        }
+        
+        // ==================== INVENTORY ====================
+        function toggleInventory() {
+            const panel = document.getElementById('inventory-panel');
+            const content = document.getElementById('inventory-content');
+            
+            if (panel.style.display === 'block') {
+                panel.style.display = 'none';
+                return;
+            }
+            
+            content.innerHTML = '';
+            let hasItems = false;
+            
+            Object.keys(player.inventory).forEach(key => {
+                const count = player.inventory[key];
+                if (count > 0) {
+                    hasItems = true;
+                    const div = document.createElement('div');
+                    div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px solid #334155; cursor:pointer';
+                    
+                    let icon = '📦';
+                    if (key === 'energy_drink') icon = '🥤';
+                    if (key === 'usb_drive') icon = '💾';
+                    if (key === 'study_book') icon = '📚';
+                    if (key === 'notes') icon = '📝';
+                    
+                    div.innerHTML = `
+                        <span>${icon} ${key.replace('_', ' ').toUpperCase()} ×${count}</span>
+                        <span style="color:#64748b; font-size:9px">USE</span>
+                    `;
+                    
+                    div.onclick = () => {
+                        useItem(key, div);
+                    };
+                    
+                    content.appendChild(div);
+                }
+            });
+            
+            if (!hasItems) {
+                content.innerHTML = '<div style="color:#64748b; text-align:center; padding:20px 0">Inventory is empty.<br>Explore to find items!</div>';
+            }
+            
+            document.getElementById('inv-coins').textContent = techCoins;
+            panel.style.display = 'block';
+        }
+        
+        function useItem(type, element) {
+            if (type === 'energy_drink' && player.inventory.energy_drink > 0) {
+                player.health = Math.min(player.maxHealth, player.health + 35);
+                player.inventory.energy_drink--;
+                createParticles(player.x, player.y, 8, '#22c55e');
+                playSound(620, 0.15);
+                screenShake(1);
+                showToast("+35 HP restored!");
+                
+                if (player.inventory.energy_drink <= 0) {
+                    element.remove();
+                } else {
+                    element.innerHTML = element.innerHTML.replace(/×\d+/, `×${player.inventory.energy_drink}`);
+                }
+            }
+            
+            // Update HUD
+            updateHUD();
+        }
+        
+        function toggleQuestLog() {
+            const tracker = document.getElementById('quest-tracker');
+            tracker.style.display = tracker.style.display === 'block' ? 'none' : 'block';
+            if (tracker.style.display === 'block') {
+                updateQuestTracker();
+            }
+        }
+        
+        // ==================== INPUT HANDLING ====================
+        function setupInput() {
+            // Keyboard
+            window.addEventListener('keydown', (e) => {
+                keys[e.key.toLowerCase()] = true;
+                
+                if (gameState === 'playing' && !isPaused) {
+                    if (e.key.toLowerCase() === 'e') interact();
+                    if (e.key === ' ') { e.preventDefault(); attack(); }
+                    if (e.key.toLowerCase() === 'i') toggleInventory();
+                    if (e.key.toLowerCase() === 'q') toggleQuestLog();
+                    if (e.key === 'Escape') pauseGame();
+                }
+                
+                if (e.key === 'Escape' && gameState === 'playing') {
+                    if (!isPaused) pauseGame();
+                    else resumeGame();
+                }
+            });
+            
+            window.addEventListener('keyup', (e) => {
+                keys[e.key.toLowerCase()] = false;
+            });
+            
+            // Mouse click on canvas for attack / interact (bonus)
+            canvas.addEventListener('click', (e) => {
+                if (gameState !== 'playing' || isPaused) return;
+                
+                const rect = canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left + camera.x;
+                const clickY = e.clientY - rect.top + camera.y;
+                
+                // Simple: attack towards click
+                const dx = clickX - player.x;
+                const dy = clickY - player.y;
+                
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    player.direction = dx > 0 ? 'right' : 'left';
+                } else {
+                    player.direction = dy > 0 ? 'down' : 'up';
+                }
+                
+                attack();
+            });
+            
+            // Mobile detection
+            isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            if (isMobile) {
+                document.getElementById('mobile-controls').style.display = 'block';
+                setupJoystick();
+            }
+            
+            // Prevent context menu
+            canvas.addEventListener('contextmenu', e => e.preventDefault());
+        }
+        
+        function setupJoystick() {
+            const container = document.getElementById('joystick-container');
+            const knob = document.getElementById('joystick-knob');
+            
+            let active = false;
+            let centerX = 0;
+            let centerY = 0;
+            
+            function updateKnob(x, y) {
+                const rect = container.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                
+                let dx = x - cx;
+                let dy = y - cy;
+                const maxDist = 38;
+                
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist > maxDist) {
+                    dx = (dx / dist) * maxDist;
+                    dy = (dy / dist) * maxDist;
+                }
+                
+                knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+                
+                inputX = dx / maxDist;
+                inputY = dy / maxDist;
+            }
+            
+            function resetKnob() {
+                knob.style.transform = 'translate(-50%, -50%)';
+                inputX = 0;
+                inputY = 0;
+                active = false;
+            }
+            
+            container.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                active = true;
+                const touch = e.touches[0];
+                updateKnob(touch.clientX, touch.clientY);
+            });
+            
+            container.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (!active) return;
+                const touch = e.touches[0];
+                updateKnob(touch.clientX, touch.clientY);
+            });
+            
+            container.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                resetKnob();
+            });
+            
+            // Also support mouse for testing
+            container.addEventListener('mousedown', (e) => {
+                active = true;
+                updateKnob(e.clientX, e.clientY);
+            });
+            
+            window.addEventListener('mousemove', (e) => {
+                if (!active) return;
+                updateKnob(e.clientX, e.clientY);
+            });
+            
+            window.addEventListener('mouseup', () => {
+                if (active) resetKnob();
+            });
+        }
+        
+        // ==================== GAME LOOP ====================
+        function gameLoop() {
+            const currentTime = performance.now();
+            const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
+            lastTime = currentTime;
+            
+            // FPS calculation
+            frameCount++;
+            fpsTime += dt;
+            if (fpsTime >= 1) {
+                fps = frameCount;
+                frameCount = 0;
+                fpsTime = 0;
+            }
+            
+            if (gameState === 'playing' && !isPaused) {
+                updatePlayer(dt);
+                updateEnemies(dt);
+                updateParticles(dt);
+                updateTime(dt);
+                checkItemPickup();
+                checkQuestProgress();
+                
+                // Attack cooldown
+                if (attackCooldown > 0) attackCooldown -= dt;
+                if (attackTimer > 0) attackTimer -= dt;
+                else attacking = false;
+                
+                // Auto save every 25 seconds
+                autoSaveTimer += dt;
+                if (autoSaveTimer > 25) {
+                    autoSaveTimer = 0;
+                    saveGame(true);
+                }
+                
+                // Check win condition (all main quests + boss)
+                const completedMain = Object.values(questData).filter(q => q.status === 'completed').length;
+                if (completedMain >= 3 && player.level >= 4 && !achievements.techpro_legend) {
+                    unlockAchievement('techpro_legend');
+                }
+            }
+            
+            if (gameState === 'playing') {
+                render();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // ==================== SAVE / LOAD ====================
+        function saveGame(silent = false) {
+            const state = {
+                player: {
+                    x: player.x,
+                    y: player.y,
+                    health: player.health,
+                    maxHealth: player.maxHealth,
+                    xp: player.xp,
+                    level: player.level,
+                    inventory: player.inventory,
+                    direction: player.direction
+                },
+                techCoins,
+                reputation,
+                timeOfDay,
+                isRaining,
+                questData,
+                achievements,
+                itemsTaken: items.map(i => ({ id: i.id, taken: i.taken })),
+                enemiesAlive: enemies.map(e => ({ id: e.id, alive: e.alive, health: e.health }))
+            };
+            
+            try {
+                localStorage.setItem('techproB_save', JSON.stringify(state));
+                if (!silent) showToast("Game Saved!");
+            } catch (e) {
+                console.warn("Save failed", e);
+            }
+        }
+        
+        function loadGame() {
+            try {
+                const saved = localStorage.getItem('techproB_save');
+                if (!saved) return false;
+                
+                const state = JSON.parse(saved);
+                
+                // Restore player
+                Object.assign(player, state.player);
+                
+                // Restore globals
+                techCoins = state.techCoins || 0;
+                reputation = state.reputation || 50;
+                timeOfDay = state.timeOfDay || 9.5;
+                isRaining = state.isRaining || false;
+                questData = state.questData || questData;
+                achievements = state.achievements || achievements;
+                
+                // Restore items
+                if (state.itemsTaken) {
+                    state.itemsTaken.forEach(savedItem => {
+                        const item = items.find(i => i.id === savedItem.id);
+                        if (item) item.taken = savedItem.taken;
+                    });
+                }
+                
+                // Restore enemies
+                if (state.enemiesAlive) {
+                    state.enemiesAlive.forEach(savedE => {
+                        const enemy = enemies.find(e => e.id === savedE.id);
+                        if (enemy) {
+                            enemy.alive = savedE.alive;
+                            if (savedE.health !== undefined) enemy.health = savedE.health;
+                        }
+                    });
+                }
+                
+                // Position camera
+                camera.x = player.x - CANVAS_WIDTH / 2;
+                camera.y = player.y - CANVAS_HEIGHT / 2;
+                
+                updateQuestTracker();
+                return true;
+            } catch (e) {
+                console.warn("Load failed", e);
+                return false;
+            }
+        }
+        
+        function loadGameFromTitle() {
+            if (loadGame()) {
+                startGame(true);
+                showToast("Game Loaded!");
+            } else {
+                alert("No saved game found!");
+            }
+        }
+        
+        // ==================== GAME STATE ====================
+        function startGame(loaded = false) {
+            document.getElementById('title-screen').style.display = 'none';
+            
+            if (!loaded) {
+                initPlayer();
+                initItems();
+                initEnemies();
+                initNPCs();
+                initQuests();
+                initAchievements();
+                techCoins = 12;
+                reputation = 50;
+                timeOfDay = 9.5;
+                isRaining = false;
+                
+                // Give starting quest hint
+                setTimeout(() => {
+                    showToast("Talk to NPCs with E or 💬 button!");
+                }, 1800);
+            }
+            
+            gameState = 'playing';
+            isPaused = false;
+            
+            // Initial camera
+            camera.x = player.x - CANVAS_WIDTH / 2;
+            camera.y = player.y - CANVAS_HEIGHT / 2;
+            
+            updateQuestTracker();
+            
+            // Start rain chance
+            setTimeout(() => {
+                if (gameState === 'playing' && Math.random() < 0.4) isRaining = true;
+            }, 22000);
+            
+            // Auto trigger a small particle effect at start
+            setTimeout(() => createParticles(player.x, player.y, 6, '#22d3ee'), 600);
+        }
+        
+        function pauseGame() {
+            if (gameState !== 'playing') return;
+            isPaused = true;
+            document.getElementById('pause-menu').style.display = 'flex';
+        }
+        
+        function resumeGame() {
+            isPaused = false;
+            document.getElementById('pause-menu').style.display = 'none';
+            document.getElementById('settings-menu').style.display = 'none';
+        }
+        
+        function showSettings() {
+            document.getElementById('pause-menu').style.display = 'none';
+            const settings = document.getElementById('settings-menu');
+            settings.style.display = 'block';
+            
+            document.getElementById('sound-toggle').checked = soundEnabled;
+            document.getElementById('rain-toggle').checked = isRaining;
+        }
+        
+        function closeSettings() {
+            document.getElementById('settings-menu').style.display = 'none';
+            document.getElementById('pause-menu').style.display = 'flex';
+        }
+        
+        function toggleSound() {
+            soundEnabled = document.getElementById('sound-toggle').checked;
+        }
+        
+        function toggleRain() {
+            isRaining = document.getElementById('rain-toggle').checked;
+            if (isRaining) {
+                rainParticles = [];
+            }
+        }
+        
+        function backToTitle() {
+            document.getElementById('pause-menu').style.display = 'none';
+            document.getElementById('game-over-screen').style.display = 'none';
+            document.getElementById('settings-menu').style.display = 'none';
+            document.getElementById('title-screen').style.display = 'flex';
+            gameState = 'title';
+            isPaused = false;
+        }
+        
+        function gameOver() {
+            gameState = 'gameover';
+            document.getElementById('game-over-screen').style.display = 'flex';
+            playSound(180, 0.6, 'sawtooth');
+        }
+        
+        function restartGame() {
+            document.getElementById('game-over-screen').style.display = 'none';
+            
+            // Reset everything
+            initPlayer();
+            initItems();
+            initEnemies();
+            initNPCs();
+            initQuests();
+            initAchievements();
+            techCoins = 12;
+            reputation = 50;
+            timeOfDay = 9.5;
+            isRaining = false;
+            particles = [];
+            rainParticles = [];
+            shake = 0;
+            
+            gameState = 'playing';
+            isPaused = false;
+            
+            camera.x = player.x - CANVAS_WIDTH / 2;
+            camera.y = player.y - CANVAS_HEIGHT / 2;
+            
+            updateQuestTracker();
+        }
+        
+        // ==================== AUDIO ====================
+        let audioCtx;
+        
+        function playSound(freq, duration = 0.1, type = 'square') {
+            if (!soundEnabled) return;
+            
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+                
+                osc.type = type;
+                osc.frequency.value = freq;
+                
+                filter.type = 'lowpass';
+                filter.frequency.value = 1200;
+                
+                gain.gain.value = 0.18;
+                gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration + 0.05);
+            } catch (e) {}
+        }
+        
+        // ==================== INITIALIZATION ====================
+        function init() {
+            initMap();
+            initPlayer();
+            initNPCs();
+            initEnemies();
+            initItems();
+            initQuests();
+            initAchievements();
+            
+            setupInput();
+            
+            // Boot message
+            console.log('%c[TechPro B] Pixel RPG initialized successfully', 'color:#22d3ee');
+            
+            // Start game loop
+            lastTime = performance.now();
+            gameLoop();
+            
+            // Easter egg: secret room hint after 45s if not found
+            setTimeout(() => {
+                if (gameState === 'playing' && reputation < 65) {
+                    const secret = npcs.find(n => n.type === 'secret');
+                    if (secret) secret.questMarker = true;
+                }
+            }, 45000);
+            
+            // Make sure title is visible
+            document.getElementById('title-screen').style.display = 'flex';
+        }
+        
+        // Boot the game
+        window.onload = init;
+    </script>
 </body>
 </html>
